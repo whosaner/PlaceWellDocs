@@ -117,7 +117,8 @@ https://placewell.app/s/{LABELID}-{SIGNATURE}?n={name}
   "label_sku": "round-1.5",
   "created_at": "Timestamp",
   "status": "active",
-  "scan_count": 0,
+  "camera_scan_count": 0,
+  "app_scan_count": 0,
   "last_scanned_at": null
 }
 ```
@@ -151,3 +152,44 @@ https://placewell.app/s/{LABELID}-{SIGNATURE}?n={name}
 5. **Separate order and label records:** Firestore stores per-label allocation in `qr_codes` and higher-level batch/order facts in `orders`.
 6. **Shared config, not duplicated logic:** templates, styles, and categories are managed centrally through PlaceWellAdmin so UI, PDFs, and app behavior stay aligned.
 7. **One server, isolated internal services:** Apache fronts public traffic while QR Service and UI run on internal localhost ports.
+
+## Analytics
+
+### Scan tracking (Firestore — `qr_codes` collection)
+
+Each label document tracks two scan counters:
+
+| Field | Incremented by | When |
+|---|---|---|
+| `camera_scan_count` | PlaceWellQRService `/s/` redirect | Physical QR scan via phone camera → browser |
+| `app_scan_count` | PlaceWellQRService `/api/qr/lookup/` | In-app scanner scan |
+
+Both use Firestore's atomic `fs.Increment(1)` — safe under concurrent scans. Writes are best-effort and do not block the user-facing response.
+
+### Firebase Analytics (PlaceWellApp — `src/utils/analytics.js`)
+
+The app uses a Firebase Analytics wrapper that is a **silent no-op in Expo Go** and activates automatically in production EAS builds where Firebase is configured.
+
+| Event | Trigger |
+|---|---|
+| `scanner_opened` | User opens the in-app scanner |
+| `label_scanned` | Every QR scan — params: `label_id`, `label_category`, `is_rescan` (0/1) |
+| `label_created` | Label saved in create mode — params: `has_photo`, `has_location`, `is_spice` |
+| `label_edited` | Label saved in edit mode |
+| `label_deleted` | Delete confirmed on LabelRecall or LabelDetail screen |
+| `label_refilled` | Refill confirmed on LabelRecall screen — param: `freshness_category` |
+| `freshness_date_set` | User manually sets a Best By date |
+| `home_label_opened` | Label card tapped on HomeScreen |
+| `bulk_import_started` | Order QR scan triggers bulk import flow |
+| `bulk_import_completed` | All labels created — params: `created_count`, `skipped_count` |
+
+### Production activation (EAS build)
+
+Firebase Analytics is installed but not active until a production build is created:
+
+1. Add `google-services.json` (Android) to the project root
+2. Add `GoogleService-Info.plist` (iOS) to the project root
+3. Add `@react-native-firebase/app` to `app.json` plugins
+4. Run `eas build` — all 10 events will flow into Firebase Analytics automatically
+
+No app code changes are needed for activation.

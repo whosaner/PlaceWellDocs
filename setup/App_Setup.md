@@ -42,3 +42,20 @@ npx jest --no-coverage --maxWorkers=2
 - Design system: `C:\PlaceWell\Docs\design\Design_System.md`
 - Feature spec: `C:\PlaceWell\Docs\features\ScanToRecall.md`
 - Release checklist: `C:\PlaceWell\Docs\release\Release_Validation_Checklist.md`
+
+## Firebase Analytics — production activation
+
+Analytics events are instrumented in the app but are **silent no-ops in Expo Go**. To activate for a production EAS build:
+
+1. Create a Firebase project (or use `placewell-prod` if already set up)
+2. Add `google-services.json` (Android) to `C:\PlaceWell\PlaceWellApp\`
+3. Add `GoogleService-Info.plist` (iOS) to `C:\PlaceWell\PlaceWellApp\`
+4. Add the Firebase plugin to `app.json`:
+   ```json
+   "plugins": [
+     "@react-native-firebase/app"
+   ]
+   ```
+5. Run `eas build` — all 10 analytics events activate with no code changes
+
+See `C:\PlaceWell\Docs\architecture\System_Overview.md` for the full event list.
