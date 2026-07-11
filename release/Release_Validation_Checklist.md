@@ -62,7 +62,45 @@ Last updated: 2026-07-07
 
 ---
 
-## Current status (as of 2026-07-07)
+## Android Signing — SHA-256 Fingerprint
+
+### What it is
+The SHA-256 fingerprint uniquely identifies the Android keystore used to sign every PlaceWell build. It is required for:
+- **`assetlinks.json`** — tells Android OS that `placewell.app` links should open directly in the PlaceWell app (App Links / Digital Asset Links)
+- **Google Play signing verification** — proves future APK/AAB updates come from the same developer
+
+### How to retrieve it
+```
+cd C:\PlaceWell\PlaceWellApp
+eas credentials --platform android
+```
+Select **production** build profile. The fingerprint is shown under **Configuration: Build Credentials**.
+
+### Current value (generated 2026-07-09)
+```
+SHA-256: 71:60:05:01:D2:63:A4:E1:65:90:AB:4A:10:49:00:6C:D1:2A:68:35:E6:15:0C:15:D9:B4:EE:89:9A:52:37:C7
+Key Alias: 256c9dae2571d40de5b467e9171468ac
+MD5:       82:4A:B9:24:1E:6D:22:C5:A0:7D:3A:42:9B:41:EB:FB
+SHA1:      29:BE:03:5A:97:EB:D9:CD:16:CA:17:15:39:5D:77:96:63:BF:B7:53
+```
+
+### Is this one-time or recurring?
+**One-time.** The keystore is stored permanently on EAS servers and reused for every future build. The SHA-256 fingerprint never changes as long as you use the same EAS keystore. Only needs updating if the keystore is ever regenerated (which would also break Play Store update delivery — avoid unless absolutely necessary).
+
+### Where is assetlinks.json deployed?
+- Live URL: `https://placewell.app/.well-known/assetlinks.json`
+- Source copy: `C:\PlaceWell\Docs\deployment\assetlinks.json`
+- Server path: `/var/www/placewell-well-known/.well-known/assetlinks.json`
+
+### Where is apple-app-site-association deployed?
+- Live URL: `https://placewell.app/.well-known/apple-app-site-association`
+- Source copy: `C:\PlaceWell\Docs\deployment\apple-app-site-association`
+- Server path: `/var/www/placewell-well-known/.well-known/apple-app-site-association`
+- Apple Team ID: `CM5N45M892` / Bundle ID: `com.placewell.app`
+
+---
+
+## Current status (as of 2026-07-11)
 
 | Item | Status |
 |---|---|
@@ -70,13 +108,18 @@ Last updated: 2026-07-07
 | Bundle ID / package name | ✅ `com.placewell.app` |
 | Permissions (camera, photos) | ✅ Declared |
 | Deep link / universal link config | ✅ Configured |
-| App icon | ⏳ Placeholder only — replace before submission |
-| Splash screen | ⏳ Placeholder only |
-| Firebase config files | ❌ Not yet added |
+| `assetlinks.json` (Android App Links) | ✅ Live at placewell.app |
+| `apple-app-site-association` (iOS Universal Links) | ✅ Live at placewell.app |
+| iOS production build | ✅ v1.0.0 build 9 |
+| Android production build | ✅ v1.0.0 build 2 |
+| iOS submitted to TestFlight | ✅ |
+| Android uploaded to Play internal testing | ✅ |
+| App icon | ⏳ Placeholder — replace before App Store submission |
+| Splash screen | ⏳ Placeholder |
+| Firebase config files | ⏳ Deferred to Expo SDK 55+ |
 | Secrets in EAS | ❌ Still in app.json |
-| App Store Connect app created | ❌ Pending |
-| Google Play app created | ❌ Pending |
 | Privacy policy | ❌ Pending |
+| App Store screenshots | ❌ Pending |
 
 ---
 
