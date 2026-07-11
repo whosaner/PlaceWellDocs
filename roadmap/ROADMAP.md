@@ -133,6 +133,8 @@ This roadmap consolidates the active app, infrastructure, operator, PDF, and bus
    - **LabelRecallScreen** (inline, replacing the hero photo tap)
    Requires: building and hosting a jar image catalog (CDN or bundled assets), catalog browser UI component, per-label `brandImageId` field in storage schema.
 
+3. **Multi-Photo Labels (up to 3 images)** — allow users to add up to 3 photos per label instead of the current single photo. Useful for showing the jar from multiple angles, showing the contents, or showing the label on the shelf. The hero card would show the first photo with a swipeable carousel for additional photos. Affects: LabelFormScreen (Photo step), LabelDetailScreen, LabelRecallScreen (hero card), and local storage schema (`photoUris: string[]` replacing `photoUri: string`). Max 3 photos to keep storage and performance manageable.
+
 ---
 
 ## Future / Premium Tier
