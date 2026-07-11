@@ -1,0 +1,35 @@
+== PLACEWELL APP ICON — AI Generation Prompt ==
+
+Use this prompt in Midjourney, DALL-E, Adobe Firefly, or similar:
+
+---
+
+Minimalist mobile app icon for a home organization app called PlaceWell. Clean amber and warm cream color palette (#C9A66B amber, #F5F0E8 cream, #1C1B19 dark ink). Design features a small QR-coded label or tag symbol. Premium, sophisticated, modern aesthetic. No text. Flat design with subtle depth. 1024x1024, square format, no rounded corners (Apple will add them), solid background.
+
+---
+
+== SPECS FOR THE FINAL ICON ==
+
+File: icon.png
+Size: 1024 x 1024 pixels
+Format: PNG
+Background: Solid color (no transparency)
+No rounded corners (Apple adds them)
+No text
+
+File: adaptive-icon.png (Android)
+Size: 1024 x 1024 pixels
+Format: PNG with transparent background
+Keep the main design within the inner 66% (660x660 center)
+
+File: splash.png (Splash screen)
+Size: 1242 x 2688 pixels
+Format: PNG
+Background color: #F5F0E8
+Centered logo/wordmark on the cream background
+
+== WHERE TO SAVE THE FILES ==
+
+C:\PlaceWell\PlaceWellApp\assets\icon.png
+C:\PlaceWell\PlaceWellApp\assets\adaptive-icon.png
+C:\PlaceWell\PlaceWellApp\assets\splash.png

@@ -1,0 +1,18 @@
+== ANDROID SUBMISSION LINKS ==
+
+== Option 1: Try API Access URL directly ==
+https://play.google.com/console/developers/7538287515721412159/api-access
+
+== Option 2: Download the Android AAB build ==
+https://expo.dev/accounts/beniralu/projects/placewell/builds/6ede2742-e86f-4f89-adb4-f4c88fb23c8f
+
+== Option 3: Manual upload in Play Console ==
+1. Download the AAB from the link above (click "Download" button)
+2. Go to: https://play.google.com/console/u/0/developers/7538287515721412159/app/4972436155407905552/tracks/internal-testing
+3. Click "Create new release"
+4. Upload the .aab file
+5. Save and roll out
+
+== EAS Submit command (run after service account is set up) ==
+cd C:\PlaceWell\PlaceWellApp
+eas submit --platform android
