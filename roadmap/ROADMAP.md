@@ -124,18 +124,18 @@ This roadmap consolidates the active app, infrastructure, operator, PDF, and bus
 
 ## Roadmap Feature
 
-1. **AI Quantity Vision** — 3D jar scan with content level markers (measuring cup-style), periodic quantity tracking, low-stock notifications. High complexity — brainstorm phase.
+1. **Deferred Deep Linking** ⭐ PRIORITY — when a user scans a PlaceWell label or order QR without the app installed, they are shown a download page. After installing, they currently must scan the label again manually. Deferred deep linking would remember the original QR and route them directly to LabelSetup or BulkImport on first launch. Applies to both label QRs (`/s/`) and order QRs (`/o/`). Options under evaluation: Branch.io (free tier), app.smler.io, or a custom server-side continuation token. Firebase Dynamic Links is NOT an option (deprecated 2025). Decision pending research.
 
-2. **Brand Jar Image Catalog** — provide a curated catalog of jar/container brand images (e.g. Ball Mason, Weck, OXO, Costco, Penzeys) for users to pick from instead of using a photo or the default placeholder. App provides a sensible default based on label category; user can browse and select a matching brand image. Editable on:
+2. **AI Quantity Vision** — 3D jar scan with content level markers (measuring cup-style), periodic quantity tracking, low-stock notifications. High complexity — brainstorm phase.
+
+3. **Brand Jar Image Catalog** — provide a curated catalog of jar/container brand images (e.g. Ball Mason, Weck, OXO, Costco, Penzeys) for users to pick from instead of using a photo or the default placeholder. App provides a sensible default based on label category; user can browse and select a matching brand image. Editable on:
    - **Label Setup Screen** (Step 1 — Photo step)
    - **Bulk Import Screen** (per-label override)
    - **LabelDetailScreen** (inline, replacing the photo tap)
    - **LabelRecallScreen** (inline, replacing the hero photo tap)
    Requires: building and hosting a jar image catalog (CDN or bundled assets), catalog browser UI component, per-label `brandImageId` field in storage schema.
 
-3. **Multi-Photo Labels (up to 3 images)** — allow users to add up to 3 photos per label instead of the current single photo. Useful for showing the jar from multiple angles, showing the contents, or showing the label on the shelf. The hero card would show the first photo with a swipeable carousel for additional photos. Affects: LabelFormScreen (Photo step), LabelDetailScreen, LabelRecallScreen (hero card), and local storage schema (`photoUris: string[]` replacing `photoUri: string`). Max 3 photos to keep storage and performance manageable.
-
-4. **Deferred Deep Linking** — when a user scans a PlaceWell label or order QR without the app installed, they are shown a download page. After installing, they currently must scan the label again manually. Deferred deep linking would remember the original QR and route them directly to LabelSetup or BulkImport on first launch. Options: Branch.io (free tier), or a custom server-side continuation token (store labelId/orderId on server when fallback page is served, redeem on first app launch). Applies to both label QRs (`/s/`) and order QRs (`/o/` — not yet implemented). Firebase Dynamic Links is NOT an option (deprecated 2025).
+4. **Multi-Photo Labels (up to 3 images)** — allow users to add up to 3 photos per label instead of the current single photo. Useful for showing the jar from multiple angles, showing the contents, or showing the label on the shelf. The hero card would show the first photo with a swipeable carousel for additional photos. Affects: LabelFormScreen (Photo step), LabelDetailScreen, LabelRecallScreen (hero card), and local storage schema (`photoUris: string[]` replacing `photoUri: string`). Max 3 photos to keep storage and performance manageable.
 
 ---
 
