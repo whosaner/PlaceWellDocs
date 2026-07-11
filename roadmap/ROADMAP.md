@@ -1,6 +1,10 @@
 # PlaceWell Unified Roadmap
 
+Last updated: 2026-07-11
+
 This roadmap consolidates the active app, infrastructure, operator, PDF, and business-track documentation for the full PlaceWell ecosystem.
+
+---
 
 ## Completed ✅
 
@@ -12,94 +16,137 @@ This roadmap consolidates the active app, infrastructure, operator, PDF, and bus
 - **Coming Soon Panel** — in-app preview sheet for upcoming capabilities.
 - **Recently Scanned** — recent label access is tracked and surfaced on the home screen.
 - **Scan Confirmation Sound** — successful scans play audio feedback in addition to haptics.
-- **Widget / Quick Action (partial)** — deep link `placewell://scan` is wired and Android shortcut support exists; iOS widget still remains open.
+- **Scan-to-Recall (Spice Freshness)** — full freshness tracking for spice labels: Best By, In Use Since, burn rate, refill history, and LabelRecallScreen.
+- **Inline Editing — LabelRecallScreen** — hero photo, Best By, and In Use Since editable directly without going through the wizard.
+- **Inline Editing — LabelDetailScreen** — hero photo, contents, and notes editable inline for non-spice labels.
+- **Save & Exit in Discard Dialog** — users can save mid-wizard without completing all steps.
+- **HomeScreen Carousel Refresh** — always shows correct label and breadcrumb after edits; filter resets on return.
+- **Pre-defined Room/Zone Dropdowns** — PlaceWellUI operator form uses linked dropdowns matching app defaultRooms.js.
+- **Category Dropdown — PlaceWellUI** — per-row category is now a dropdown (Spice/Storage/Garage) with cascading location/zone defaults.
 
 ### Cross-project platform work
-- **Per-Label Configuration & SKU-Driven Presets** — rich CSV-driven defaults now flow across UI, QR Service, PDF generation, and app setup.
+- **Per-Label Configuration & SKU-Driven Presets** — rich CSV-driven defaults flow across UI, QR Service, PDF generation, and app setup.
 - **Order QR Bulk Load** — order QR prints on the sheet and bulk-creates labels in the app on first scan.
-- **Order QR Scan Routing Fix** — order scans now resolve into the bulk-import flow instead of single-label setup.
-- **Label SKU Migration** — `label_sku` replaced legacy size fields across services.
-- **PDF Rendering Fixes** — crop mark removal, border updates, round-label spacing fixes, filename cleanup, and manifest improvements.
+- **Firestore Order Record** — order-level metadata written atomically alongside qr_codes on every allocation.
+- **Scan Analytics** — `camera_scan_count` (browser/camera) and `app_scan_count` (in-app scanner) tracked separately per label.
+- **Firebase Analytics Wrapper** — 10 events instrumented with graceful Expo Go no-op; deferred Firebase activation to Expo SDK 55+.
+- **Manifest Simplification** — counts/freshness removed; label names list kept for customer verification.
+- **PDF Rendering Fixes** — crop mark removal, border updates, round-label spacing fixes, filename cleanup.
 - **Font Weight Upgrade** — Josefin Sans moved from thin to regular for readability.
 
 ### Individual project milestones
 - **QR Service** — deployed on Linode with allocation, lookup, order, and scan-redirect endpoints backed by Firestore.
-- **PlaceWellUI** — operator form built with per-label table, template selection, color picker, blanks handling, and footer options.
-- **PlaceWellPdfGenerator** — 3-layer rendering architecture with label sheet + manifest output is fully working.
-- **PlaceWellAdmin** — local config manager built with template/style/category editing and CSV CRUD support.
-- **Mobile App Core** — wizard flow, QR lookup, search, room/zone management, archive/restore, device identity, and order import are in place.
-- **Finalize Styles, Fonts, Label Sizes** — baseline design stack and template set are locked.
+- **PlaceWellUI** — operator form with per-label table, template selection, color picker, blanks handling, footer options, and linked room/zone/category dropdowns.
+- **PlaceWellPdfGenerator** — 3-layer rendering architecture with label sheet + manifest output fully working.
+- **PlaceWellAdmin** — local config manager with template/style/category editing and CSV CRUD support.
+- **Mobile App Core** — wizard flow, QR lookup, search, room/zone management, archive/restore, device identity, and order import.
+- **Documentation Consolidation** — all docs centralized at `C:\PlaceWell\Docs\` with architecture, deployment, design, features, setup, release, and roadmap sections.
+- **Etsy Launch Plan** — full listing content, pricing, tags, photo shot list, and step-by-step checklist at `C:\PlaceWell\Docs\etsy\`.
+
+### Production builds ✅ (2026-07-09)
+- **iOS build** — EAS production build complete (v1.0.0 build 9), submitted to TestFlight.
+- **Android build** — EAS production build complete (v1.0.0 build 2), AAB uploaded to Play Console internal testing.
+
+---
 
 ## In Progress 🔄
 
-- **Apple Developer Account & App Store Upload** — enrollment is in progress.
+- **TestFlight internal testing** — iOS build in TestFlight, awaiting internal test completion before App Store review submission.
+- **Google Play internal testing** — Android AAB uploaded; add testers and install on Pixel device.
 
-## Coming Soon (currently surfaced in the app)
+---
 
-- **Household Sharing** — shared homes and multi-person access.
-- **Advanced Search** — richer search, including future photo intelligence.
-- **Expiry Reminders** — proactive freshness/date notifications.
-- **Auto Replenishment** — future reorder and replenishment workflows.
+## Pre-Launch — Must-have before public release
 
-## Pre-Launch (must-have before go-live)
+1. **Privacy Policy** — host at placewell.app/privacy. Required by both App Store and Play Store. Add `privacyPolicyUrl` to `app.json`.
+2. **App Store screenshots** — minimum 6.7" iPhone (1290×2796). Screens: Home carousel, Scanner, Label Setup, Recall. Upload in App Store Connect.
+3. **Move secrets to EAS** — `hmacSecret` and `qrServiceToken` still in `app.json` extra. Run `eas secret:create` for both and update `qrService.js` to read from `Constants.expoConfig.extra`.
+4. **Final production icon + splash** — placeholder assets in place. Replace with professional design before App Store submission. Use AI prompt at `C:\PlaceWell\Docs\etsy\PlaceWell_App_Icon_AI_Prompt.txt`.
+5. **Print Labels — Real-World Test** — print every style/template combination and validate scan on real containers.
+6. **Product photography for Etsy** — 10 shots listed in `C:\PlaceWell\Docs\etsy\Etsy_Launch_Plan.md`.
+7. **Etsy listing on BeNiralu** — all content ready in Etsy_Launch_Plan.md; needs photos to go live.
+8. **placewell.app Landing Page** — root landing page + `apple-app-site-association` + `assetlinks.json` for universal/app links.
 
-1. **Apple Developer Account & App Store Upload** — finish enrollment, signing, production build, and App Store submission.
-2. **Google Play Upload** — register the Play developer account, build the Android release bundle, and submit the store listing.
-3. **Print Labels — Real-World Test** — print every style/template combination and validate scan performance on real containers.
-4. **Product Photographs for Listings** — create polished photography for Etsy, Shopify, and app-store visuals.
-5. **Marketing Content for Etsy Listings** — finalize descriptions, FAQs, bullets, and SEO tags.
-6. **placewell.app Landing Page + Universal Links + App Links** — add the root landing page plus `apple-app-site-association` and `assetlinks.json` support.
-7. **Order Service / Order Tracking** — maintain high-level order records for analytics, support, reprints, and reporting.
+---
+
+## Deferred — Come back after Expo SDK 55+ upgrade
+
+1. **Firebase Analytics activation** — `@react-native-firebase` conflicts with Expo SDK 54 New Architecture. Deferred to SDK 55+. Analytics wrapper already in place; zero app code changes needed. See `src/utils/analytics.js`.
+
+---
 
 ## High Priority
 
-1. **Comprehensive Testing Framework** — expand unit, integration, API, template-rendering, and end-to-end coverage across all projects.
-2. **Etsy/Shopify Store Integration in the App** — direct users from the mobile app into the storefront.
-3. **iOS WidgetKit Extension** — complete the native iOS scan widget path.
-4. **End-to-End Integration Test** — automate the UI → QR Service → PDF generation pipeline verification.
+1. **E2E Testing — Maestro CLI** — research complete, free stack recommended. Maestro CLI (Expo Go compatible) + AWS Device Farm free tier.
+2. **Google Play Service Account** — set up for automated `eas submit --platform android` in future builds.
+3. **iOS WidgetKit Extension** — native Swift widget for deep link `placewell://scan`.
+4. **Etsy/Shopify Store Integration** — direct users from mobile app into storefront.
 
-## Pending from Recent Work
+---
 
-1. **Placeholder Images — StorageBox & Generic** — waiting on image assets.
-2. **Settings — User Profile Display** — surface OS-captured identity info in app settings.
-3. **Carousel UX Improvement** — refine spacing, snap feel, and overall visual polish.
-4. **Admin: CSV Table Editor Frontend** — build the in-browser table editor on top of the existing API.
-5. **Admin v2: File Uploads** — support font, CSV preset, and placeholder-image uploads.
-6. **Edit Category in PlaceWellAdmin** — bring category editing to parity with template and style editing.
+## Tabled (deferred by decision)
+
+- **Autosave** — deferred, no timeline.
+- **Drag-and-drop labels in BulkImport** — Approach A approved, execution deferred.
+
+---
+
+## Coming Soon (surfaced in the app)
+
+- **Household Sharing** — shared homes and multi-person access.
+- **Advanced Search** — richer search including future photo intelligence.
+- **Expiry Reminders** — proactive freshness/date notifications.
+- **Auto Replenishment** — future reorder and replenishment workflows.
+
+---
 
 ## Medium Priority
 
-1. **Household Sharing** — cloud sync, invite flows, and role-based access.
-2. **Activity Log** — per-label history once shared households exist.
-3. **Voice Search** — speech-driven label search.
-4. **AI-Powered Search** — search labels by text and photo understanding.
-5. **Expiration / Date Alerts** — badges, filters, and local notifications.
-6. **Custom Fields** — user-defined metadata on labels.
-7. **Export / Backup** — CSV or PDF export and restore flows.
-8. **Dark Mode** — a complete alternate theme.
+1. **Household Sharing** — cloud sync, invite flows, role-based access.
+2. **Expiration / Date Alerts** — badges, filters, and local notifications.
+3. **Activity Log** — per-label history once shared households exist.
+4. **Custom Fields** — user-defined metadata on labels.
+5. **Export / Backup** — CSV or PDF export and restore.
+6. **Voice Search** — speech-driven label search.
+7. **AI-Powered Search** — search by text and photo understanding.
+8. **Dark Mode** — complete alternate theme.
 9. **Label Templates in App** — pre-built presets for common use cases.
+
+---
 
 ## Low Priority
 
-1. **Camera Enhancements** — multi-photo support, flash, crop UX, and in-app camera controls.
-2. **Batch Operations** — multi-select move/archive/delete flows beyond the existing all-at-once actions.
-3. **Quantity Tracking** — simple inventory counters for consumables.
-4. **Room/Zone Deletion — Bulk Reassignment** — guided cleanup when spaces still contain labels.
+1. **Camera Enhancements** — multi-photo, flash, crop UX.
+2. **Batch Operations** — multi-select move/archive/delete.
+3. **Room/Zone Deletion — Bulk Reassignment** — guided cleanup when spaces still contain labels.
+
+---
+
+## Roadmap Feature
+
+1. **AI Quantity Vision** — 3D jar scan with content level markers (measuring cup-style), periodic quantity tracking, low-stock notifications. High complexity — brainstorm phase.
+
+---
 
 ## Future / Premium Tier
 
 1. **NFC Labels** — premium hardware labels for tap-to-open behavior.
 
+---
+
 ## Post-Launch
 
 ### V1 post-launch
-- **New Label Categories** — expand beyond spice into garage, kids, laundry, office, bathroom, and related presets.
-- **Shopify Store for PlaceWell** — dedicated storefront and direct customer relationship layer.
+- **New Label Categories** — expand beyond spice into garage, kids, laundry, office, bathroom.
+- **Shopify Store for PlaceWell** — dedicated storefront and direct customer relationship.
 
 ### V2 post-launch
-- **Auto Replenishment — AI Inventory Scanner** — use AI-assisted scanning of real products, packaging, and handwriting to grow toward inventory management.
+- **Auto Replenishment — AI Inventory Scanner** — AI-assisted scanning of real products and packaging.
+
+---
 
 ## Longer-Term Business Growth
 
-1. **Sell Physical Labels Directly** — build fulfillment around pre-printed shipped label packs.
+1. **Sell Physical Labels Directly** — fulfillment around pre-printed shipped label packs.
 2. **New Home-Owner Kit** — curated boxed sets for move-in gifting and builder partnerships.
+
