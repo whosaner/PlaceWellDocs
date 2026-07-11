@@ -124,7 +124,32 @@ This roadmap consolidates the active app, infrastructure, operator, PDF, and bus
 
 ## Roadmap Feature
 
-1. **Deferred Deep Linking** ⭐ PRIORITY — when a user scans a PlaceWell label or order QR without the app installed, they are shown a download page. After installing, they currently must scan the label again manually. Deferred deep linking would remember the original QR and route them directly to LabelSetup or BulkImport on first launch. Applies to both label QRs (`/s/`) and order QRs (`/o/`). Options under evaluation: Branch.io (free tier), app.smler.io, or a custom server-side continuation token. Firebase Dynamic Links is NOT an option (deprecated 2025). Decision pending research.
+1. **Deferred Deep Linking** ⭐ PRIORITY — when a user scans a PlaceWell label or order QR without the app installed, they are shown a download page. After installing, they currently must scan the label again manually. Deferred deep linking would remember the original QR and route them directly to LabelSetup or BulkImport on first launch. Applies to both label QRs (`/s/`) and order QRs (`/o/`).
+
+   **Recommended tool: app.smler.io (Smler)**
+   - Purpose-built as a Firebase Dynamic Links replacement — exactly the use case
+   - Free tier: 10,000 clicks/month + 25,000 attributed installs/month (sufficient for current scale)
+   - React Native SDK with TypeScript support confirmed in docs
+   - Android Install Referrer (deterministic) + iOS clipboard/probabilistic matching
+   - Flat pricing: $0 free / $129/mo paid — no MAU-based billing
+   - ⚠️ Caveat: npm package name must be verified after signup at app.smler.io; Expo managed workflow compatibility unconfirmed — test in bare/prebuild Expo first
+
+   **Fallback if Smler Expo integration fails: Branch.io**
+   - Mature React Native SDK; community Expo config plugin (`@config-plugins/react-native-branch`)
+   - Branch explicitly disclaims Expo plugin support
+   - Now an enterprise MMP (attribution platform) — deep linking is one piece; pricing $199–$499+/mo
+
+   **DIY fallback (zero vendor dependency):**
+   - Android Install Referrer API directly + iOS Universal Links + clipboard reading
+   - ~2–3 days engineering; no third-party risk
+   - Firebase Dynamic Links is NOT an option (deprecated August 2025)
+
+   **Implementation steps (once tool is chosen):**
+   1. Sign up for Smler free tier → verify npm package name → install SDK
+   2. Update `/s/` fallback page to embed a Smler link instead of plain App Store URL
+   3. Update `/o/` fallback page same way
+   4. Add Smler SDK to app; handle `onDeepLink` callback on first launch → route to LabelSetup or BulkImport
+   5. Test end-to-end on both iOS and Android: scan → install → correct screen
 
 2. **AI Quantity Vision** — 3D jar scan with content level markers (measuring cup-style), periodic quantity tracking, low-stock notifications. High complexity — brainstorm phase.
 
