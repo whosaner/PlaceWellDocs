@@ -126,6 +126,13 @@ This roadmap consolidates the active app, infrastructure, operator, PDF, and bus
 
 1. **AI Quantity Vision** — 3D jar scan with content level markers (measuring cup-style), periodic quantity tracking, low-stock notifications. High complexity — brainstorm phase.
 
+2. **Brand Jar Image Catalog** — provide a curated catalog of jar/container brand images (e.g. Ball Mason, Weck, OXO, Costco, Penzeys) for users to pick from instead of using a photo or the default placeholder. App provides a sensible default based on label category; user can browse and select a matching brand image. Editable on:
+   - **Label Setup Screen** (Step 1 — Photo step)
+   - **Bulk Import Screen** (per-label override)
+   - **LabelDetailScreen** (inline, replacing the photo tap)
+   - **LabelRecallScreen** (inline, replacing the hero photo tap)
+   Requires: building and hosting a jar image catalog (CDN or bundled assets), catalog browser UI component, per-label `brandImageId` field in storage schema.
+
 ---
 
 ## Future / Premium Tier
