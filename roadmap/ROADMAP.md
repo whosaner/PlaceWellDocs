@@ -135,6 +135,8 @@ This roadmap consolidates the active app, infrastructure, operator, PDF, and bus
 
 3. **Multi-Photo Labels (up to 3 images)** — allow users to add up to 3 photos per label instead of the current single photo. Useful for showing the jar from multiple angles, showing the contents, or showing the label on the shelf. The hero card would show the first photo with a swipeable carousel for additional photos. Affects: LabelFormScreen (Photo step), LabelDetailScreen, LabelRecallScreen (hero card), and local storage schema (`photoUris: string[]` replacing `photoUri: string`). Max 3 photos to keep storage and performance manageable.
 
+4. **Deferred Deep Linking** — when a user scans a PlaceWell label or order QR without the app installed, they are shown a download page. After installing, they currently must scan the label again manually. Deferred deep linking would remember the original QR and route them directly to LabelSetup or BulkImport on first launch. Options: Branch.io (free tier), or a custom server-side continuation token (store labelId/orderId on server when fallback page is served, redeem on first app launch). Applies to both label QRs (`/s/`) and order QRs (`/o/` — not yet implemented). Firebase Dynamic Links is NOT an option (deprecated 2025).
+
 ---
 
 ## Future / Premium Tier
