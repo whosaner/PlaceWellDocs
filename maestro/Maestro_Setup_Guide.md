@@ -1,0 +1,310 @@
+# PlaceWell Maestro E2E Testing — Setup & Usage Guide
+
+**What is Maestro?**
+Maestro is a free, open-source mobile E2E test runner. It drives the app from
+outside (via the OS accessibility layer) — no test code inside the app binary,
+no npm packages added to production dependencies. The `.maestro/` YAML flows
+never affect what users install from the Play Store or App Store.
+
+---
+
+## Prerequisites
+
+### 1. Java 17+
+
+Maestro requires Java 17 or higher.
+
+**Check:**
+```
+java -version
+```
+
+**Install (Windows):** Download from https://adoptium.net and set `JAVA_HOME`.
+
+**Install (macOS):**
+```
+brew install openjdk@17
+```
+
+### 2. Maestro CLI
+
+**macOS / Linux:**
+```bash
+curl -fsSL "https://get.maestro.mobile.dev" | bash
+```
+
+**Windows:**
+1. Download the latest `maestro.zip` from https://github.com/mobile-dev-inc/maestro/releases
+2. Extract to `C:\maestro`
+3. Add `C:\maestro\bin` to your `PATH` environment variable
+
+**Verify install:**
+```
+maestro --version
+```
+
+### 3. Android Emulator (for local testing)
+
+An AVD must be running before executing flows.
+
+**Start emulator from Android Studio:**
+- Tools → Device Manager → Play button on your AVD
+
+**Or via command line:**
+```
+emulator -avd <your_avd_name>
+```
+
+**Verify Maestro can see it:**
+```
+maestro list-devices
+```
+
+### 4. Install the PlaceWell APK on the emulator
+
+You need the PlaceWell app installed on the emulator/device before running flows.
+
+**Option A — From EAS (recommended for CI):**
+```
+cd C:\PlaceWell\PlaceWellApp
+eas build --profile production --platform android --non-interactive
+```
+Then download the AAB from https://expo.dev and install it.
+
+**Option B — Debug build for local development:**
+```
+cd C:\PlaceWell\PlaceWellApp
+npx expo run:android
+```
+
+**Verify the app is installed:**
+```
+adb shell pm list packages | grep placewell
+```
+
+---
+
+## Running Tests
+
+### Run the full smoke suite (fastest — use on every push)
+
+```
+cd C:\PlaceWell\PlaceWellApp
+maestro test .maestro/smoke -e APP_ID=com.placewell.app
+```
+
+### Run a single flow by file
+
+```
+maestro test .maestro/smoke/CORE-01_first-launch-empty-home.yaml -e APP_ID=com.placewell.app
+```
+
+### Run a single flow by scenario ID (via generator script)
+
+```
+npm run maestro:test -- --id SCAN-03
+```
+
+### Run a flow with required env vars
+
+Some flows need QR data from your Firestore test order.
+Set these once per session (or in a `.env.maestro` file):
+
+```powershell
+# Windows PowerShell
+$env:APP_ID = "com.placewell.app"
+$env:PW_SCAN_EXISTING_SPICE_LINK = "placewell://scan/YOUR_SPICE_LABEL_ID"
+$env:PW_SCAN_EXISTING_STORAGE_LINK = "placewell://scan/YOUR_STORAGE_LABEL_ID"
+$env:PW_ORDER_LINK = "placewell://order/YOUR_ORDER_ID"
+$env:PW_SCAN_NEW_SPICE_URL = "https://placewell.app/s/LABELID-SIG"
+```
+
+```bash
+# macOS/Linux
+export APP_ID=com.placewell.app
+export PW_SCAN_EXISTING_SPICE_LINK=placewell://scan/YOUR_SPICE_LABEL_ID
+export PW_SCAN_EXISTING_STORAGE_LINK=placewell://scan/YOUR_STORAGE_LABEL_ID
+export PW_ORDER_LINK=placewell://order/YOUR_ORDER_ID
+export PW_SCAN_NEW_SPICE_URL=https://placewell.app/s/LABELID-SIG
+```
+
+Then run any flow and the env vars are passed automatically.
+
+### Run the full regression suite
+
+```
+maestro test .maestro -e APP_ID=com.placewell.app --include-tags regression
+```
+
+### Watch mode (re-runs on file save)
+
+```
+maestro test .maestro/smoke/CORE-01_first-launch-empty-home.yaml -e APP_ID=com.placewell.app --continuous
+```
+
+---
+
+## Managing Scenarios
+
+### List all scenarios and their status
+
+```
+npm run maestro:list
+```
+
+Output shows each scenario ID, whether it's implemented or planned, the file
+path, and its tags.
+
+### Add a new scenario (no YAML editing needed)
+
+```
+npm run maestro:add -- --prompt "Test that when a user scans a garage label it opens LabelDetail"
+```
+
+The script will:
+1. Classify your prompt into the right feature area
+2. Pick a base template
+3. Generate a YAML flow file in the correct subfolder
+4. Update `.maestro/scenario-index.yaml`
+5. Print the file path, tags, and required env vars
+
+### Add a scenario with a specific ID
+
+```
+npm run maestro:add -- --id SETUP-03 --prompt "Create new garage label with Shelves default"
+```
+
+---
+
+## Folder Structure
+
+```
+C:\PlaceWell\PlaceWellApp\
+  .maestro\
+    config.yaml               — workspace settings
+    scenario-index.yaml       — registry of all 46 scenarios
+    smoke\                    — P0 flows, run on every push
+    scanner\                  — QR scan / deep link entry flows
+    label-setup\              — label creation wizard flows
+    label-detail\             — non-spice detail/edit/delete flows
+    label-recall\             — spice recall/freshness flows
+    bulk-import\              — order QR bulk import flows
+    home\                     — carousel/search/filter flows
+    settings\                 — settings/profile flows
+    errors\                   — negative / error-state flows
+    subflows\
+      common\                 — reusable launch, scan, modal helpers
+      home\                   — home-specific helpers
+      setup\                  — room/zone/photo picker helpers
+  scripts\
+    maestro\
+      add-scenario.mjs        — scenario generator CLI
+      render-template.mjs     — YAML template renderer
+      scenario-catalog.json   — all 46 scenario definitions
+      selector-catalog.json   — all testIDs organized by screen
+```
+
+---
+
+## Test Data Setup
+
+The smoke suite needs a small set of real Firestore labels from a
+**dedicated Maestro test order** (never used for real customers).
+
+### Create the test dataset once
+
+1. Use PlaceWellUI to generate an order with these labels:
+   - 1 spice label (e.g. "Test Cinnamon")
+   - 1 storage label (e.g. "Test Box")
+   - 1 garage label (e.g. "Test Shelf")
+   - 1 blank label
+   - 1 order QR label
+
+2. Record the allocated label IDs and HMAC signatures from the manifest PDF.
+
+3. Compute HMAC signatures if needed:
+```powershell
+cd C:\PlaceWell\PlaceWellPdfGenerator
+.venv\Scripts\python.exe -c @"
+import hashlib
+SECRET = '6cbccc6e926d68b0c07c21dc4132b9479bf8e6b8c20c9155e80a0840fd9ce21e'
+for label_id in ['YOUR_LABEL_ID_HERE']:
+    sig = hashlib.sha256(f'{SECRET}:{label_id}'.encode()).hexdigest()[:4].upper()
+    print(f'{label_id}-{sig}  ->  placewell://scan/{label_id}')
+    print(f'               ->  https://placewell.app/s/{label_id}-{sig}')
+"@
+```
+
+4. Set the env vars (see "Running Tests" section above).
+
+---
+
+## MAESTRO_TEST_MODE
+
+For error-state flows (network failures, invalid QR, order-not-found), a
+`MAESTRO_TEST_MODE=true` flag can be passed to the app at launch:
+
+```yaml
+- launchApp:
+    arguments:
+      MAESTRO_TEST_MODE: "true"
+```
+
+The flag is read at startup via `react-native-launch-arguments` and defaults
+to `false`. It has **zero effect in production** — a real user cannot pass
+launch arguments when opening the app normally.
+
+The flag gates fault-injection hooks that are not yet implemented (Phase 2).
+Current smoke flows do not require it.
+
+---
+
+## iOS Testing
+
+Maestro supports iOS Simulator only (not physical iPhone).
+
+**Run on iOS Simulator (macOS only):**
+```bash
+maestro test .maestro/smoke -e APP_ID=com.placewell.app --platform ios
+```
+
+Requires the app installed on the simulator:
+```bash
+npx expo run:ios --simulator "iPhone 16"
+```
+
+---
+
+## CI/CD (GitHub Actions)
+
+The free-tier approach runs Maestro on an Android emulator in GitHub Actions
+with no Maestro Cloud cost.
+
+Recommended workflow trigger: push to `main`, nightly cron for full regression.
+
+See the full plan at:
+`C:\PlaceWell\Docs\roadmap\Maestro_Implementation_Plan.md` (Section 6)
+
+---
+
+## Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| `maestro: command not found` | Add Maestro bin to PATH; verify with `maestro --version` |
+| `No devices found` | Start an Android emulator or connect device via USB with ADB debugging on |
+| Flow fails on `assertVisible: "text"` | Check testID spelling in selector-catalog.json; prefer `id:` selectors over text |
+| `openLink` does nothing | Verify the app is installed and the deep link prefix is registered (`placewell://`) |
+| `getInitialURL` re-triggers old label | Already fixed — requires the latest app build |
+| Flow hangs on date picker | Use the platform-specific date helper subflow; native pickers are high-flake |
+| `LOOKUP_SECRET` causing blank label name | Verify the env var matches the server's `.env` value |
+
+---
+
+## Reference
+
+- Maestro docs: https://docs.maestro.dev
+- Maestro GitHub: https://github.com/mobile-dev-inc/maestro
+- PlaceWell Maestro plan: `C:\PlaceWell\Docs\roadmap\Maestro_Implementation_Plan.md`
+- Scenario catalog: `C:\PlaceWell\PlaceWellApp\scripts\maestro\scenario-catalog.json`
+- Selector catalog: `C:\PlaceWell\PlaceWellApp\scripts\maestro\selector-catalog.json`
