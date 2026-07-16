@@ -37,6 +37,18 @@ Open Expo Go on your phone and scan the terminal QR code.
 npx jest --no-coverage --maxWorkers=2
 ```
 
+## Maestro E2E workspace
+- The app now includes a Maestro workspace at `C:\PlaceWell\PlaceWellApp\.maestro\`.
+- Use a **standalone/dev-client build** with app ID `com.placewell.app` for Maestro work — not Expo Go.
+- Shared flow generation commands live in `PlaceWellApp\package.json`:
+  ```bash
+  npm run maestro:list
+  npm run maestro:add -- --prompt "Add a regression test for bulk import where track freshness is off"
+  npm run maestro:test -- --id CORE-01
+  ```
+- Current smoke flows expect runtime env vars such as `APP_ID`, `PW_SCAN_NEW_SPICE_URL`, `PW_SCAN_NEW_STORAGE_URL`, `PW_SCAN_EXISTING_SPICE_LINK`, `PW_SCAN_EXISTING_STORAGE_LINK`, `PW_ORDER_LINK`, and `PW_SCAN_BAD_SIGNATURE_URL`.
+- Maestro launch-argument detection is wired through `src\utils\testMode.js` with `react-native-launch-arguments` so future test-mode hooks can key off `MAESTRO_TEST_MODE=true`.
+
 ## Related central docs
 - Architecture: `C:\PlaceWell\Docs\architecture\System_Overview.md`
 - Design system: `C:\PlaceWell\Docs\design\Design_System.md`
