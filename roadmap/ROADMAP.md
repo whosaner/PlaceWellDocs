@@ -1,188 +1,129 @@
 # PlaceWell Unified Roadmap
 
-Last updated: 2026-07-11
+Last updated: 2026-07-17
 
-This roadmap consolidates the active app, infrastructure, operator, PDF, and business-track documentation for the full PlaceWell ecosystem.
+**Single source of truth** for the PlaceWell ecosystem (app, QR service, UI, PDF generator, admin, business). This file consolidates the former `PlaceWellApp/docs/roadmap/ROADMAP.md`, which has been removed.
 
 ---
 
-## Completed ✅
+## Shipped ✅ (condensed)
 
-### Product and app experience
-- **Custom Modal Dialogs** — native alerts replaced with branded themed modals.
-- **Bulk Import Flow** — order QR scanning imports many labels at once with defaults and per-label overrides.
-- **Room Filter Drawer / Floating Panel** — labels can be browsed by Room → Zone from a drawer-style grouped view.
-- **Archive All / Delete All** — bulk label-management actions added to the app.
-- **Coming Soon Panel** — in-app preview sheet for upcoming capabilities.
-- **Recently Scanned** — recent label access is tracked and surfaced on the home screen.
-- **Scan Confirmation Sound** — successful scans play audio feedback in addition to haptics.
-- **Scan-to-Recall (Spice Freshness)** — full freshness tracking for spice labels: Best By, In Use Since, burn rate, refill history, and LabelRecallScreen.
-- **Inline Editing — LabelRecallScreen** — hero photo, Best By, and In Use Since editable directly without going through the wizard.
-- **Inline Editing — LabelDetailScreen** — hero photo, contents, and notes editable inline for non-spice labels.
-- **Save & Exit in Discard Dialog** — users can save mid-wizard without completing all steps.
-- **HomeScreen Carousel Refresh** — always shows correct label and breadcrumb after edits; filter resets on return.
-- **Pre-defined Room/Zone Dropdowns** — PlaceWellUI operator form uses linked dropdowns matching app defaultRooms.js.
-- **Category Dropdown — PlaceWellUI** — per-row category is now a dropdown (Spice/Storage/Garage) with cascading location/zone defaults.
+Completed work, grouped. Kept brief on purpose — this roadmap is forward-looking.
 
-### Cross-project platform work
-- **Per-Label Configuration & SKU-Driven Presets** — rich CSV-driven defaults flow across UI, QR Service, PDF generation, and app setup.
-- **Order QR Bulk Load** — order QR prints on the sheet and bulk-creates labels in the app on first scan.
-- **Firestore Order Record** — order-level metadata written atomically alongside qr_codes on every allocation.
-- **Scan Analytics** — `camera_scan_count` (browser/camera) and `app_scan_count` (in-app scanner) tracked separately per label.
-- **Firebase Analytics Wrapper** — 10 events instrumented with graceful Expo Go no-op; deferred Firebase activation to Expo SDK 55+.
-- **Manifest Simplification** — counts/freshness removed; label names list kept for customer verification.
-- **PDF Rendering Fixes** — crop mark removal, border updates, round-label spacing fixes, filename cleanup.
-- **Font Weight Upgrade** — Josefin Sans moved from thin to regular for readability.
-
-### Individual project milestones
-- **QR Service** — deployed on Linode with allocation, lookup, order, and scan-redirect endpoints backed by Firestore.
-- **PlaceWellUI** — operator form with per-label table, template selection, color picker, blanks handling, footer options, and linked room/zone/category dropdowns.
-- **PlaceWellPdfGenerator** — 3-layer rendering architecture with label sheet + manifest output fully working.
-- **PlaceWellAdmin** — local config manager with template/style/category editing and CSV CRUD support.
-- **Mobile App Core** — wizard flow, QR lookup, search, room/zone management, archive/restore, device identity, and order import.
-- **Documentation Consolidation** — all docs centralized at `C:\PlaceWell\Docs\` with architecture, deployment, design, features, setup, release, and roadmap sections.
-- **Etsy Launch Plan** — full listing content, pricing, tags, photo shot list, and step-by-step checklist at `C:\PlaceWell\Docs\etsy\`.
-
-### Production builds ✅ (2026-07-09)
-- **iOS build** — EAS production build complete (v1.0.0 build 9), submitted to TestFlight.
-- **Android build** — EAS production build complete (v1.0.0 build 2), AAB uploaded to Play Console internal testing.
+- **App experience** — 4-step label wizard; QR scan → lookup → route (LabelSetup / LabelDetail / LabelRecall / BulkImport); bulk import from Order QR (global + per-label room/zone, add-new inline); inline editing on Recall (photo, Best By, In Use Since) and Detail (photo, contents, notes); spice freshness (Best By, In Use Since, refill history); room/zone filter drawer; search; home carousel with correct-label refresh + filter reset; custom branded modals; scan sound + haptics; Coming Soon panel; recently scanned.
+- **Platform** — QR Service on Linode (allocate / lookup / order / scan) backed by Firestore + HMAC-signed URLs; per-label SKU-driven presets across UI → QR → PDF → app; Order QR bulk load + Firestore order record; split scan analytics (`camera_scan_count` / `app_scan_count`, both non-blocking); **scan landing page (7 server-rendered states, App Links / Universal Links)**; `assetlinks.json` (incl. Play signing cert) + `apple-app-site-association` deployed.
+- **Build / ops** — iOS + Android production builds via EAS; **secrets split & moved to EAS** (ALLOCATE vs read-only LOOKUP; HMAC + LOOKUP as EAS secrets, `app.config.js` reads at build time); **production PW monogram icon set** (iOS, Android adaptive w/ gradient background, splash); **cold-start deep-link fix** (leading-slash App Link path routing); Maestro E2E scaffolding (Phase 0 testIDs + Phase 1 smoke suite + scenario generator).
+- **Docs / tooling** — consolidated `Docs/` repo; `DOC_CATALOG.md`; `Project_Checkout_Guide.md`; `deploy.ps1` moved into version control (`Docs/deployment/`); Etsy launch plan.
 
 ---
 
 ## In Progress 🔄
 
-- **TestFlight internal testing** — iOS build in TestFlight, awaiting internal test completion before App Store review submission.
-- **Google Play internal testing** — Android AAB uploaded; add testers and install on Pixel device.
+- **Latest build verification** — iOS (TestFlight) + Android (Play internal testing) of the build containing the cold-start deep-link fix and new icons. Verify with `PlaceWellApp/VERIFICATION_CHECKLIST.txt` (focus: Section B cold-start camera scan).
 
 ---
 
-## Pre-Launch — Must-have before public release
+## Pre-Launch — must-have before public release
 
-1. **Privacy Policy** — host at placewell.app/privacy. Required by both App Store and Play Store. Add `privacyPolicyUrl` to `app.json`.
-2. **App Store screenshots** — minimum 6.7" iPhone (1290×2796). Screens: Home carousel, Scanner, Label Setup, Recall. Upload in App Store Connect.
-3. **Move secrets to EAS** — `hmacSecret` and `qrServiceToken` still in `app.json` extra. Run `eas secret:create` for both and update `qrService.js` to read from `Constants.expoConfig.extra`.
-4. **Final production icon + splash** — placeholder assets in place. Replace with professional design before App Store submission. Use AI prompt at `C:\PlaceWell\Docs\etsy\PlaceWell_App_Icon_AI_Prompt.txt`.
-5. **Print Labels — Real-World Test** — print every style/template combination and validate scan on real containers.
-6. **Product photography for Etsy** — 10 shots listed in `C:\PlaceWell\Docs\etsy\Etsy_Launch_Plan.md`.
-7. **Etsy listing on BeNiralu** — all content ready in Etsy_Launch_Plan.md; needs photos to go live.
-8. **placewell.app Landing Page** — root landing page + `apple-app-site-association` + `assetlinks.json` for universal/app links.
-
----
-
-## Deferred — Come back after Expo SDK 55+ upgrade
-
-1. **Firebase Analytics activation** — `@react-native-firebase` conflicts with Expo SDK 54 New Architecture. Deferred to SDK 55+. Analytics wrapper already in place; zero app code changes needed. See `src/utils/analytics.js`.
+1. **Privacy Policy** — host at `placewell.app/privacy`; add `privacyPolicyUrl` to `app.json`. Required by App Store + Play Store.
+2. **App Store screenshots** — min 6.7" iPhone (1290×2796): Home carousel, Scanner, Label Setup, Recall.
+3. **Play Store listing** — create default store listing (name, short/full description, 512×512 icon at `PlaceWellApp/assets/playstore-icon.png`, 1024×500 feature graphic, ≥2 phone screenshots). Required for production track (not internal testing).
+4. **Google Play service account** — finish permission grant so automated `eas submit --platform android` works (currently falls back to manual AAB upload).
+5. **placewell.app root landing page** — public marketing page at the domain root (AASA + assetlinks already deployed).
+6. **Print labels — real-world test** — print every style × template and validate scan on real containers.
+7. **Product photography for Etsy** — 10 shots (see `Docs/etsy/Etsy_Launch_Plan.md`).
+8. **Etsy listing on BeNiralu** — content ready; needs photos to go live.
 
 ---
 
 ## High Priority
 
-1. **E2E Testing — Maestro CLI** — research complete, free stack recommended. Maestro CLI (Expo Go compatible) + AWS Device Farm free tier.
-2. **Google Play Service Account** — set up for automated `eas submit --platform android` in future builds.
-3. **iOS WidgetKit Extension** — native Swift widget for deep link `placewell://scan`.
-4. **Etsy/Shopify Store Integration** — direct users from mobile app into storefront.
+1. **Deferred Deep Linking** ⭐ — after install from a scan, remember the original QR and route straight to LabelSetup / BulkImport (today the user must re-scan). See detailed options below.
+2. **Maestro E2E — Phase 2** — Phase 0 (testIDs) + Phase 1 (smoke) shipped. Remaining: regression suite, `MAESTRO_TEST_MODE` fault-injection hooks, GitHub Actions CI lane. See `Docs/maestro/`.
+3. **iOS WidgetKit Extension** — native Swift one-tap scan widget (`placewell://scan`).
+4. **Etsy/Shopify store integration** — in-app link into storefront.
 
 ---
 
-## Tabled (deferred by decision)
+## Deferred (revisit after Expo SDK 55+ upgrade)
 
-- **Autosave** — deferred, no timeline.
-- **Drag-and-drop labels in BulkImport** — Approach A approved, execution deferred.
+- **Firebase Analytics activation** — `@react-native-firebase` conflicts with Expo SDK 54 New Architecture. Wrapper already in place (`src/utils/analytics.js`); zero app code changes needed on activation.
+
+---
+
+## Roadmap Features (detailed, forward-looking)
+
+### 1. Deferred Deep Linking ⭐ PRIORITY
+When a user scans a label (`/s/`) or order QR (`/o/`) without the app, they see the download page; after install they must scan again. Deferred deep linking would route them directly on first launch.
+
+- **Recommended: app.smler.io (Smler)** — purpose-built Firebase Dynamic Links replacement. Free tier 10k clicks + 25k installs/mo; RN SDK (TS) confirmed in docs; flat pricing ($0 / $129 mo). ⚠️ Verify npm package + Expo managed compatibility after signup (test in prebuild first).
+- **Fallback: Branch.io** — mature RN SDK, community Expo plugin (Branch disclaims support); enterprise MMP, $199–499+/mo.
+- **DIY (no vendor):** Android Install Referrer + iOS Universal Links + clipboard (~2–3 days). Firebase Dynamic Links is NOT an option (deprecated Aug 2025).
+- **Steps:** sign up → verify SDK → embed Smler link in `/s/` + `/o/` fallback pages → handle `onDeepLink` on first launch → route to LabelSetup/BulkImport → test scan→install→correct screen on both platforms.
+
+### 2. AI Quantity Vision
+3D jar scan with content-level markers (measuring-cup style), periodic quantity tracking, low-stock notifications. High complexity — brainstorm phase.
+
+### 3. Brand Jar Image Catalog
+Curated catalog of jar/container brand images (Ball Mason, Weck, OXO, Penzeys, etc.) to pick from instead of a photo/default. Editable on Label Setup (photo step), Bulk Import (per-label), LabelDetail, LabelRecall. Requires: hosted catalog (CDN/bundled), browser UI, `brandImageId` on the storage schema.
+
+### 4. Multi-Photo Labels (up to 3)
+Allow up to 3 photos per label (angles, contents, on-shelf). Hero shows first photo w/ swipeable carousel. Affects LabelFormScreen, LabelDetail, LabelRecall, and storage schema (`photoUris: string[]`).
 
 ---
 
 ## Coming Soon (surfaced in the app)
 
-- **Household Sharing** — shared homes and multi-person access.
-- **Advanced Search** — richer search including future photo intelligence.
+- **Household Sharing** — shared homes, multi-person access.
+- **Advanced Search** — richer search incl. future photo intelligence.
 - **Expiry Reminders** — proactive freshness/date notifications.
-- **Auto Replenishment** — future reorder and replenishment workflows.
+- **Auto Replenishment** — reorder when items run low.
 
 ---
 
 ## Medium Priority
 
-1. **Household Sharing** — cloud sync, invite flows, role-based access.
-2. **Expiration / Date Alerts** — badges, filters, and local notifications.
-3. **Activity Log** — per-label history once shared households exist.
-4. **Custom Fields** — user-defined metadata on labels.
-5. **Export / Backup** — CSV or PDF export and restore.
-6. **Voice Search** — speech-driven label search.
-7. **AI-Powered Search** — search by text and photo understanding.
-8. **Dark Mode** — complete alternate theme.
-9. **Label Templates in App** — pre-built presets for common use cases.
+1. Household Sharing (cloud sync, invite codes, roles)
+2. Expiration / Date Alerts (badges, filters, local notifications)
+3. Activity Log (per-label history; needs shared households)
+4. Custom Fields (user-defined metadata)
+5. Export / Backup (CSV or PDF)
+6. Voice Search
+7. AI-Powered Search (text + photo understanding)
+8. Dark Mode
+9. Label Templates in-app (pre-built presets)
+10. Order Service — order tracking (orderId, numLabels, sku, status)
+11. Settings — user profile display
+12. Placeholder images — StorageBox & Generic (waiting on assets)
+
+### Admin (PlaceWellAdmin)
+- CSV table editor frontend
+- Edit category
+- Admin v2: file uploads (fonts, CSVs, placeholder images)
 
 ---
 
 ## Low Priority
 
-1. **Camera Enhancements** — multi-photo, flash, crop UX.
-2. **Batch Operations** — multi-select move/archive/delete.
-3. **Room/Zone Deletion — Bulk Reassignment** — guided cleanup when spaces still contain labels.
+1. Camera enhancements (multi-photo capture, flash, crop)
+2. Batch operations (multi-select move/archive/delete)
+3. Quantity tracking (+/- counter)
+4. Room/Zone deletion — bulk reassignment when spaces still contain labels
 
 ---
 
-## Roadmap Feature
+## Tabled (deferred by decision)
 
-1. **Deferred Deep Linking** ⭐ PRIORITY — when a user scans a PlaceWell label or order QR without the app installed, they are shown a download page. After installing, they currently must scan the label again manually. Deferred deep linking would remember the original QR and route them directly to LabelSetup or BulkImport on first launch. Applies to both label QRs (`/s/`) and order QRs (`/o/`).
-
-   **Recommended tool: app.smler.io (Smler)**
-   - Purpose-built as a Firebase Dynamic Links replacement — exactly the use case
-   - Free tier: 10,000 clicks/month + 25,000 attributed installs/month (sufficient for current scale)
-   - React Native SDK with TypeScript support confirmed in docs
-   - Android Install Referrer (deterministic) + iOS clipboard/probabilistic matching
-   - Flat pricing: $0 free / $129/mo paid — no MAU-based billing
-   - ⚠️ Caveat: npm package name must be verified after signup at app.smler.io; Expo managed workflow compatibility unconfirmed — test in bare/prebuild Expo first
-
-   **Fallback if Smler Expo integration fails: Branch.io**
-   - Mature React Native SDK; community Expo config plugin (`@config-plugins/react-native-branch`)
-   - Branch explicitly disclaims Expo plugin support
-   - Now an enterprise MMP (attribution platform) — deep linking is one piece; pricing $199–$499+/mo
-
-   **DIY fallback (zero vendor dependency):**
-   - Android Install Referrer API directly + iOS Universal Links + clipboard reading
-   - ~2–3 days engineering; no third-party risk
-   - Firebase Dynamic Links is NOT an option (deprecated August 2025)
-
-   **Implementation steps (once tool is chosen):**
-   1. Sign up for Smler free tier → verify npm package name → install SDK
-   2. Update `/s/` fallback page to embed a Smler link instead of plain App Store URL
-   3. Update `/o/` fallback page same way
-   4. Add Smler SDK to app; handle `onDeepLink` callback on first launch → route to LabelSetup or BulkImport
-   5. Test end-to-end on both iOS and Android: scan → install → correct screen
-
-2. **AI Quantity Vision** — 3D jar scan with content level markers (measuring cup-style), periodic quantity tracking, low-stock notifications. High complexity — brainstorm phase.
-
-3. **Brand Jar Image Catalog** — provide a curated catalog of jar/container brand images (e.g. Ball Mason, Weck, OXO, Costco, Penzeys) for users to pick from instead of using a photo or the default placeholder. App provides a sensible default based on label category; user can browse and select a matching brand image. Editable on:
-   - **Label Setup Screen** (Step 1 — Photo step)
-   - **Bulk Import Screen** (per-label override)
-   - **LabelDetailScreen** (inline, replacing the photo tap)
-   - **LabelRecallScreen** (inline, replacing the hero photo tap)
-   Requires: building and hosting a jar image catalog (CDN or bundled assets), catalog browser UI component, per-label `brandImageId` field in storage schema.
-
-4. **Multi-Photo Labels (up to 3 images)** — allow users to add up to 3 photos per label instead of the current single photo. Useful for showing the jar from multiple angles, showing the contents, or showing the label on the shelf. The hero card would show the first photo with a swipeable carousel for additional photos. Affects: LabelFormScreen (Photo step), LabelDetailScreen, LabelRecallScreen (hero card), and local storage schema (`photoUris: string[]` replacing `photoUri: string`). Max 3 photos to keep storage and performance manageable.
+- **Autosave** — no timeline.
+- **Drag-and-drop labels in BulkImport** — Approach A approved, execution deferred.
 
 ---
 
-## Future / Premium Tier
+## Future / Premium & Business Growth
 
-1. **NFC Labels** — premium hardware labels for tap-to-open behavior.
-
----
-
-## Post-Launch
-
-### V1 post-launch
-- **New Label Categories** — expand beyond spice into garage, kids, laundry, office, bathroom.
-- **Shopify Store for PlaceWell** — dedicated storefront and direct customer relationship.
-
-### V2 post-launch
-- **Auto Replenishment — AI Inventory Scanner** — AI-assisted scanning of real products and packaging.
-
----
-
-## Longer-Term Business Growth
-
-1. **Sell Physical Labels Directly** — fulfillment around pre-printed shipped label packs.
-2. **New Home-Owner Kit** — curated boxed sets for move-in gifting and builder partnerships.
-
+- **NFC Labels** — premium tap-to-open hardware labels.
+- **Auto Replenishment — AI Inventory Scanner** — AI scanning of real products/packaging (V2 post-launch).
+- **New label categories** — garage, kids, laundry, office, bathroom (V1 post-launch).
+- **Shopify store for PlaceWell** — dedicated storefront.
+- **Sell physical labels directly** — pre-printed shipped packs.
+- **New Home-Owner Kit** — curated boxed sets for move-in gifting / builder partnerships.

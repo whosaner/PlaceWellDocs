@@ -95,8 +95,7 @@ Use this catalog when you know the task but not which PlaceWell document to open
 
 | Document | What it covers | Look here if you want to... | Key contents |
 |---|---|---|---|
-| `Docs\roadmap\ROADMAP.md` | Unified product/project roadmap. | See completed work, pre-launch must-haves, priorities, deferred items, premium ideas, and business growth plans. | Completed product/platform milestones; in-progress work; pre-launch; Expo SDK 55 deferrals; high/medium/low priorities; tabled items; coming soon; roadmap feature; future premium; post-launch; long-term growth. |
-| `PlaceWellApp\docs\roadmap\ROADMAP.md` | App-local roadmap. | Review app-focused completed, in-progress, coming soon, and future work. | Completed items; in progress; coming soon; pre-launch; high/medium/low priorities; pending recent work; future/premium. |
+| `Docs\roadmap\ROADMAP.md` | Unified product/project roadmap (single source of truth). | See shipped work, pre-launch must-haves, priorities, deferred items, detailed roadmap features, and business growth plans. | Condensed shipped summary; in-progress; pre-launch; SDK 55 deferrals; high/medium/low priorities; roadmap features (deferred deep linking, AI vision, brand jar catalog, multi-photo); coming soon; tabled; future/premium/business. |
 
 ## Etsy and business
 
