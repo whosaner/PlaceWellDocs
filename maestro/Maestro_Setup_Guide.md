@@ -283,7 +283,7 @@ with no Maestro Cloud cost.
 Recommended workflow trigger: push to `main`, nightly cron for full regression.
 
 See the full plan at:
-`C:\PlaceWell\Docs\roadmap\Maestro_Implementation_Plan.md` (Section 6)
+`C:\PlaceWell\Docs\maestro\Maestro_Implementation_Plan.md` (Section 6)
 
 ---
 
@@ -305,6 +305,6 @@ See the full plan at:
 
 - Maestro docs: https://docs.maestro.dev
 - Maestro GitHub: https://github.com/mobile-dev-inc/maestro
-- PlaceWell Maestro plan: `C:\PlaceWell\Docs\roadmap\Maestro_Implementation_Plan.md`
+- PlaceWell Maestro plan: `C:\PlaceWell\Docs\maestro\Maestro_Implementation_Plan.md`
 - Scenario catalog: `C:\PlaceWell\PlaceWellApp\scripts\maestro\scenario-catalog.json`
 - Selector catalog: `C:\PlaceWell\PlaceWellApp\scripts\maestro\selector-catalog.json`
