@@ -208,34 +208,43 @@ C:\PlaceWell\PlaceWellApp\
 
 ## Test Data Setup
 
-The smoke suite needs a small set of real Firestore labels from a
-**dedicated Maestro test order** (never used for real customers).
+The smoke suite and screenshot flow need a small set of real Firestore labels
+from a **dedicated Maestro test order** (`maestro_test_kit`, never used for real
+customers). These are seeded automatically with fixed, deterministic IDs, so the
+same QR URLs regenerate every time — even if you delete them from Firestore.
 
-### Create the test dataset once
+### Seed the fixtures (host initialization step)
 
-1. Use PlaceWellUI to generate an order with these labels:
-   - 1 spice label (e.g. "Test Cinnamon")
-   - 1 storage label (e.g. "Test Box")
-   - 1 garage label (e.g. "Test Shelf")
-   - 1 blank label
-   - 1 order QR label
+Maestro cannot run a host script itself (flow steps target the device,
+`runScript` is a sandboxed JS engine, and there is no host-command hook), so
+seed on the **host, before** running the flows:
 
-2. Record the allocated label IDs and HMAC signatures from the manifest PDF.
-
-3. Compute HMAC signatures if needed:
-```powershell
-cd C:\PlaceWell\PlaceWellPdfGenerator
-.venv\Scripts\python.exe -c @"
-import hashlib
-SECRET = '6cbccc6e926d68b0c07c21dc4132b9479bf8e6b8c20c9155e80a0840fd9ce21e'
-for label_id in ['YOUR_LABEL_ID_HERE']:
-    sig = hashlib.sha256(f'{SECRET}:{label_id}'.encode()).hexdigest()[:4].upper()
-    print(f'{label_id}-{sig}  ->  placewell://scan/{label_id}')
-    print(f'               ->  https://placewell.app/s/{label_id}-{sig}')
-"@
+```
+cd C:\PlaceWell\PlaceWellApp
+npm run maestro:seed               # writes labels + order to Firestore (idempotent)
+npm run maestro:seed -- --dry-run  # preview the URLs without writing
 ```
 
-4. Set the env vars (see "Running Tests" section above).
+This delegates to `PlaceWellQRService/scripts/seed_maestro_qr.py`, which needs
+that repo's `.env` (`PLACEWELL_HMAC_SECRET`) and Firebase credentials
+(`GOOGLE_APPLICATION_CREDENTIALS`). The seeded IDs match
+`.maestro/smoke-labels.json`, so `npm run maestro:smoke` derives matching signed
+URLs automatically.
+
+### Seed + run in one step
+
+```
+npm run maestro:smoke:seed         # seed Firestore, then run the smoke suite
+```
+
+In CI, run the two as sequential steps (seed job/step, then `maestro test`).
+
+### Sources of truth
+
+The label IDs live in two places that must stay in sync:
+`.maestro/smoke-labels.json` (drives the smoke runner) and the seeder's
+`FIXTURES` list (drives Firestore). Both currently use
+`PWMSP2 / PWMST3 / PWMXS5 / PWMXT6 / PWMQR7`.
 
 ---
 
