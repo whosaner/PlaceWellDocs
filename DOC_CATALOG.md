@@ -72,7 +72,7 @@ Use this catalog when you know the task but not which PlaceWell document to open
 | Document | What it covers | Look here if you want to... | Key contents |
 |---|---|---|---|
 | `Docs\maestro\Maestro_Setup_Guide.md` | Practical Maestro E2E setup and usage guide. | Install Maestro, run smoke/regression flows, create scenarios, configure test data, or troubleshoot. | Java 17; Maestro CLI; Android emulator/APK; smoke/single/regression/watch commands; scenario generator; folder structure; test data; `MAESTRO_TEST_MODE`; iOS; CI/CD; troubleshooting. |
-| `Docs\roadmap\Maestro_Implementation_Plan.md` | Detailed plan for comprehensive Maestro test coverage. | Design or expand the E2E suite, add testIDs, define scenarios, or plan CI. | Codebase observations; scenario table; workspace layout; CLI install; test data strategy; env vars; testID additions; full scenario catalog; scenario generation; CI rollout; risks. |
+| `Docs\maestro\Maestro_Implementation_Plan.md` | Detailed plan for comprehensive Maestro test coverage. | Design or expand the E2E suite, add testIDs, define scenarios, or plan CI. | Codebase observations; scenario table; workspace layout; CLI install; test data strategy; env vars; testID additions; full scenario catalog; scenario generation; CI rollout; risks. |
 
 ## Features and specifications
 
