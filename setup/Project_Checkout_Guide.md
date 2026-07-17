@@ -159,13 +159,13 @@ Note: Android automated submit currently has a Play Console permission issue; th
 
 ### Server deploy
 
-Run from `C:\PlaceWell`:
+Run the version-controlled deploy script (uses absolute paths, so it works from any directory):
 
 ```powershell
-C:\PlaceWell\deploy.ps1
+C:\PlaceWell\Docs\deployment\deploy.ps1
 ```
 
-`deploy.ps1` packages `PlaceWellUI`, `PlaceWellPdfGenerator`, and `PlaceWellQRService`, uploads archives to `root@45.56.71.137` with `scp`, extracts under `/opt/placewell-ui` and `/opt/placewell-service`, and restarts `placewell-ui` plus `placewell.service`.
+`deploy.ps1` packages `PlaceWellUI`, `PlaceWellPdfGenerator`, and `PlaceWellQRService`, uploads archives to `root@45.56.71.137` with `scp`, extracts under `/opt/placewell-ui` and `/opt/placewell-service`, and restarts `placewell-ui` plus `placewell.service`. It does NOT deploy the mobile app (that goes through EAS build/submit).
 
 First-time Linode setup still needs Python installs, service account files, `.env` files, systemd services, Apache, SSL, and firewall/DNS configuration. See:
 
