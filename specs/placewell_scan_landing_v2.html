@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PlaceWell — Scan Landing (Mockup v2)</title>
+
+<!-- Production only: gives Safari a free native install banner -->
+<!-- <meta name="apple-itunes-app" content="app-id=XXXXXXXXX"> -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,600&family=Jost:wght@400;500;600&family=DM+Mono:wght@400;500&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bgTop:#DDE6EC; --bgMid:#B8CFDA; --bgBot:#8AABBD;
+    --ink:#243040; --inkSoft:#4A6070; --inkMuted:#7A9AAA;
+    --amber:#C9A66B; --amberDeep:#B08F52;
+    --terracotta:#C4785A; --terracottaDeep:#9C5B41;
+    --glass:rgba(255,255,255,0.42);
+    --glassBorder:rgba(255,255,255,0.62);
+    --glassSoft:rgba(255,255,255,0.30);
+    --display:'Cormorant Garamond',Georgia,serif;
+    --body:'Jost',system-ui,sans-serif;
+    --mono:'DM Mono',ui-monospace,monospace;
+    --serifItalic:'Libre Baskerville',Georgia,serif;
+    --r-lg:20px; --r-md:14px; --r-pill:999px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--body);background:#EDF1F4;color:var(--ink);-webkit-font-smoothing:antialiased}
+
+  /* ---- mockup chrome (not shipped) ---- */
+  .harness{padding:18px 16px 60px;display:flex;flex-direction:column;align-items:center;gap:16px}
+  .switcher{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;background:#fff;padding:6px;border-radius:var(--r-pill);box-shadow:0 2px 12px rgba(36,48,64,.10)}
+  .switcher button{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;border:0;cursor:pointer;padding:9px 13px;border-radius:var(--r-pill);background:transparent;color:var(--inkMuted);transition:.18s}
+  .switcher button:hover{color:var(--ink)}
+  .switcher button[aria-pressed="true"]{background:var(--ink);color:#fff}
+  .switcher button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .note{font-family:var(--mono);font-size:10.5px;color:#8FA3AF;letter-spacing:.03em;text-align:center;max-width:580px;line-height:1.8}
+  .device{width:390px;max-width:100%;border-radius:38px;overflow:hidden;border:9px solid #1b2430;box-shadow:0 24px 60px rgba(36,48,64,.28)}
+  .device.wide{width:940px;border-radius:16px;border-width:10px}
+
+  /* ---- the page ---- */
+  .page{
+    background:linear-gradient(180deg,var(--bgTop) 0%,var(--bgMid) 52%,var(--bgBot) 100%);
+    min-height:772px;padding:34px 26px 24px;display:flex;flex-direction:column;
+  }
+  .device.wide .page{min-height:610px;padding:44px 56px 32px}
+
+  .wordmark{font-family:var(--display);font-weight:400;font-size:40px;line-height:1;color:var(--ink)}
+  .wordmark em{font-style:italic;font-weight:600;color:var(--amber)}
+  .tagline{font-family:var(--serifItalic);font-style:italic;font-size:13px;color:var(--inkSoft);margin-top:9px}
+  .rule{height:1px;margin-top:20px;background:rgba(255,255,255,.55)}
+
+  /* signature: jars with an empty label slot */
+  .stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:22px 0 8px}
+  .jars{display:flex;align-items:flex-end;gap:12px;animation:rise .8s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .jar{width:112px}
+  .jar.small{width:72px;opacity:.62}
+  .lid{height:18px;border-radius:4px 4px 2px 2px;background:linear-gradient(180deg,#E6C88C,#C9A66B 45%,#9E7F45);box-shadow:0 2px 6px rgba(36,48,64,.18)}
+  .jar.small .lid{height:13px}
+  .glassbody{
+    height:146px;margin-top:3px;border-radius:5px 5px 16px 16px;
+    background:linear-gradient(105deg,rgba(255,255,255,.50),rgba(255,255,255,.14) 42%,rgba(255,255,255,.34));
+    border:1px solid rgba(255,255,255,.60);border-top:0;
+    box-shadow:inset 0 -14px 22px rgba(255,255,255,.35);
+    position:relative;display:flex;align-items:center;justify-content:center;
+  }
+  .jar.small .glassbody{height:104px}
+  .glassbody::before{content:"";position:absolute;left:10px;top:11px;width:6px;height:78%;border-radius:4px;background:linear-gradient(180deg,rgba(255,255,255,.85),rgba(255,255,255,.2))}
+  .slot{
+    width:66px;height:48px;border-radius:6px;
+    border:1.4px dashed rgba(36,48,64,.30);background:rgba(255,255,255,.30);
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:20px;color:rgba(36,48,64,.32);
+  }
+  .jar.small .slot{width:42px;height:32px;font-size:14px}
+
+  .chip{
+    display:inline-flex;align-items:center;gap:9px;padding:8px 15px;border-radius:var(--r-pill);
+    background:var(--glassSoft);border:1px solid var(--glassBorder);
+    font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--inkSoft);
+  }
+
+  .card{
+    background:var(--glass);border:1px solid var(--glassBorder);border-radius:var(--r-lg);
+    padding:26px 22px 22px;box-shadow:0 10px 30px rgba(36,48,64,.10);
+    animation:rise .8s .12s cubic-bezier(.2,.7,.2,1) both;
+  }
+  h1{font-family:var(--display);font-weight:600;font-size:29px;line-height:1.2}
+  .lede{font-size:14.5px;line-height:1.65;color:var(--inkSoft);margin-top:10px}
+
+  .btn{
+    display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:20px;
+    padding:16px 18px;border-radius:var(--r-pill);
+    background:var(--amber);color:#fff;border:1px solid var(--amberDeep);
+    font-weight:500;font-size:15.5px;text-decoration:none;
+    box-shadow:0 8px 20px rgba(201,166,107,.42);transition:transform .14s,box-shadow .14s;
+  }
+  .btn:hover{transform:translateY(-1px);box-shadow:0 11px 26px rgba(201,166,107,.50)}
+  .btn:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+  .btn.ghost{background:var(--glassSoft);color:var(--ink);border:1px solid var(--glassBorder);box-shadow:none}
+  .btn svg{flex:none}
+
+  .alt{display:block;text-align:center;margin-top:15px;font-size:13.5px;color:var(--inkSoft);text-decoration:none}
+  .alt u{text-decoration:none;border-bottom:1px solid rgba(74,96,112,.45);padding-bottom:1px}
+  .alt:hover u{color:var(--ink);border-bottom-color:var(--ink)}
+  .alt:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:4px}
+
+  .steps{margin-top:24px;padding-top:18px;border-top:1px solid rgba(255,255,255,.55);display:flex;flex-direction:column;gap:11px}
+  .step{display:flex;align-items:baseline;gap:11px}
+  .step .n{font-family:var(--mono);font-size:11px;color:var(--amberDeep);letter-spacing:.1em;flex:none;width:16px}
+  .step .t{font-size:13.5px;color:var(--inkSoft);line-height:1.5}
+  .step .t b{font-weight:600;color:var(--ink)}
+
+  footer{margin-top:22px;text-align:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:rgba(36,48,64,.42)}
+
+  /* desktop */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center;flex:1}
+  .dcta{display:flex;gap:14px;margin-top:22px;flex-wrap:wrap}
+  .dcta .btn{width:auto;flex:1;min-width:175px;margin-top:0}
+  .scanhint{display:flex;gap:16px;align-items:center;margin-top:26px;padding-top:20px;border-top:1px solid rgba(255,255,255,.55)}
+  .qrbox{background:#fff;border-radius:var(--r-md);padding:14px;width:132px;box-shadow:0 8px 22px rgba(36,48,64,.16);flex:none}
+  .qrbox img{width:100%;display:block}
+  .scanhint p{font-size:13.5px;color:var(--inkSoft);line-height:1.6}
+
+  /* error */
+  .page.error .lid{background:linear-gradient(180deg,#DFA48A,#C4785A 45%,var(--terracottaDeep))}
+  .page.error .slot{border-color:rgba(196,120,90,.45);color:rgba(196,120,90,.55)}
+  .page.error .chip{color:var(--terracotta);border-color:rgba(196,120,90,.35)}
+
+  [hidden]{display:none!important}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  @media (max-width:1000px){
+    .device.wide{width:390px;border-radius:38px;border-width:9px}
+    .device.wide .page{padding:34px 26px 24px}
+    .two-col{grid-template-columns:1fr;gap:24px}
+  }
+</style>
+</head>
+<body>
+<div class="harness">
+
+  <div class="switcher" role="group" aria-label="Preview state">
+    <button data-s="label_ios" aria-pressed="true">Label · iPhone</button>
+    <button data-s="label_and" aria-pressed="false">Label · Android</button>
+    <button data-s="order_ios" aria-pressed="false">Order · iPhone</button>
+    <button data-s="order_and" aria-pressed="false">Order · Android</button>
+    <button data-s="desktop"   aria-pressed="false">Desktop</button>
+    <button data-s="notfound"  aria-pressed="false">404</button>
+    <button data-s="revoked"   aria-pressed="false">410</button>
+  </div>
+  <p class="note">Mockup only. In production FastAPI picks <b>platform</b> from the User-Agent header and <b>code type</b> from the Firestore lookup on LABELID. Same URL for both: /s/{ID}-{SIG}. No label name, contents or photo is ever rendered here. No client-side JS required.</p>
+
+  <!-- ================= MOBILE SHELL ================= -->
+  <div class="device" id="dMob">
+    <div class="page" id="page">
+      <header>
+        <div class="wordmark">Place<em>W</em>ell</div>
+        <p class="tagline">Everything in its place, done well.</p>
+        <div class="rule"></div>
+      </header>
+
+      <div class="stage">
+        <div class="jars" id="jars" aria-hidden="true"></div>
+        <span class="chip" id="chip"></span>
+      </div>
+
+      <div class="card">
+        <h1 id="h1"></h1>
+        <p class="lede" id="lede"></p>
+
+        <a class="btn" id="cta" href="#">
+          <svg id="ctaIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"></svg>
+          <span id="ctaLabel"></span>
+        </a>
+
+        <a class="alt" id="alt" href="#"></a>
+
+        <div class="steps" id="steps"></div>
+      </div>
+
+      <footer>placewell.app &nbsp;·&nbsp; BeNiralu LLC</footer>
+    </div>
+  </div>
+
+  <!-- ================= DESKTOP SHELL ================= -->
+  <div class="device wide" id="dDesk" hidden>
+    <div class="page">
+      <header>
+        <div class="wordmark">Place<em>W</em>ell</div>
+        <p class="tagline">Everything in its place, done well.</p>
+        <div class="rule"></div>
+      </header>
+
+      <div class="two-col">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:20px">
+          <div class="jars">
+            <div class="jar"><div class="lid"></div><div class="glassbody"><div class="slot">?</div></div></div>
+          </div>
+          <span class="chip">VP4K2R</span>
+        </div>
+        <div>
+          <h1 style="font-size:36px">PlaceWell lives on your phone.</h1>
+          <p class="lede" style="font-size:15.5px;max-width:44ch">That's where the camera is. Install the app, then scan this code again with your phone to set it up.</p>
+          <div class="dcta">
+            <a class="btn" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.8c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9-.7 0-1.8-.9-3-.8-1.5 0-2.9.9-3.7 2.3-1.6 2.8-.4 6.9 1.1 9.1.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.8-2.2.9-1.3 1.3-2.6 1.3-2.6s-2.5-1-2.5-3.7zM14.2 5.9c.6-.8 1-1.9.9-3-.9 0-2 .6-2.7 1.4-.6.7-1.1 1.8-.9 2.9 1 0 2.1-.5 2.7-1.3z"/></svg>App Store</a>
+            <a class="btn ghost" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3.6 2.2c-.3.3-.5.8-.5 1.4v16.8c0 .6.2 1.1.5 1.4l.1.1 9.4-9.4v-.2L3.6 2.2zM16.6 15.1l-3.1-3.1v-.2l3.1-3.1.1.1 3.7 2.1c1.1.6 1.1 1.6 0 2.2l-3.8 2zM15.9 15.8l-3.2-3.2-9.1 9.1c.4.4 1 .4 1.7.1l10.6-6zM15.9 8.2L5.3 2.2c-.7-.4-1.3-.3-1.7.1l9.1 9.1 3.2-3.2z"/></svg>Google Play</a>
+          </div>
+          <div class="scanhint">
+            <div class="qrbox"><img alt="QR code for this PlaceWell code" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 25 25' shape-rendering='crispEdges'%3E%3Crect width='25' height='25' fill='%23fff'/%3E%3Cg fill='%231C1B19'%3E%3Crect x='1' y='1' width='7' height='1'/%3E%3Crect x='1' y='2' width='1' height='5'/%3E%3Crect x='7' y='2' width='1' height='5'/%3E%3Crect x='1' y='7' width='7' height='1'/%3E%3Crect x='3' y='3' width='3' height='3'/%3E%3Crect x='17' y='1' width='7' height='1'/%3E%3Crect x='17' y='2' width='1' height='5'/%3E%3Crect x='23' y='2' width='1' height='5'/%3E%3Crect x='17' y='7' width='7' height='1'/%3E%3Crect x='19' y='3' width='3' height='3'/%3E%3Crect x='1' y='17' width='7' height='1'/%3E%3Crect x='1' y='18' width='1' height='5'/%3E%3Crect x='7' y='18' width='1' height='5'/%3E%3Crect x='1' y='23' width='7' height='1'/%3E%3Crect x='3' y='19' width='3' height='3'/%3E%3Crect x='10' y='1' width='1' height='1'/%3E%3Crect x='12' y='1' width='1' height='2'/%3E%3Crect x='14' y='2' width='1' height='1'/%3E%3Crect x='10' y='3' width='2' height='1'/%3E%3Crect x='13' y='4' width='2' height='1'/%3E%3Crect x='11' y='5' width='1' height='2'/%3E%3Crect x='14' y='6' width='1' height='2'/%3E%3Crect x='9' y='9' width='2' height='1'/%3E%3Crect x='12' y='9' width='1' height='1'/%3E%3Crect x='15' y='9' width='2' height='1'/%3E%3Crect x='19' y='9' width='1' height='2'/%3E%3Crect x='22' y='10' width='1' height='1'/%3E%3Crect x='9' y='11' width='1' height='2'/%3E%3Crect x='13' y='11' width='2' height='1'/%3E%3Crect x='17' y='12' width='1' height='2'/%3E%3Crect x='20' y='12' width='2' height='1'/%3E%3Crect x='11' y='13' width='1' height='2'/%3E%3Crect x='15' y='14' width='2' height='1'/%3E%3Crect x='23' y='13' width='1' height='2'/%3E%3Crect x='9' y='15' width='2' height='1'/%3E%3Crect x='13' y='16' width='1' height='2'/%3E%3Crect x='18' y='15' width='1' height='2'/%3E%3Crect x='21' y='16' width='2' height='1'/%3E%3Crect x='10' y='18' width='1' height='1'/%3E%3Crect x='12' y='18' width='2' height='1'/%3E%3Crect x='16' y='18' width='1' height='2'/%3E%3Crect x='19' y='18' width='1' height='1'/%3E%3Crect x='22' y='18' width='1' height='2'/%3E%3Crect x='11' y='20' width='2' height='1'/%3E%3Crect x='14' y='20' width='1' height='2'/%3E%3Crect x='18' y='20' width='2' height='1'/%3E%3Crect x='21' y='21' width='1' height='2'/%3E%3Crect x='10' y='22' width='1' height='2'/%3E%3Crect x='13' y='22' width='2' height='1'/%3E%3Crect x='16' y='22' width='1' height='2'/%3E%3Crect x='19' y='23' width='2' height='1'/%3E%3Crect x='23' y='22' width='1' height='1'/%3E%3C/g%3E%3C/svg%3E"></div>
+            <p>Or point your phone camera here.<br>Same code, shorter trip.</p>
+          </div>
+        </div>
+      </div>
+      <footer style="margin-top:26px">placewell.app &nbsp;·&nbsp; BeNiralu LLC</footer>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= CONFIG ================= */
+
+/* Platform — server picks from User-Agent. Secondary store is always rendered. */
+const STORE = {
+  ios:{
+    url:'https://apps.apple.com/app/placewell/id000000000',
+    label:'Download on the App Store',
+    icon:'<path d="M16.4 12.8c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9-.7 0-1.8-.9-3-.8-1.5 0-2.9.9-3.7 2.3-1.6 2.8-.4 6.9 1.1 9.1.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.8-2.2.9-1.3 1.3-2.6 1.3-2.6s-2.5-1-2.5-3.7zM14.2 5.9c.6-.8 1-1.9.9-3-.9 0-2 .6-2.7 1.4-.6.7-1.1 1.8-.9 2.9 1 0 2.1-.5 2.7-1.3z"/>',
+    alt:'On an iPhone? <u>Download on the App Store</u>'
+  },
+  and:{
+    url:'https://play.google.com/store/apps/details?id=com.beniralu.placewell',
+    label:'Get it on Google Play',
+    icon:'<path d="M3.6 2.2c-.3.3-.5.8-.5 1.4v16.8c0 .6.2 1.1.5 1.4l.1.1 9.4-9.4v-.2L3.6 2.2zM16.6 15.1l-3.1-3.1v-.2l3.1-3.1.1.1 3.7 2.1c1.1.6 1.1 1.6 0 2.2l-3.8 2zM15.9 15.8l-3.2-3.2-9.1 9.1c.4.4 1 .4 1.7.1l10.6-6zM15.9 8.2L5.3 2.2c-.7-.4-1.3-.3-1.7.1l9.1 9.1 3.2-3.2z"/>',
+    alt:'Using Android? <u>Get it on Google Play</u>'
+  }
+};
+
+/* Code type — server picks from Firestore. Type only. No label data. */
+const TYPE = {
+  label:{
+    jars:1,
+    chip:'Label\u00A0\u00A0VP4K2R',
+    h:'This label is blank.',
+    p:"Get the free PlaceWell app to name it, photograph what's inside, and find it again with a single scan.",
+    steps:[
+      ['01','Install the free app.'],
+      ['02','<b>Scan this label again.</b> The app opens straight to it.'],
+      ['03',"Name it, snap what's inside, set its room."]
+    ]
+  },
+  order:{
+    jars:3,
+    chip:'Order\u00A0\u00A0VP4K2R',
+    h:'Your labels are ready.',
+    p:'Get the free PlaceWell app. Scanning this card once loads every label in your kit — so you can set them up as you stick them on.',
+    steps:[
+      ['01','Install the free app.'],
+      ['02','<b>Scan this card again.</b> Your whole kit loads at once.'],
+      ['03','Stick a label on, scan it, tell it what it holds.']
+    ]
+  }
+};
+
+const ERROR = {
+  notfound:{
+    jars:1, chip:'Unrecognised code',
+    h:"That's not a PlaceWell code.",
+    p:"It didn't match anything in our system. Check you're scanning the QR on a PlaceWell label or kit card — not a shipping barcode or another sticker.",
+    cta:'See PlaceWell labels',
+    alt:'Bought a kit and still stuck? <u>Email support</u>'
+  },
+  revoked:{
+    jars:1, chip:'VP4K2R\u00A0\u00A0·\u00A0\u00A0Retired',
+    h:'This code is retired.',
+    p:"It was deactivated and no longer links to anything. If you didn't retire it yourself, we can look into it.",
+    cta:'Email PlaceWell support',
+    alt:'Or <u>order a replacement label</u>'
+  }
+};
+
+/* ================= RENDER ================= */
+const $ = id => document.getElementById(id);
+const jarHTML = n => Array.from({length:n},(_,i)=>
+  `<div class="jar${(n>1 && i!==1) ? ' small' : ''}"><div class="lid"></div><div class="glassbody"><div class="slot">?</div></div></div>`
+).join('');
+
+function render(state){
+  if(state === 'desktop'){ $('dMob').hidden = true; $('dDesk').hidden = false; return; }
+  $('dDesk').hidden = true; $('dMob').hidden = false;
+
+  if(state in ERROR){
+    const e = ERROR[state];
+    $('page').classList.add('error');
+    $('jars').innerHTML = jarHTML(e.jars);
+    $('chip').innerHTML = e.chip;
+    $('h1').textContent = e.h;
+    $('lede').textContent = e.p;
+    $('cta').className = 'btn ghost';
+    $('cta').href = '#';
+    $('ctaLabel').textContent = e.cta;
+    $('ctaIcon').style.display = 'none';
+    $('alt').innerHTML = e.alt;
+    $('steps').hidden = true;
+    return;
+  }
+
+  $('page').classList.remove('error');
+  const [t, p] = state.split('_');
+  const T = TYPE[t], S = STORE[p], O = STORE[p === 'ios' ? 'and' : 'ios'];
+
+  $('jars').innerHTML = jarHTML(T.jars);
+  $('chip').innerHTML = T.chip;
+  $('h1').textContent = T.h;
+  $('lede').textContent = T.p;
+
+  $('cta').className = 'btn';
+  $('cta').href = S.url;
+  $('ctaLabel').textContent = S.label;
+  $('ctaIcon').style.display = '';
+  $('ctaIcon').innerHTML = S.icon;
+
+  $('alt').href = O.url;
+  $('alt').innerHTML = O.alt;
+
+  $('steps').hidden = false;
+  $('steps').innerHTML = T.steps.map(([n, txt]) =>
+    `<div class="step"><span class="n">${n}</span><span class="t">${txt}</span></div>`).join('');
+}
+
+document.querySelectorAll('.switcher button').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.switcher button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    render(b.dataset.s);
+  });
+});
+
+render('label_ios');
+</script>
+</body>
+</html>
