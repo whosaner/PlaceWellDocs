@@ -8,12 +8,13 @@ Use this catalog when you know the task but not which PlaceWell document to open
 |---|---|
 | Check out every repo from scratch | `Docs\setup\Project_Checkout_Guide.md` |
 | Set up one local project | `Docs\setup\App_Setup.md`, `QRService_Setup.md`, `PdfGenerator_Setup.md`, or `UI_Setup.md` |
-| Deploy QR service/UI/PDF code to Linode | `Docs\deployment\deploy.ps1` (one-shot), or `Docs\deployment\Server_Reference.md` + `Linode_Deployment.md`/`UI_Deployment.md` |
+| Deploy QR service/UI/PDF code to Linode | `Docs\scripts\deploy.ps1` (one-shot), or `Docs\deployment\Server_Reference.md` + `Linode_Deployment.md`/`UI_Deployment.md` |
 | Build or submit the mobile app | `Docs\release\iOS_Android_Build_Guide.md` and `PlaceWellApp\PRE_BUILD_COMMANDS.txt` |
 | Manually validate a release | `Docs\release\Release_Validation_Checklist.md` and `PlaceWellApp\VERIFICATION_CHECKLIST.txt` |
 | Understand system architecture and deep links | `Docs\architecture\System_Overview.md` |
 | Understand scan landing page states | `Docs\specs\PlaceWell_Scan_Landing_Spec.md` |
-| Run Maestro E2E tests | `Docs\maestro\Maestro_Setup_Guide.md` |
+| Run Maestro E2E tests (one command) | `Docs\maestro\Maestro_Setup_Guide.md`; `PlaceWellApp\scripts\maestro\README.md` (`npm run maestro`); `Docs\scripts\run-maestro.ps1` |
+| Regenerate test QR codes/fixtures in Firestore | `PlaceWellQRService\scripts\README.md` (`seed_test_fixtures.py`) |
 | Add a new label category | `Docs\setup\Adding_A_Category.md` |
 | Generate PDFs or export label PNGs | `PlaceWellPdfGenerator\README.md` and `PlaceWellPdfGenerator\LABEL_EXPORT_WIKI.md` |
 | Find the Android SHA-256 fingerprint process | `Docs\release\Release_Validation_Checklist.md` and `PlaceWellApp\PRE_BUILD_COMMANDS.txt` |
@@ -54,7 +55,7 @@ Use this catalog when you know the task but not which PlaceWell document to open
 | `Docs\deployment\Server_Reference.md` | Day-to-day Linode server reference. | Check routes, service names, file locations, env vars, update commands, logs, or troubleshooting. | Server summary; public routes/internal services; systemd services; file paths; service management; update quick refs; env vars; Firestore; DNS; troubleshooting. |
 | `Docs\deployment\Linode_Deployment.md` | Full first-time Linode deployment guide for the QR service and Apache/SSL stack. | Build a new server or understand the original provisioning flow. | Linode provisioning; DNS; Apache/firewall; FastAPI files; Firebase key; `.env`; venv; systemd; reverse proxy; Let's Encrypt; verification; update commands. |
 | `Docs\deployment\UI_Deployment.md` | Full deployment guide for the operator UI on Linode. | Deploy or repair the web UI, Apache password protection, reverse proxy, and UI service. | Copy files; Python env; UI `.env`; manual run; systemd; Apache Basic Auth; reverse proxy; verification; code/CSV updates; commands; server paths. |
-| `Docs\deployment\deploy.ps1` | One-shot PowerShell deploy script. Packages QR Service + PDF Generator + UI, uploads via scp, extracts on Linode, and restarts services. | Push local server-side code changes to Linode in a single command (does NOT deploy the mobile app). | Stages UI/PDF/QR into tarballs; `scp` to `root@45.56.71.137`; ssh extract to `/opt/placewell-ui` and `/opt/placewell-service`; `systemctl restart`; cleanup. Uses absolute paths — run from anywhere. |
+| `Docs\scripts\deploy.ps1` | One-shot PowerShell deploy script. Packages QR Service + PDF Generator + UI, uploads via scp, extracts on Linode, and restarts services. | Push local server-side code changes to Linode in a single command (does NOT deploy the mobile app). | Stages UI/PDF/QR into tarballs; `scp` to `root@45.56.71.137`; ssh extract to `/opt/placewell-ui` and `/opt/placewell-service`; `systemctl restart`; cleanup. Uses absolute paths — run from anywhere. |
 
 ## Build, release, and validation
 
@@ -73,6 +74,9 @@ Use this catalog when you know the task but not which PlaceWell document to open
 |---|---|---|---|
 | `Docs\maestro\Maestro_Setup_Guide.md` | Practical Maestro E2E setup and usage guide. | Install Maestro, run smoke/regression flows, create scenarios, configure test data, or troubleshoot. | Java 17; Maestro CLI; Android emulator/APK; smoke/single/regression/watch commands; scenario generator; folder structure; test data; `MAESTRO_TEST_MODE`; iOS; CI/CD; troubleshooting. |
 | `Docs\maestro\Maestro_Implementation_Plan.md` | Detailed plan for comprehensive Maestro test coverage. | Design or expand the E2E suite, add testIDs, define scenarios, or plan CI. | Codebase observations; scenario table; workspace layout; CLI install; test data strategy; env vars; testID additions; full scenario catalog; scenario generation; CI rollout; risks. |
+| `PlaceWellApp\scripts\maestro\README.md` | The Node runner/generator tooling behind `npm run maestro`. | Run tests end to end with one command, or understand the `.maestro` (flows) vs `scripts/maestro` (tooling) split. | `run-maestro.mjs` orchestrator (CLI/device/app-install/seed/run steps); `run-smoke.mjs`; `seed-fixtures.mjs`; `derive-env.mjs`; scenario generator; npm scripts; `builds/` drop folder; bundletool `.aab` install; auto-start emulator. |
+| `PlaceWellQRService\scripts\README.md` | The repeatable test-fixture QR seeder (`seed_test_fixtures.py`). | Regenerate the deterministic test labels + order in Firestore after deletion, or get the `PW_*` deep-link URLs for Maestro. | Fixed-ID fixtures; `--dry-run`/`--env-out`/`--qr-images`; idempotent Firestore upsert; signatures via the server HMAC secret; runs as a host init step before `maestro test`. |
+| `Docs\scripts\run-maestro.ps1` | PowerShell entry that wraps `npm run maestro`. | Run Maestro tests without typing npm commands (interactive menu or direct passthrough). | `cd`s into the sibling PlaceWellApp repo; menu (smoke/screenshots/regression/seed-only/custom); forwards args; execution-policy note. |
 
 ## Features and specifications
 

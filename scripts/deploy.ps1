@@ -1,6 +1,6 @@
 # PlaceWell Deploy Script
-# Location: C:\PlaceWell\Docs\deployment\deploy.ps1 (version-controlled in PlaceWellDocs)
-# Usage:    C:\PlaceWell\Docs\deployment\deploy.ps1
+# Location: C:\PlaceWell\Docs\scripts\deploy.ps1 (version-controlled in PlaceWellDocs)
+# Usage:    C:\PlaceWell\Docs\scripts\deploy.ps1
 #           (uses absolute C:\PlaceWell\... paths, so it runs from any working directory)
 # Deploys UI + PDF Generator + QR Service to the Linode server and restarts services.
 # Note: does NOT deploy the mobile app (that goes through EAS build/submit).

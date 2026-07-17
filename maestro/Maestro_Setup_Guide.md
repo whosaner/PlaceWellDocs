@@ -89,9 +89,11 @@ adb shell pm list packages | grep placewell
 ### One command (recommended): `npm run maestro`
 
 `scripts/maestro/run-maestro.mjs` is the single end-to-end entry point. It runs
-five steps in order — (1) check Maestro CLI, (2) check/optionally start a device,
-(3) check/optionally install the app, (4) seed Firestore fixtures, (5) run the
-flow(s) with the derived `PW_*` env vars:
+five steps in order — (1) check the Maestro CLI, (2) check a device, **auto-starting**
+an emulator if none is running, (3) check the app, **auto-installing** the newest
+build from `builds\` when it isn't on the device (an `.aab` is converted via
+bundletool), (4) seed Firestore fixtures, (5) run the flow(s) with the derived
+`PW_*` env vars:
 
 ```
 cd C:\PlaceWell\PlaceWellApp
@@ -99,10 +101,20 @@ npm run maestro                    # smoke suite (seed + run)
 npm run maestro -- screenshots     # store screenshot flow
 npm run maestro -- regression      # full regression suite
 npm run maestro -- .maestro/smoke/CORE-01_first-launch-empty-home.yaml
-npm run maestro -- --start-device  # boot an emulator first if none is running
-npm run maestro -- --apk path\to\app.apk   # install this build first
-npm run maestro -- --no-seed       # skip Firestore seeding
-npm run maestro -- --print         # show the plan + derived env, run nothing
+npm run maestro -- --app builds\app.aab   # install this build first (.aab/.apk)
+npm run maestro -- --no-start-device      # don't auto-start an emulator
+npm run maestro -- --no-seed              # skip Firestore seeding
+npm run maestro -- --print                # show the plan + derived env, run nothing
+```
+
+To install a build, drop the EAS `.aab`/`.apk` into
+`C:\PlaceWell\PlaceWellApp\builds\` (or pass `--app <path>`, or set
+`PLACEWELL_APP_ARTIFACT`); the runner auto-detects the newest one. Prefer not to
+type npm? Use the PowerShell entry:
+
+```
+C:\PlaceWell\Docs\scripts\run-maestro.ps1          # interactive menu
+C:\PlaceWell\Docs\scripts\run-maestro.ps1 smoke    # or pass a target directly
 ```
 
 It does **not build** the app — that's a one-time step done only when app code
@@ -110,7 +122,7 @@ changes:
 
 ```
 npx expo run:android          # debug/dev build, installs to the running device
-eas build -p android          # release build (download the .apk, then --apk it)
+eas build -p android          # release build (drop the .aab into builds\)
 ```
 
 The individual steps below are still available if you want finer control.
@@ -254,7 +266,7 @@ npm run maestro:seed               # writes labels + order to Firestore (idempot
 npm run maestro:seed -- --dry-run  # preview the URLs without writing
 ```
 
-This delegates to `PlaceWellQRService/scripts/seed_maestro_qr.py`, which needs
+This delegates to `PlaceWellQRService/scripts/seed_test_fixtures.py`, which needs
 that repo's `.env` (`PLACEWELL_HMAC_SECRET`) and Firebase credentials
 (`GOOGLE_APPLICATION_CREDENTIALS`). The seeded IDs match
 `.maestro/smoke-labels.json`, so `npm run maestro:smoke` derives matching signed
