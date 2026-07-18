@@ -15,6 +15,7 @@ Use this catalog when you know the task but not which PlaceWell document to open
 | Understand scan landing page states | `Docs\specs\PlaceWell_Scan_Landing_Spec.md` |
 | Run Maestro E2E tests (one command) | `Docs\maestro\Maestro_Setup_Guide.md`; `PlaceWellApp\scripts\maestro\README.md` (`npm run maestro`); `Docs\scripts\run-maestro.ps1` |
 | Regenerate test QR codes/fixtures in Firestore | `PlaceWellQRService\scripts\README.md` (`seed_test_fixtures.py`) |
+| Run unit tests (app Jest + QR service pytest) | `Docs\scripts\run-tests.ps1` |
 | Add a new label category | `Docs\setup\Adding_A_Category.md` |
 | Generate PDFs or export label PNGs | `PlaceWellPdfGenerator\README.md` and `PlaceWellPdfGenerator\LABEL_EXPORT_WIKI.md` |
 | Find the Android SHA-256 fingerprint process | `Docs\release\Release_Validation_Checklist.md` and `PlaceWellApp\PRE_BUILD_COMMANDS.txt` |
@@ -77,6 +78,7 @@ Use this catalog when you know the task but not which PlaceWell document to open
 | `PlaceWellApp\scripts\maestro\README.md` | The Node runner/generator tooling behind `npm run maestro`. | Run tests end to end with one command, or understand the `.maestro` (flows) vs `scripts/maestro` (tooling) split. | `run-maestro.mjs` orchestrator (CLI/device/app-install/seed/run steps); `run-smoke.mjs`; `seed-fixtures.mjs`; `derive-env.mjs`; scenario generator; npm scripts; `builds/` drop folder; bundletool `.aab` install; auto-start emulator. |
 | `PlaceWellQRService\scripts\README.md` | The repeatable test-fixture QR seeder (`seed_test_fixtures.py`). | Regenerate the deterministic test labels + order in Firestore after deletion, or get the `PW_*` deep-link URLs for Maestro. | Fixed-ID fixtures; `--dry-run`/`--env-out`/`--qr-images`; idempotent Firestore upsert; signatures via the server HMAC secret; runs as a host init step before `maestro test`. |
 | `Docs\scripts\run-maestro.ps1` | PowerShell entry that wraps `npm run maestro`. | Run Maestro tests without typing npm commands (interactive menu or direct passthrough). | `cd`s into the sibling PlaceWellApp repo; menu (smoke/screenshots/regression/seed-only/custom); forwards args; execution-policy note. |
+| `Docs\scripts\run-tests.ps1` | PowerShell runner for the projects' unit tests. | Run all unit suites (or one project) and get a per-project pass/fail summary. | PlaceWellApp Jest + PlaceWellQRService pytest; skips PdfGenerator/UI (empty test dirs); per-project venv detection; `.\run-tests.ps1 [app\|qrservice\|pdf\|ui]`; execution-policy note. |
 
 ## Features and specifications
 
