@@ -25,11 +25,11 @@ Completed work, grouped. Kept brief on purpose — this roadmap is forward-looki
 
 ## Pre-Launch — must-have before public release
 
-1. **Privacy Policy** — host at `placewell.app/privacy`; add `privacyPolicyUrl` to `app.json`. Required by App Store + Play Store.
+1. **Privacy Policy** — ✅ hosted at `placewell.app/privacy` (live). Privacy URL is set for iOS via `PlaceWellApp/store.config.json` (`eas metadata:push`) and entered in the Play Console for Android — it is **not** an `app.json` field.
 2. **App Store screenshots** — min 6.7" iPhone (1290×2796): Home carousel, Scanner, Label Setup, Recall.
 3. **Play Store listing** — create default store listing (name, short/full description, 512×512 icon at `PlaceWellApp/assets/playstore-icon.png`, 1024×500 feature graphic, ≥2 phone screenshots). Required for production track (not internal testing).
 4. **Google Play service account** — finish permission grant so automated `eas submit --platform android` works (currently falls back to manual AAB upload).
-5. **placewell.app root landing page** — public marketing page at the domain root (AASA + assetlinks already deployed).
+5. **placewell.app root landing page** — ✅ live at the domain root (AASA + assetlinks deployed).
 6. **Print labels — real-world test** — print every style × template and validate scan on real containers.
 7. **Product photography for Etsy** — 10 shots (see `Docs/etsy/Etsy_Launch_Plan.md`).
 8. **Etsy listing on BeNiralu** — content ready; needs photos to go live.
