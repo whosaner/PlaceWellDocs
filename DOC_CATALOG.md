@@ -14,7 +14,7 @@ Use this catalog when you know the task but not which PlaceWell document to open
 | Understand system architecture and deep links | `Docs\architecture\System_Overview.md` |
 | Understand scan landing page states | `Docs\specs\PlaceWell_Scan_Landing_Spec.md` |
 | Run Maestro E2E tests (one command) | `Docs\maestro\Maestro_Setup_Guide.md`; `PlaceWellApp\scripts\maestro\README.md` (`npm run maestro`); `Docs\scripts\run-maestro.ps1` |
-| Regenerate test QR codes/fixtures in Firestore | `PlaceWellQRService\scripts\README.md` (`seed_test_fixtures.py`) |
+| Regenerate test QR codes/fixtures, or make correctly-signed demo QR PNGs | `Docs\scripts\seed-test-fixtures.ps1` (one-shot wrapper, pass your prod HMAC secret); `PlaceWellQRService\scripts\README.md` (`seed_test_fixtures.py`) |
 | Run unit tests (app Jest + QR service pytest) | `Docs\scripts\run-tests.ps1` |
 | Add a new label category | `Docs\setup\Adding_A_Category.md` |
 | Generate PDFs or export label PNGs | `PlaceWellPdfGenerator\README.md` and `PlaceWellPdfGenerator\LABEL_EXPORT_WIKI.md` |
@@ -79,6 +79,7 @@ Use this catalog when you know the task but not which PlaceWell document to open
 | `PlaceWellQRService\scripts\README.md` | The repeatable test-fixture QR seeder (`seed_test_fixtures.py`). | Regenerate the deterministic test labels + order in Firestore after deletion, or get the `PW_*` deep-link URLs for Maestro. | Fixed-ID fixtures; `--dry-run`/`--env-out`/`--qr-images`; idempotent Firestore upsert; signatures via the server HMAC secret; runs as a host init step before `maestro test`. |
 | `Docs\scripts\run-maestro.ps1` | PowerShell entry that wraps `npm run maestro`. | Run Maestro tests without typing npm commands (interactive menu or direct passthrough). | `cd`s into the sibling PlaceWellApp repo; menu (smoke/screenshots/regression/seed-only/custom); forwards args; execution-policy note. |
 | `Docs\scripts\run-tests.ps1` | PowerShell runner for the projects' unit tests. | Run all unit suites (or one project) and get a per-project pass/fail summary. | PlaceWellApp Jest + PlaceWellQRService pytest; skips PdfGenerator/UI (empty test dirs); per-project venv detection; `.\run-tests.ps1 [app\|qrservice\|pdf\|ui]`; execution-policy note. |
+| `Docs\scripts\seed-test-fixtures.ps1` | PowerShell wrapper for the QR fixture seeder that passes your production HMAC secret so signatures are valid. | Generate correctly-signed demo QR codes/URLs for App Store & Play review, or seed/regenerate the deterministic test labels in Firestore. | Passes `-HmacSecret` to `seed_test_fixtures.py` as `PLACEWELL_HMAC_SECRET` (child process only, restored afterwards); `-DryRun` (no Firestore writes), `-QrImages -Out <dir>`, `-EnvOut`; forwards extra args after `--`; resolves sibling `PlaceWellQRService`; fixed/deterministic fixture IDs; execution-policy note. |
 
 ## Features and specifications
 

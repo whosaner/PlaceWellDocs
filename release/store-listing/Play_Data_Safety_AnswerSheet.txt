@@ -1,0 +1,160 @@
+========================================================================
+ GOOGLE PLAY — DATA SAFETY + APP CONTENT ANSWER SHEET  (PlaceWell)
+ Play Console -> Policy -> App content
+========================================================================
+
+
+########################################################################
+ 1) DATA SAFETY   (App content -> Data safety)
+########################################################################
+
+RECOMMENDED ANSWER (matches the actual shipped build)
+------------------------------------------------------------------------
+Q: Does your app collect or share any of the required user data types?
+A: NO
+------------------------------------------------------------------------
+
+Why "No" is accurate for PlaceWell:
+  - All label data (names, contents, notes, PHOTOS, room/zone, freshness
+    dates, brand) is stored ONLY on the device (AsyncStorage + local
+    files). Google counts data as "collected" only if it is transmitted
+    off the device. Yours is not.
+  - The build contains NO analytics SDK, NO crash-reporting SDK, and NO
+    advertising SDK. The Firebase Analytics wrapper is inert because the
+    @react-native-firebase/analytics package is not installed, so no
+    analytics events are ever sent.
+  - The only network call is the QR lookup:
+        GET https://placewell.app/api/qr/lookup/{labelId}-{signature}
+        GET https://placewell.app/api/qr/order/{orderId}
+    It sends ONLY the scanned label/order ID plus a static app token.
+    No account, no user ID, no device ID, no personal data. This does
+    not map to any of Google's user-data categories.
+  - No account, login, or email is required or collected.
+
+After you select NO, the form skips the data-type and security
+questions. Review and submit.
+
+
+>>> IMPORTANT FUTURE CAVEAT (analytics) <<<
+Your privacy policy mentions analytics because you plan to re-add Firebase
+Analytics at Expo SDK 55+ (tracked as a todo). Analytics is INERT today,
+so "No collection" is correct RIGHT NOW. BEFORE you ship any build that
+actually bundles Firebase Analytics, you MUST return here and update Data
+Safety to declare:
+    - App activity  -> App interactions
+    - App info and performance -> Crash logs; Diagnostics
+    - Device or other IDs
+  (all: de-identified/aggregated, not shared, not sold,
+   purpose = Analytics + App functionality)
+
+
+OPTIONAL — if you'd rather pre-declare analytics now (more conservative,
+but technically declares data you don't yet collect):
+  Answer YES, then declare the three data types listed in the caveat.
+  For each: Collected = Yes; Shared = No; Processed ephemerally = No;
+  Collection required (users can't turn it off); Purpose = Analytics
+  (+ App functionality); Linked to user identity = No.
+  Then answer the two security questions below.
+
+SECURITY QUESTIONS (only appear if you declare collection):
+  - Is all user data encrypted in transit?  YES  (all traffic is HTTPS)
+  - Do you provide a way for users to request data deletion?  YES
+      (users delete labels in-app and can uninstall to clear local data;
+       for QR service metadata, contact niralu.53@gmail.com /
+       support@placewell.app)
+
+
+########################################################################
+ 2) ADS   (App content -> Ads)
+########################################################################
+Q: Does your app contain ads?
+A: NO   (no ad SDK, no ads shown)
+
+
+########################################################################
+ 3) SIGN IN DETAILS  (App content -> Sign in details; was "App access")
+########################################################################
+Q: Is any part of your app restricted?
+A: YES   <-- IMPORTANT: NOT "No".
+
+Why YES: PlaceWell's core flows (label setup, scan-to-recall, bulk
+import) can ONLY be reached by scanning a PlaceWell QR label, which a
+reviewer will not physically have. On a fresh install the Home screen is
+empty and the only action is the Scan button -> camera -> dead end. The
+"Yes" criteria on that screen explicitly lists "QR codes". Choosing "No"
+risks a review REJECTION because the reviewer cannot reach the main app.
+
+After selecting YES, click "Add instructions" and enter:
+   Name:      Label setup & recall (requires scanning a PlaceWell QR)
+   Username:  (leave blank - no account)
+   Password:  (leave blank - no account)
+   Any other instructions:  paste the block below.
+
+--- BEGIN "Any other instructions"  (Google limit 500 chars; this = 450) -
+No login/account needed. The app opens to an empty Home; features unlock by scanning a PlaceWell QR. To review without a physical label:
+1) Open on the device: https://placewell.app/s/PWMSP2-84A3
+2) If prompted, tap "Open in PlaceWell" - the label SETUP screen opens.
+3) Type any name, add a photo (optional), pick a room/zone, tap Save. The label appears on Home; tap it to view details/recall.
+Order/Bulk import: https://placewell.app/s/PWMQR7-8C64
+--- END "Any other instructions" ----------------------------------------
+
+TEST LABELS (Maestro fixtures - deterministic + permanent; verified working
+on device, Android + iOS, 2026-07-30. Signed with the production secret):
+   Smoked Paprika (spice)   -> setup  : https://placewell.app/s/PWMSP2-84A3
+   Holiday Decor (storage)  -> setup  : https://placewell.app/s/PWMST3-4CAA
+   Cordless Drill (garage)  -> setup  : https://placewell.app/s/PWMGR4-154D
+   Ground Cumin (spice)     -> recall : https://placewell.app/s/PWMXS5-EB24
+   Winter Blankets (storage)-> detail : https://placewell.app/s/PWMXT6-4682
+   Order QR                 -> bulk   : https://placewell.app/s/PWMQR7-8C64
+
+NOTES:
+   - On a fresh install, opening a label URL goes to SETUP first (the label
+     isn't in local storage yet). Save it, then open the SAME URL again to
+     see scan-to-recall / detail. One URL demonstrates both flows.
+   - These are seeded, deterministic fixtures - keep them in Firestore
+     (npm run maestro:seed re-seeds them). Do NOT delete.
+   - Google also accepts a short DEMO VIDEO of scan -> setup -> recall as an
+     alternative/supplement.
+   - This SAME access info is needed for Apple App Review (App Review
+     Information -> Notes), so keep it handy.
+
+
+########################################################################
+ 4) CONTENT RATINGS   (App content -> Content ratings)
+########################################################################
+  Email: niralu.53@gmail.com
+  Category: All Other App Types
+  Questionnaire: answer NO to every content + interactivity question
+  Result: Everyone / suitable for all ages
+
+
+########################################################################
+ 5) TARGET AUDIENCE AND CONTENT   (App content -> Target audience)
+########################################################################
+  Target age groups: select ONLY "18 and over".
+    Do NOT check 13-15 or 16-17 - any under-18 box triggers Google's
+    Families policy (extra compliance) for no benefit. Teens can still
+    install; you are simply not targeting minors.
+  "Restrict users Google determined to be minors" (optional): LEAVE UNCHECKED.
+    Only for apps that must hard-block minors (mature/gambling/dating). PlaceWell
+    is benign, so checking it would needlessly shrink reach. 18+ targeting alone
+    already avoids the Families policy.
+  Is your app designed for / primarily appealing to children?  NO
+    (Keeps PlaceWell out of the Families policy program.)
+
+
+########################################################################
+ 6) OTHER DECLARATIONS  (answer as they appear)
+########################################################################
+  News app?          No
+  Government app?     No
+  Financial features? No
+  Health app?         No
+  COVID-19 / contact-tracing?  No
+
+
+========================================================================
+ SUMMARY: PlaceWell is local-first with no analytics/ads/crash SDK, so
+ Data Safety = "No data collected or shared". Revisit ONLY when Firebase
+ Analytics is re-added at Expo SDK 55+.
+========================================================================

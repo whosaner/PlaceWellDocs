@@ -1,0 +1,100 @@
+========================================================================
+ GOOGLE PLAY — MAIN STORE LISTING  (paste-ready)
+ Play Console -> PlaceWell -> Grow -> Store presence -> Main store listing
+ Copy each block between the dashed lines. Do not include the dashed lines.
+========================================================================
+
+
+[ 1 ] APP NAME   (limit 30 chars — this is 9)
+------------------------------------------------------------------------
+PlaceWell
+------------------------------------------------------------------------
+
+
+[ 2 ] SHORT DESCRIPTION   (limit 80 chars — this is 68)
+------------------------------------------------------------------------
+Scan QR home labels to store, organize, and find what belongs where.
+------------------------------------------------------------------------
+
+
+[ 3 ] FULL DESCRIPTION   (limit 4000 chars — well within)
+------------------------------------------------------------------------
+Everything in its place, done well.
+
+PlaceWell is a premium home-organization app for QR-coded physical labels. Apply a PlaceWell label to a jar, bin, basket, drawer, or container, scan the QR code with your phone, and create a simple record of what is stored there.
+
+PlaceWell is local-first and does not require an account, so setup stays fast and calm.
+
+Organize your home with QR labels:
+
+• Scan a PlaceWell QR label to set it up or open it again later
+• Name each label in a guided setup flow
+• Add a photo for quick visual recall
+• Assign a room and zone, such as Pantry, Kitchen, Bathroom, Laundry, or Entryway
+• Save contents and notes for bins, jars, baskets, and containers
+• Search your labels and filter by room or zone
+• Open recently scanned labels from the home screen
+• Import a full kit by scanning an Order QR
+• Apply one room and zone to a kit, then adjust labels individually
+
+Built for spice freshness:
+
+When spices move into matching jars, the original packaging often disappears. PlaceWell helps the app remember what the jar cannot.
+
+• Track Best By dates
+• Track In Use Since dates
+• See freshness status: Fresh, Use soon, Past best-by, or Not tracked
+• Save brand and notes
+• Tap Refilled today to update refill history
+• Let PlaceWell learn your refill pace over time
+
+Great for:
+
+• Spice jars
+• Pantry containers
+• Dry goods and baking supplies
+• Tea, coffee, and snacks
+• Bathroom storage
+• Laundry supplies
+• Linen closet baskets
+• Entryway bins
+• Household catch-alls
+
+PlaceWell by BeNiralu LLC pairs minimalist QR labels with a companion app that makes everyday organization easier. It is designed for a calm, premium home: simple visuals, clear flows, and no cluttered account setup.
+
+Scan. Set up. Find it again.
+------------------------------------------------------------------------
+
+
+[ 4 ] GRAPHICS  (upload — files already exist)
+------------------------------------------------------------------------
+App icon (512x512):      C:\PlaceWell\PlaceWellApp\assets\playstore-icon.png
+Feature graphic (1024x500): C:\PlaceWell\Docs\release\store-listing\play-feature-graphic.png
+------------------------------------------------------------------------
+
+
+[ 5 ] PHONE SCREENSHOTS  (YOU STILL NEED THESE — min 2, max 8, portrait PNG/JPEG)
+------------------------------------------------------------------------
+Capture on your Android test device:
+  - Home carousel
+  - Label Setup ("Make it unforgettable")
+  - Label Recall
+  - Scanner
+------------------------------------------------------------------------
+
+
+========================================================================
+ OTHER PLAY CONSOLE FIELDS (outside the listing page)
+========================================================================
+
+CATEGORY:        Productivity        (Store settings)
+CONTACT EMAIL:   niralu.53@gmail.com   (monitored; support@placewell.app to be forwarded here later)
+WEBSITE:         https://placewell.app
+PRIVACY POLICY:  https://placewell.app/privacy   (Policy -> App content)
+
+CONTENT RATING QUESTIONNAIRE  (Policy -> App content):
+  Answer NO to all: violence, sexual content, profanity, controlled
+  substances, gambling, user-generated content/social sharing, online
+  purchases, location sharing. No account required.
+  Expected rating: Everyone / suitable for all ages.
+========================================================================

@@ -1,0 +1,214 @@
+========================================================================
+ APP STORE CONNECT - PASTE-READY SUBMISSION SHEET  (PlaceWell)
+ appstoreconnect.apple.com -> Apps -> PlaceWell
+ Apple ID 6788545365 | Team CM5N45M892 | Apple ID login niralu.53@gmail.com
+ Copy each block between the dashed lines (do not include the dashed lines).
+========================================================================
+
+
+########################################################################
+ 1) APP INFORMATION   (General -> App Information)
+########################################################################
+
+APP NAME  (limit 30 - this is 9)
+------------------------------------------------------------------------
+PlaceWell
+------------------------------------------------------------------------
+
+SUBTITLE  (limit 30 - this is 26)
+------------------------------------------------------------------------
+Scan-to-recall home labels
+------------------------------------------------------------------------
+
+PRIMARY CATEGORY:    Utilities
+SECONDARY CATEGORY:  Lifestyle
+
+PRIVACY POLICY URL:
+------------------------------------------------------------------------
+https://placewell.app/privacy
+------------------------------------------------------------------------
+
+
+########################################################################
+ 2) VERSION 1.0.0 METADATA   (the version page, left sidebar)
+########################################################################
+
+PROMOTIONAL TEXT  (limit 170 - this is ~117; editable later without review)
+------------------------------------------------------------------------
+Beautiful QR labels for bins, jars, and spices. Scan, photograph, place, and find what you stored - no account needed.
+------------------------------------------------------------------------
+
+DESCRIPTION  (limit 4000)
+------------------------------------------------------------------------
+Everything in its place, done well.
+
+PlaceWell turns premium QR-coded labels into a calm, practical home organization system. Apply a PlaceWell label to a jar, bin, basket, drawer, or container, scan it with your phone, and create a simple record of what belongs there.
+
+No account is required. PlaceWell is local-first, designed for quick setup and everyday recall at home.
+
+What you can do with PlaceWell:
+
+- Scan a PlaceWell QR label to set it up or open it later
+- Name each label with a clean 4-step setup flow
+- Add a photo so you can recognize contents at a glance
+- Assign a room and zone, such as Pantry, Kitchen, Bathroom, Laundry, or Entryway
+- Record contents and notes for bins, jars, baskets, and storage containers
+- Search your labels and filter by room or zone
+- Revisit recently scanned labels from the home screen
+- Import a whole label kit by scanning an Order QR
+- Apply a room and zone to a full kit, then adjust individual labels when needed
+
+Made for spice organization:
+
+PlaceWell includes special support for spice labels, so the app remembers what the jar cannot.
+
+- Track Best By dates
+- Track In Use Since dates
+- See freshness status such as Fresh, Use soon, Past best-by, or Not tracked
+- Save brand and notes
+- Tap Refilled today to update refill history
+- Let PlaceWell learn your refill pace over time
+
+PlaceWell is especially useful for:
+
+- Spice jars and pantry containers
+- Dry goods and baking supplies
+- Tea, coffee, and snack storage
+- Bathroom and laundry organization
+- Linen closet baskets
+- Entryway bins and household catch-alls
+- Giftable home organization kits
+
+PlaceWell by BeNiralu LLC is built for people who love an organized home but do not want cluttered systems, spreadsheets, or another required account. The design is quiet and premium: soft Porcelain Sky colors, simple flows, and just enough structure to make every label useful.
+
+Scan. Set up. Find it again.
+------------------------------------------------------------------------
+
+KEYWORDS  (limit 100 - this is 85; comma-separated, NO spaces after commas)
+------------------------------------------------------------------------
+qr labels,home organization,pantry,spice labels,storage,inventory,declutter,bins,jars
+------------------------------------------------------------------------
+
+WHAT'S NEW IN THIS VERSION  (v1.0.0)
+------------------------------------------------------------------------
+Welcome to PlaceWell. Set up QR-coded home labels, add photos and locations, search your organized spaces, bulk import label kits, and track spice freshness.
+------------------------------------------------------------------------
+
+SUPPORT URL:     https://placewell.app
+MARKETING URL:   https://placewell.app   (optional)
+
+SCREENSHOTS (required):
+   - iPhone 6.9" or 6.7" display, PORTRAIT, 1290 x 2796 px (PNG/JPG).
+   - Minimum 1, up to 10. Use the same set you captured for Play.
+   - No iPad screenshots needed (app is iPhone-only: supportsTablet=false).
+
+
+########################################################################
+ 3) APP REVIEW INFORMATION   (version page -> App Review Information)
+########################################################################
+
+SIGN-IN REQUIRED?  ->  NO  (uncheck the box - the app needs no account)
+
+CONTACT INFORMATION:
+   First name: <your first name>
+   Last name:  <your last name>
+   Phone:      <your phone number>
+   Email:      niralu.53@gmail.com
+
+ATTACHMENT:  upload  Docs\release\store-listing\qr\REVIEW-SHEET-all-qr.png
+   (the QR sheet the reviewer scans in-app - fully pre-fills the demo)
+
+NOTES  (paste the block below)
+------------------------------------------------------------------------
+PlaceWell is a companion app for physical QR-coded home-organization labels. No account, login, or payment is required.
+
+The core flows (label setup, scan-to-recall, bulk import) begin by scanning a PlaceWell QR label. Reviewers will not have a physical label, so we have ATTACHED a QR sheet (REVIEW-SHEET-all-qr.png) with demo labels.
+
+TO REVIEW ALL FEATURES:
+1. Launch PlaceWell. On the Home screen, tap the round Scan button at the bottom center.
+2. Point the camera at a QR on the attached sheet:
+   - "Smoked Paprika (spice) - SETUP" opens the label setup flow ("Make it Unforgettable"): enter a name, optionally add a photo, pick a room and zone, then Save. The label then appears on the Home carousel.
+   - Tap the saved label to open its detail / scan-to-recall view (spice labels show freshness such as Best By and In Use Since).
+   - "Order QR - BULK IMPORT" loads a kit of labels you can import at once.
+
+Camera and photo-library permissions are used only to scan QR codes and attach label photos. All label data is stored locally on the device; no account and no sign-in.
+------------------------------------------------------------------------
+
+
+########################################################################
+ 4) APP PRIVACY   (App Privacy -> Get Started)
+########################################################################
+
+Q: Do you or your third-party partners collect data from this app?
+A: NO  ->  select "No, we do not collect data from this app".
+
+Why (matches the shipped build, same as Google Data Safety):
+   - All label data (names, contents, notes, PHOTOS, room/zone, freshness)
+     is stored ONLY on device. Apple counts data as collected only if it
+     leaves the device; yours does not.
+   - No analytics SDK, no crash SDK, no ad SDK in the build (the Firebase
+     Analytics wrapper is inert - package not installed).
+   - The only network call (QR lookup) sends just the scanned label/order
+     ID + a static token; no personal data, no account, no device ID.
+
+Result: your listing shows "Data Not Collected".
+
+>>> FUTURE CAVEAT: when you re-add Firebase Analytics at Expo SDK 55+,
+    come back and update App Privacy to declare the analytics data
+    (App activity, Diagnostics, Identifiers) before that build ships. <<<
+
+
+########################################################################
+ 5) AGE RATING   (App Information -> Age Rating -> Edit)
+########################################################################
+Apple asks a series of questions. For PlaceWell, set EVERY content type to
+"None" and every Yes/No to "No". Item by item:
+
+A) CONTENT DESCRIPTORS  (set each frequency = None):
+   - Cartoon or Fantasy Violence ...................... None
+   - Realistic Violence .............................. None
+   - Prolonged Graphic or Sadistic Realistic Violence  None
+   - Profanity or Crude Humor ........................ None
+   - Mature / Suggestive Themes ...................... None
+   - Horror / Fear Themes ............................ None
+   - Medical / Treatment Information ................. None
+   - Alcohol, Tobacco, or Drug Use or References ..... None
+   - Simulated Gambling .............................. None
+   - Sexual Content or Nudity ........................ None
+   - Graphic Sexual Content and Nudity ............... None
+
+B) YES / NO QUESTIONS  (answer No):
+   - Gambling (real money) ........................... No
+   - Contests ........................................ No
+   - Unrestricted Web Access ......................... No   (no in-app browser)
+   - Made for Kids ................................... No   (leave unchecked)
+
+C) CAPABILITIES  (newer questionnaire - answer No / None):
+   - Users can communicate / message / chat .......... No
+   - User-generated content shared with others ....... No
+   - Users can share their location with others ...... No
+   - Purchases of digital goods (in-app purchases) ... No
+   - Age assurance / parental gate needed ............ No
+
+D) RESULT:  4+   (suitable for all ages)
+
+Note: Apple may word or group these slightly differently over time, but
+every answer for PlaceWell is None/No, which always yields a 4+ rating.
+
+
+########################################################################
+ SUBMIT
+########################################################################
+   1. BUILD TO ATTACH:  Build 21  (v1.0.0, commit 23217d6 - the LATEST iOS
+      build, with all 4 photo fixes; the twin of Android build 14).
+      *** Do NOT use build 19 (commit e69fa4f) - it predates the photo fixes.
+      If build 21 is not yet in App Store Connect / TestFlight, submit it:
+          cd C:\PlaceWell\PlaceWellApp
+          eas submit --platform ios --id ce4038f9-00a2-4afa-85ea-7d9841e38553
+      Wait for it to finish "Processing", then select it under "Build".
+   2. Set Pricing = Free (My Apps -> PlaceWell -> Pricing and Availability).
+   3. Fill sections 1-5 above.
+   4. Add screenshots.
+   5. Click "Add for Review" / "Submit for Review".
+   Apple review is typically 24-48 hours.
+========================================================================
