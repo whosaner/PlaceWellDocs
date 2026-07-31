@@ -102,7 +102,7 @@ Use this catalog when you know the task but not which PlaceWell document to open
 
 | Document | What it covers | Look here if you want to... | Key contents |
 |---|---|---|---|
-| `Docs\roadmap\ROADMAP.md` | Unified product/project roadmap (single source of truth). | See shipped work, pre-launch must-haves, priorities, deferred items, detailed roadmap features, and business growth plans. | Condensed shipped summary; in-progress; pre-launch; SDK 55 deferrals; high/medium/low priorities; roadmap features (deferred deep linking, AI vision, brand jar catalog, multi-photo); coming soon; tabled; future/premium/business. |
+| `Docs\roadmap\ROADMAP.md` | Unified product/project roadmap and backlog (single source of truth — the former separate todo list is folded in). | See launch status, shipped work, the full prioritized backlog in one table, and detailed feature notes. | Launch status (both apps in review); condensed shipped summary; single **Master Priority List** table (all open items + former todos, editable Priority column); post-launch privacy reminder; feature details (deferred deep linking, Firebase analytics, brand jar catalog, multi-photo, AI vision); related-docs index. |
 
 ## Etsy and business
 
