@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlaceWell · Guided Jar Capture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,600&family=Jost:wght@400;500;600&family=DM+Mono:wght@400;500&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
+<style>
+  /* ---- Porcelain Sky tokens (in-app palette) ---- */
+  :root{
+    --ink:#243040; --inkSoft:#4A6070; --inkMuted:#7A9AAA;
+    --amber:#C9A66B; --amberDim:rgba(201,166,107,0.20);
+    --terracotta:#C4785A;
+    --bgTop:#DDE6EC; --bgMid:#B8CFDA; --bgBot:#8AABBD;
+    --glass:rgba(255,255,255,0.42); --glassBorder:rgba(255,255,255,0.62);
+    --white:#fff;
+    /* mockup-only */
+    --paper:#e8e3dc;
+    --font-display:'Cormorant Garamond',serif;
+    --font-body:'Jost',sans-serif;
+    --font-mono:'DM Mono',monospace;
+    --font-italic:'Libre Baskerville',serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:var(--font-body);
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #f3efe9 0%, var(--paper) 55%, #ddd7ce 100%);
+    color:var(--ink);
+    min-height:100vh;
+    padding:44px 20px 60px;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---- Page header ---- */
+  .pagehead{max-width:760px;margin:0 auto 40px;text-align:center}
+  .wordmark{font-family:var(--font-display);font-weight:400;font-size:40px;letter-spacing:.5px;color:var(--ink);line-height:1}
+  .wordmark .w{font-style:italic;color:var(--amber)}
+  .tagline{font-family:var(--font-italic);font-style:italic;font-size:12px;color:var(--inkMuted);margin-top:6px}
+  .pagehead h1{font-family:var(--font-display);font-weight:600;font-size:26px;color:var(--ink);margin-top:22px}
+  .pagehead p{font-size:14px;color:var(--inkSoft);max-width:520px;margin:8px auto 0;line-height:1.55}
+
+  /* ---- Stage / phones ---- */
+  .stage{display:flex;gap:56px;justify-content:center;align-items:flex-start;flex-wrap:wrap;max-width:900px;margin:0 auto}
+  .device{display:flex;flex-direction:column;align-items:center;gap:16px}
+  .caption{font-family:var(--font-mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--inkSoft)}
+  .caption b{color:var(--amber);font-weight:500}
+
+  .phone{
+    width:300px;height:620px;border-radius:46px;
+    background:#0f151c;padding:11px;
+    box-shadow:0 34px 70px -24px rgba(30,42,54,.55), 0 4px 16px rgba(0,0,0,.18), inset 0 0 0 2px #262f38;
+    position:relative;
+  }
+  .screen{position:relative;width:100%;height:100%;border-radius:36px;overflow:hidden;background:#20242a}
+
+  /* ---- Simulated camera feed (warm kitchen scene) ---- */
+  .feed{position:absolute;inset:0;
+    background:
+      linear-gradient(180deg,#d7cdbf 0%,#cbbfae 38%,#c2b09a 55%, #b79a7f 56%, #a98868 100%);
+  }
+  .feed::after{content:"";position:absolute;inset:0;
+    background:radial-gradient(120% 80% at 50% 34%, transparent 55%, rgba(30,22,14,.28) 100%);}
+  .counter-seam{position:absolute;top:56%;left:0;right:0;height:1px;background:rgba(90,60,38,.35)}
+
+  /* ---- CSS jar sitting in the scene ---- */
+  .jar{position:absolute;left:50%;top:50%;transform:translate(-50%,-58%);width:104px;height:150px;z-index:2}
+  .jar-lid{position:absolute;top:-15px;left:50%;transform:translateX(-50%);width:88px;height:22px;border-radius:6px;
+    background:linear-gradient(180deg,#c1a77e,#9c8560);box-shadow:0 2px 4px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.35)}
+  .jar-body{position:absolute;inset:0;top:2px;border-radius:12px 12px 16px 16px;overflow:hidden;
+    background:linear-gradient(105deg,rgba(255,255,255,.34),rgba(255,255,255,.10));
+    border:1px solid rgba(255,255,255,.55);
+    box-shadow:0 10px 20px -8px rgba(40,25,12,.4), inset 0 0 12px rgba(255,255,255,.25)}
+  .jar-fill{position:absolute;left:0;right:0;bottom:0;height:75%;
+    background:linear-gradient(180deg,#cf6f4c,#a94f30);
+    background-image:radial-gradient(rgba(0,0,0,.10) 1px,transparent 1.4px);background-size:6px 6px;
+    box-shadow:inset 0 6px 8px -6px rgba(255,255,255,.35)}
+  .jar-fill::before{content:"";position:absolute;top:-2px;left:0;right:0;height:4px;background:rgba(210,120,80,.6);filter:blur(1px)}
+  .jar-sheen{position:absolute;top:6px;left:16px;width:14px;height:78%;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,0));filter:blur(1px)}
+  .jar-label{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);width:66px;height:34px;border-radius:5px;background:rgba(245,240,232,.86);border:1px solid rgba(255,255,255,.7);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+
+  /* ---- Status bar ---- */
+  .statusbar{position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:20;color:#fff;font-family:var(--font-mono);font-size:12px;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+  .statusbar .dots{display:flex;gap:4px;align-items:center}
+  .statusbar .dots span{width:5px;height:5px;border-radius:50%;background:#fff;opacity:.9}
+
+  /* ---- Glass chrome ---- */
+  .glass{background:var(--glass);border:1px solid var(--glassBorder);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+
+  .topbar{position:absolute;top:52px;left:14px;right:14px;height:44px;border-radius:16px;
+    display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:15}
+  .topbar .t-title{font-family:var(--font-display);font-weight:600;font-size:17px;color:var(--ink)}
+  .icrc{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--ink);font-size:15px;background:rgba(255,255,255,.5)}
+
+  /* ---- Staging zone ---- */
+  .zone{position:absolute;left:11%;top:20%;width:78%;height:52%;border-radius:20px;z-index:10;
+    border:1px solid rgba(255,255,255,.45);box-shadow:0 0 0 2000px rgba(24,30,38,.16)}
+  .corner{position:absolute;width:26px;height:26px;border:2.5px solid var(--amber);border-radius:3px}
+  .corner.tl{top:-2px;left:-2px;border-right:none;border-bottom:none;border-top-left-radius:12px}
+  .corner.tr{top:-2px;right:-2px;border-left:none;border-bottom:none;border-top-right-radius:12px}
+  .corner.bl{bottom:-2px;left:-2px;border-right:none;border-top:none;border-bottom-left-radius:12px}
+  .corner.br{bottom:-2px;right:-2px;border-left:none;border-top:none;border-bottom-right-radius:12px}
+  .zone-hint{position:absolute;left:0;right:0;bottom:-40px;text-align:center;font-family:var(--font-italic);font-style:italic;font-size:13px;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.45)}
+  .zone-sub{position:absolute;left:0;right:0;top:-26px;text-align:center;font-family:var(--font-mono);font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.9);text-shadow:0 1px 3px rgba(0,0,0,.4)}
+
+  /* ---- Fill scale (manual marker) ---- */
+  .scale{position:absolute;right:18px;top:21%;width:52px;height:50%;border-radius:16px;z-index:16;
+    display:flex;flex-direction:column;justify-content:space-between;padding:12px 0;overflow:hidden}
+  .scale-fill{position:absolute;left:0;right:0;bottom:0;height:25%;background:var(--amberDim);border-top:1.5px solid var(--amber)}
+  .scale-cap{position:absolute;top:-22px;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:var(--font-mono);font-size:8px;letter-spacing:1.5px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+  .lvl{position:relative;display:flex;align-items:center;justify-content:flex-end;gap:6px;padding-right:9px;height:16px;z-index:2}
+  .lvl .tick{height:2px;background:rgba(255,255,255,.75);border-radius:2px}
+  .lvl .maj{width:16px}.lvl .min{width:9px}
+  .lvl .lab{font-family:var(--font-mono);font-size:9px;letter-spacing:.5px;color:var(--ink);width:26px;text-align:left}
+  .lvl.active .tick{background:var(--amber);height:2.5px}
+  .lvl.active .lab{color:var(--ink);font-weight:500}
+  .lvl.active::after{content:"";position:absolute;right:2px;width:6px;height:6px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 3px rgba(201,166,107,.28)}
+
+  /* ---- Bottom capture cluster ---- */
+  .cluster{position:absolute;left:0;right:0;bottom:26px;display:flex;align-items:center;justify-content:center;gap:34px;z-index:16}
+  .thumb{width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.35);border:1px solid var(--glassBorder)}
+  .shutter{width:66px;height:66px;border-radius:50%;background:var(--amber);border:3px solid rgba(221,230,236,.75);
+    box-shadow:0 0 18px 2px rgba(201,166,107,.55), 0 6px 14px rgba(0,0,0,.25);position:relative}
+  .shutter::after{content:"";position:absolute;inset:9px;border-radius:50%;border:2px solid rgba(255,255,255,.85)}
+  .flash{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.35);border:1px solid var(--glassBorder);display:flex;align-items:center;justify-content:center;color:var(--ink);font-size:15px}
+  .cluster-cap{position:absolute;bottom:6px;left:0;right:0;text-align:center;font-family:var(--font-mono);font-size:9px;letter-spacing:2px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+
+  /* =========== REVIEW SCREEN =========== */
+  .review{position:absolute;inset:0;
+    background:linear-gradient(180deg,var(--bgTop),var(--bgMid) 55%,var(--bgBot));}
+  .r-top{position:absolute;top:52px;left:14px;right:14px;height:44px;border-radius:16px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:5}
+  .r-card{position:absolute;top:112px;left:24px;right:24px;border-radius:20px;padding:12px;z-index:4}
+  .square{position:relative;width:100%;aspect-ratio:1/1;border-radius:14px;overflow:hidden;
+    background:linear-gradient(180deg,#d7cdbf,#c2b09a 55%,#b79a7f);}
+  .square .counter-seam{top:58%}
+  .square .jar{transform:translate(-50%,-56%) scale(.92)}
+  .square-tag{position:absolute;right:8px;bottom:8px;font-family:var(--font-mono);font-size:8px;letter-spacing:1px;color:#fff;background:rgba(36,48,64,.55);padding:3px 6px;border-radius:6px}
+
+  .r-fill{position:absolute;top:404px;left:24px;right:24px;z-index:4}
+  .r-fill .r-lab{font-family:var(--font-mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--inkSoft);margin-bottom:8px;display:flex;justify-content:space-between}
+  .r-fill .r-lab a{color:var(--amber);text-transform:none;letter-spacing:0}
+  .segs{display:flex;gap:6px}
+  .seg{flex:1;text-align:center;padding:9px 0;border-radius:10px;font-family:var(--font-mono);font-size:11px;color:var(--inkSoft);
+    background:rgba(255,255,255,.42);border:1px solid var(--glassBorder)}
+  .seg.on{background:var(--amber);color:#fff;border-color:var(--amber);box-shadow:0 4px 10px -3px rgba(201,166,107,.6)}
+
+  .r-meta{position:absolute;top:486px;left:24px;right:24px;text-align:center;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.5px;color:var(--inkMuted);z-index:4}
+
+  .r-cta{position:absolute;bottom:30px;left:24px;right:24px;display:flex;flex-direction:column;gap:10px;z-index:4}
+  .btn-primary{background:var(--amber);color:#fff;text-align:center;padding:15px;border-radius:14px;font-family:var(--font-body);font-weight:600;font-size:15px;letter-spacing:.3px;box-shadow:0 8px 18px -6px rgba(201,166,107,.65)}
+  .btn-ghost{text-align:center;padding:13px;border-radius:14px;font-family:var(--font-body);font-weight:500;font-size:14px;color:var(--ink);background:rgba(255,255,255,.42);border:1px solid var(--glassBorder)}
+
+  /* ---- footer ---- */
+  .foot{max-width:640px;margin:52px auto 0;text-align:center;font-size:12.5px;color:var(--inkSoft);line-height:1.6}
+  .foot code{font-family:var(--font-mono);font-size:11.5px;background:rgba(36,48,64,.06);padding:2px 6px;border-radius:5px;color:var(--ink)}
+</style>
+</head>
+<body>
+
+  <div class="pagehead">
+    <div class="wordmark">Place<span class="w">W</span>ell</div>
+    <div class="tagline">Everything in its place, done well.</div>
+    <h1>Guided Jar Capture</h1>
+    <p>A shape-agnostic staging frame, a tap-to-set fill scale, and a square-normalized result — all in Porcelain Sky glass over the live camera. No OCR, no auto-detection.</p>
+  </div>
+
+  <div class="stage">
+
+    <!-- ============ CAPTURE ============ -->
+    <div class="device">
+      <div class="phone">
+        <div class="screen">
+          <div class="feed"><div class="counter-seam"></div></div>
+
+          <!-- the jar being framed -->
+          <div class="jar">
+            <div class="jar-lid"></div>
+            <div class="jar-body">
+              <div class="jar-fill"></div>
+              <div class="jar-sheen"></div>
+              <div class="jar-label"></div>
+            </div>
+          </div>
+
+          <!-- status bar -->
+          <div class="statusbar"><span>9:41</span><div class="dots"><span></span><span></span><span></span></div></div>
+
+          <!-- top bar -->
+          <div class="topbar glass">
+            <div class="icrc">‹</div>
+            <div class="t-title">Capture jar</div>
+            <div class="icrc">✕</div>
+          </div>
+
+          <!-- staging zone (NOT a jar silhouette) -->
+          <div class="zone">
+            <div class="corner tl"></div><div class="corner tr"></div>
+            <div class="corner bl"></div><div class="corner br"></div>
+            <div class="zone-sub">Fill about two-thirds of the frame</div>
+            <div class="zone-hint">Center your jar in the frame</div>
+          </div>
+
+          <!-- fill scale = manual marker -->
+          <div class="scale glass">
+            <div class="scale-cap">FILL LEVEL</div>
+            <div class="scale-fill"></div>
+            <div class="lvl"><span class="lab">Full</span><span class="tick maj"></span></div>
+            <div class="lvl active"><span class="lab">¾</span><span class="tick maj"></span></div>
+            <div class="lvl"><span class="lab">½</span><span class="tick maj"></span></div>
+            <div class="lvl"><span class="lab">¼</span><span class="tick maj"></span></div>
+            <div class="lvl"><span class="lab">Low</span><span class="tick maj"></span></div>
+          </div>
+
+          <!-- capture cluster -->
+          <div class="cluster">
+            <div class="thumb"></div>
+            <div class="shutter"></div>
+            <div class="flash">⚡</div>
+            <div class="cluster-cap">TAP TO CAPTURE</div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">Capture · frame + <b>tap fill</b></div>
+    </div>
+
+    <!-- ============ REVIEW ============ -->
+    <div class="device">
+      <div class="phone">
+        <div class="screen">
+          <div class="review"></div>
+
+          <div class="statusbar"><span style="color:var(--ink);text-shadow:none">9:41</span>
+            <div class="dots"><span style="background:var(--ink)"></span><span style="background:var(--ink)"></span><span style="background:var(--ink)"></span></div>
+          </div>
+
+          <div class="r-top glass">
+            <div class="icrc">‹</div>
+            <div class="t-title">Review</div>
+            <div class="icrc">✕</div>
+          </div>
+
+          <!-- square-normalized capture -->
+          <div class="r-card glass">
+            <div class="square">
+              <div class="counter-seam"></div>
+              <div class="jar">
+                <div class="jar-lid"></div>
+                <div class="jar-body">
+                  <div class="jar-fill"></div>
+                  <div class="jar-sheen"></div>
+                  <div class="jar-label"></div>
+                </div>
+              </div>
+              <div class="square-tag">1080 × 1080</div>
+            </div>
+          </div>
+
+          <!-- fill confirm (tap scale, horizontal) -->
+          <div class="r-fill">
+            <div class="r-lab"><span>Fill level</span><a>Adjust</a></div>
+            <div class="segs">
+              <div class="seg">Full</div>
+              <div class="seg on">¾</div>
+              <div class="seg">½</div>
+              <div class="seg">¼</div>
+              <div class="seg">Low</div>
+            </div>
+          </div>
+
+          <div class="r-meta">Photo · Fill ¾ · captured just now</div>
+
+          <div class="r-cta">
+            <div class="btn-primary">Add details</div>
+            <div class="btn-ghost">Retake</div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">Review · square + <b>confirm</b> → LabelForm</div>
+    </div>
+
+  </div>
+
+  <div class="foot">
+    Palette locked to <code>Porcelain Sky</code> (in-app surface). Swap to Style AB is a single token-block change.
+    Fill scale is <code>FILL_LEVELS</code>, staging frame is <code>STAGING_ZONE</code>, output is <code>CAPTURE_CANVAS = 1080×1080</code> — all framework config, nothing hardcoded.
+  </div>
+
+</body>
+</html>
