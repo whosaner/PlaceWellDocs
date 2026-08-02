@@ -29,6 +29,20 @@ Completed work, grouped. Kept brief on purpose — this roadmap is forward-looki
 
 ---
 
+## 🎯 Next Up (agreed batch, in order — set 2026-08-02)
+
+The active batch, sequenced. Full rows are in the Master Priority List (Priority = `Next 1..5`); scope in Feature Details.
+
+1. **#10 Real jar photos (default image)** — quick visual win; one-component swap in `CategoryPlaceholder`, keyed by existing category/SKU. Low–Med, SDK-agnostic — ship first.
+2. **#12 Guided jar capture (quantity fill markers)** — fully specced (`Docs/specs/PlaceWell_GuidedCapture_Spec.md`); manual fill scale, **no AI**; square-normalizes photos app-wide. Medium.
+3. **#11 Multi-photo (up to 3)** — extends the photo system from #12. Medium.
+4. **#9 Firebase Analytics** — batch with the **Expo SDK 55 upgrade**; plan: `Docs/roadmap/SDK55_Upgrade_And_Analytics_Plan.md`. Medium.
+5. **#13 Home sharing** — biggest lift (local-first → cloud accounts, opt-in). High.
+
+**Sequencing note:** the SDK 55 upgrade (needed for #9) is disruptive — do it before #10–12 (build on the new SDK) OR ship #10 first (SDK-agnostic) then upgrade. ⚠️ **#9 and #13 both require updating App Store + Play privacy declarations** (from "Data Not Collected").
+
+---
+
 ## Master Priority List
 
 Everything open, in one table (todos + roadmap, de-duplicated). ⭐ = deeper write-up in **Feature Details** below.
@@ -43,11 +57,11 @@ Everything open, in one table (todos + roadmap, de-duplicated). ⭐ = deeper wri
 | 6 | Maestro E2E — Phase 2 | Testing | High | regression suite + `MAESTRO_TEST_MODE` fault injection + GitHub Actions CI |
 | 7 | iOS WidgetKit one-tap scan widget | App | High | native Swift `placewell://scan` |
 | 8 | Etsy/Shopify in-app storefront link | App/Business | High | in-app link into storefront |
-| 9 | Firebase Analytics activation ⭐ | Ops | Deferred (SDK 55) | + google-services.json / GoogleService-Info.plist; **must update store privacy declarations on activation** |
-| 10 | Brand Jar Image Catalog ⭐ | App | Medium | pick curated brand jar images instead of photo/default |
-| 11 | Multi-Photo Labels (up to 3) ⭐ | App | Medium | hero + swipeable carousel; `photoUris: string[]` |
-| 12 | AI Quantity Vision ⭐ | App | Future | 3D jar scan, content-level markers, low-stock notifications (was `roadmap-3d-quantity-vision` todo) |
-| 13 | Household Sharing | App | Medium | cloud sync, invite codes, roles; shown in app Coming Soon panel |
+| 9 | Firebase Analytics activation ⭐ | Ops | **Next 4** | Batch with Expo SDK 55 upgrade — **plan: `Docs/roadmap/SDK55_Upgrade_And_Analytics_Plan.md`**. + google-services.json (Android); **must update store privacy on activation** |
+| 10 | Real jar photos as default image ⭐ | App | **Next 1** | Swap default SVG placeholder for real jar photos in the central `CategoryPlaceholder`, keyed by existing category/SKU. Low–Med. NOT a hosted catalog/picker. |
+| 11 | Multi-Photo Labels (up to 3) ⭐ | App | **Next 3** | hero + swipeable carousel; `photoUris: string[]`; extends #12's capture |
+| 12 | Guided jar capture — quantity fill markers ⭐ | App | **Next 2** | Manual fill scale (Full/¾/½/¼/Low) via guided camera + square-normalized image. **No AI/OCR.** Spec: `Docs/specs/PlaceWell_GuidedCapture_Spec.md` |
+| 13 | Household Sharing | App | **Next 5** | cloud sync, invite codes, roles (opt-in — keep local-first default); **changes privacy declarations**; shown in Coming Soon panel |
 | 14 | Expiry / Date Reminders | App | Medium | badges, filters, local notifications; shown in Coming Soon panel |
 | 15 | Activity Log (per-label history) | App | Medium | needs shared households |
 | 16 | Custom Fields (user-defined metadata) | App | Medium | |
@@ -99,19 +113,21 @@ When a user scans a label (`/s/`) or order QR (`/o/`) without the app, they see 
 - **Option 2:** replace with `expo-firebase-analytics` (Expo ecosystem, no AppDelegate changes).
 - **Steps:** npm install the package → update `app.json` plugins → add `google-services.json` (Android) + upload `GoogleService-Info.plist` to EAS again → **update store privacy declarations**.
 
-### #10 — Brand Jar Image Catalog
-Curated catalog of jar/container brand images (Ball Mason, Weck, OXO, Penzeys, etc.) to pick from instead of a photo/default. Editable on Label Setup (photo step), Bulk Import (per-label), LabelDetail, LabelRecall. Requires: hosted catalog (CDN/bundled), browser UI, `brandImageId` on the storage schema.
+### #10 — Real jar photos as default image
+Replace the default SVG jar/container illustrations with **real jar photos**, keyed by the existing `category` / `labelSku` / `placeholder` logic (the same mechanism used today to pick an illustration by size). Central change in `src/components/CategoryPlaceholder.js` (used by Home, cards, LabelDetail, LabelRecall, LabelForm) — swap the SVG render for an `Image`, plus add the photo assets. **Low–Med effort; the selection plumbing already exists.** NOT a hosted brand catalog / picker UI (that heavier idea is dropped for now). Asset prep: consistent jar photos on a clean Porcelain-Sky-friendly background, one per SKU size.
 
 ### #11 — Multi-Photo Labels (up to 3)
 Allow up to 3 photos per label (angles, contents, on-shelf). Hero shows first photo w/ swipeable carousel. Affects LabelFormScreen, LabelDetail, LabelRecall, and storage schema (`photoUris: string[]`).
 
-### #12 — AI Quantity Vision
-When a user photographs a jar/container, a vision tool (1) generates a 3D representation, (2) overlays content-level markers (measuring-cup style), (3) estimates quantity remaining. Periodic captures track quantity over time; the app then surfaces low-stock / expiry notifications based on consumption rate. Requires: computer-vision model (possibly Apple Vision or on-device ML), 3D rendering, quantity-tracking data model. High complexity — brainstorm/research phase.
+### #12 — Guided jar capture (quantity fill markers)
+**Full spec + mockup: `Docs/specs/PlaceWell_GuidedCapture_Spec.md` + `placewell-guided-capture-mockup.html`.** A guided camera screen that replaces the raw photo picker for jars: a shape-agnostic staging zone frames the jar, the user taps an ordinal **fill level** (Full / ¾ / ½ / ¼ / Low) styled as a measuring scale, and the capture is center-cropped to a fixed **1080×1080 square** (fixes tile mismatch app-wide). **No computer vision, OCR, or 3D — every value is user-set.** Tech: `expo-camera` (already used) + `expo-image-manipulator` (⚠️ removed earlier — re-add for the square crop); no new native deps. Data: `imageUri`, `fillLevel` (enum), `capturedAt`. **3 open design decisions** in spec §9 (default fill, fifth-bucket wording, when the level is set). The earlier "AI 3D quantity vision" moonshot (auto-detected levels, consumption-rate notifications) is deferred separately — this specced **manual** version is v1.
 
 ---
 
 ## Related docs
 
+- **SDK 55 + analytics plan: `Docs/roadmap/SDK55_Upgrade_And_Analytics_Plan.md`** (#9)
+- Guided jar capture spec: `Docs/specs/PlaceWell_GuidedCapture_Spec.md` + mockup (#12)
 - Build & submit: `Docs/release/iOS_Android_Build_Guide.md`, `Release_Validation_Checklist.md`, `PlaceWellApp/VERIFICATION_CHECKLIST.txt`
 - Store listing + review assets: `Docs/release/store-listing/`
 - E2E testing: `Docs/maestro/`, `PlaceWellApp/scripts/maestro/README.md`
