@@ -90,12 +90,10 @@ After selecting YES, click "Add instructions" and enter:
    Password:  (leave blank - no account)
    Any other instructions:  paste the block below.
 
---- BEGIN "Any other instructions"  (Google limit 500 chars; this = 450) -
-No login/account needed. The app opens to an empty Home; features unlock by scanning a PlaceWell QR. To review without a physical label:
-1) Open on the device: https://placewell.app/s/PWMSP2-84A3
-2) If prompted, tap "Open in PlaceWell" - the label SETUP screen opens.
-3) Type any name, add a photo (optional), pick a room/zone, tap Save. The label appears on Home; tap it to view details/recall.
-Order/Bulk import: https://placewell.app/s/PWMQR7-8C64
+--- BEGIN "Any other instructions"  (Google limit 500 chars; this = 490) -
+No login/account needed. To review the QR flow without a physical label:
+On a computer, open https://placewell.app/s/PWMSP2-84A3 - the page displays a scannable QR ("Point your phone camera here"). Scan it with the app's Scan button and the label SETUP screen opens (type any name, add a photo, pick a room/zone, Save; it then appears on Home - tap for details/recall). Or open that URL directly on the test device to reach setup.
+Order / bulk-import QR: https://placewell.app/s/PWMQR7-8C64
 --- END "Any other instructions" ----------------------------------------
 
 TEST LABELS (Maestro fixtures - deterministic + permanent; verified working
