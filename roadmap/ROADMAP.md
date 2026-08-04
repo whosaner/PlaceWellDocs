@@ -88,6 +88,7 @@ Everything open, in one table (todos + roadmap, de-duplicated). ⭐ = deeper wri
 | 37 | Shopify storefront for PlaceWell | Business | Future | dedicated storefront |
 | 38 | Sell physical labels directly (pre-printed packs) | Business | Future | |
 | 39 | New Home-Owner Kit (boxed gifting sets) | Business | Future | move-in gifting / builder partnerships |
+| 40 | Strip unused `SYSTEM_ALERT_WINDOW` permission (Android) | Ops | Low | React Native pulls "display over other apps" into the release manifest; PlaceWell doesn't use overlays. Remove via `android.blockedPermissions` (same mechanism as the foreground-service fix). Verify in the AAB after rebuild. |
 
 ---
 
