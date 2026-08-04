@@ -9,6 +9,7 @@ Use this catalog when you know the task but not which PlaceWell document to open
 | Check out every repo from scratch | `Docs\setup\Project_Checkout_Guide.md` |
 | Set up one local project | `Docs\setup\App_Setup.md`, `QRService_Setup.md`, `PdfGenerator_Setup.md`, or `UI_Setup.md` |
 | Deploy QR service/UI/PDF code to Linode | `Docs\scripts\deploy.ps1` (one-shot), or `Docs\deployment\Server_Reference.md` + `Linode_Deployment.md`/`UI_Deployment.md` |
+| Back up or recover Firestore (labels + orders) | `Docs\deployment\Firestore_Backup_And_DR_Runbook.md` |
 | Build or submit the mobile app | `Docs\release\iOS_Android_Build_Guide.md` and `PlaceWellApp\PRE_BUILD_COMMANDS.txt` |
 | Manually validate a release | `Docs\release\Release_Validation_Checklist.md` and `PlaceWellApp\VERIFICATION_CHECKLIST.txt` |
 | Understand system architecture and deep links | `Docs\architecture\System_Overview.md` |
@@ -54,6 +55,7 @@ Use this catalog when you know the task but not which PlaceWell document to open
 | Document | What it covers | Look here if you want to... | Key contents |
 |---|---|---|---|
 | `Docs\deployment\Server_Reference.md` | Day-to-day Linode server reference. | Check routes, service names, file locations, env vars, update commands, logs, or troubleshooting. | Server summary; public routes/internal services; systemd services; file paths; service management; update quick refs; env vars; Firestore; DNS; troubleshooting. |
+| `Docs\deployment\Firestore_Backup_And_DR_Runbook.md` | Firestore backup and disaster-recovery runbook for the QR service data. | Enable backups, or restore/recover labels & orders after data loss. | Why real label IDs are unrecoverable; PITR; scheduled daily/weekly backups; delete-protection; GCS exports; retain-allocations second copy; restore-by-scenario table; restore drill; `placewell-prod-60ef3` / `(default)` / `us-central1`. |
 | `Docs\deployment\Linode_Deployment.md` | Full first-time Linode deployment guide for the QR service and Apache/SSL stack. | Build a new server or understand the original provisioning flow. | Linode provisioning; DNS; Apache/firewall; FastAPI files; Firebase key; `.env`; venv; systemd; reverse proxy; Let's Encrypt; verification; update commands. |
 | `Docs\deployment\UI_Deployment.md` | Full deployment guide for the operator UI on Linode. | Deploy or repair the web UI, Apache password protection, reverse proxy, and UI service. | Copy files; Python env; UI `.env`; manual run; systemd; Apache Basic Auth; reverse proxy; verification; code/CSV updates; commands; server paths. |
 | `Docs\scripts\deploy.ps1` | One-shot PowerShell deploy script. Packages QR Service + PDF Generator + UI, uploads via scp, extracts on Linode, and restarts services. | Push local server-side code changes to Linode in a single command (does NOT deploy the mobile app). | Stages UI/PDF/QR into tarballs; `scp` to `root@45.56.71.137`; ssh extract to `/opt/placewell-ui` and `/opt/placewell-service`; `systemctl restart`; cleanup. Uses absolute paths — run from anywhere. |

@@ -89,6 +89,7 @@ Everything open, in one table (todos + roadmap, de-duplicated). ⭐ = deeper wri
 | 38 | Sell physical labels directly (pre-printed packs) | Business | Future | |
 | 39 | New Home-Owner Kit (boxed gifting sets) | Business | Future | move-in gifting / builder partnerships |
 | 40 | Strip unused `SYSTEM_ALERT_WINDOW` permission (Android) | Ops | Low | React Native pulls "display over other apps" into the release manifest; PlaceWell doesn't use overlays. Remove via `android.blockedPermissions` (same mechanism as the foreground-service fix). Verify in the AAB after rebuild. |
+| 41 | Firestore backups + disaster recovery | Ops | High | Real label IDs are random (`secrets.choice`) and live ONLY in Firestore — deleting `qr_codes` with no backup permanently orphans every not-yet-activated physical label (camera scans return "not a PlaceWell code"). Enable PITR + daily/weekly scheduled backups + `--delete-protection` on `placewell-prod-60ef3` `(default)`; retain allocation data/PDFs as an independent second copy. Runbook: `Docs/deployment/Firestore_Backup_And_DR_Runbook.md` |
 
 ---
 
