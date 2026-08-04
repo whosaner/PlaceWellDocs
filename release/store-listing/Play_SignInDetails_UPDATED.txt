@@ -1,0 +1,31 @@
+========================================================================
+ GOOGLE PLAY - APP ACCESS / SIGN IN DETAILS   (paste-ready)
+ Updated after the QR-code rejection - uses the CORRECT signature (-84A3).
+ Where: Play Console -> your app -> Policy -> App content ->
+        App access -> Edit -> "Add instructions"
+========================================================================
+
+Is any part of your app restricted?   ->   YES
+
+   Name:      Label setup & recall (requires scanning a PlaceWell QR)
+   Username:  (leave blank)
+   Password:  (leave blank)
+
+
+------------------------------------------------------------------------
+ ANY OTHER INSTRUCTIONS
+ Copy everything between the dashed lines (Google limit 500; this = 490).
+------------------------------------------------------------------------
+No login/account needed. To review the QR flow without a physical label:
+On a computer, open https://placewell.app/s/PWMSP2-84A3 - the page displays a scannable QR ("Point your phone camera here"). Scan it with the app's Scan button and the label SETUP screen opens (type any name, add a photo, pick a room/zone, Save; it then appears on Home - tap for details/recall). Or open that URL directly on the test device to reach setup.
+Order / bulk-import QR: https://placewell.app/s/PWMQR7-8C64
+------------------------------------------------------------------------
+
+
+AFTER SAVING:
+   1. (30-sec check) Open https://placewell.app/s/PWMSP2-84A3 on a computer,
+      scan the QR with the app -> should open setup with "Smoked Paprika"
+      (NOT "Invalid QR Code").
+   2. Resubmit: Publishing overview -> send changes for review.
+      No appeal needed - this is a normal fix-and-resubmit.
+========================================================================
