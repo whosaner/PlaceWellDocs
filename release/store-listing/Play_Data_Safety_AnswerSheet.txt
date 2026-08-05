@@ -37,7 +37,7 @@ questions. Review and submit.
 
 >>> IMPORTANT FUTURE CAVEAT (analytics) <<<
 Your privacy policy mentions analytics because you plan to re-add Firebase
-Analytics at Expo SDK 55+ (tracked as a todo). Analytics is INERT today,
+Analytics at Expo SDK 57 (tracked as a todo). Analytics is INERT today,
 so "No collection" is correct RIGHT NOW. BEFORE you ship any build that
 actually bundles Firebase Analytics, you MUST return here and update Data
 Safety to declare:
@@ -154,5 +154,5 @@ NOTES:
 ========================================================================
  SUMMARY: PlaceWell is local-first with no analytics/ads/crash SDK, so
  Data Safety = "No data collected or shared". Revisit ONLY when Firebase
- Analytics is re-added at Expo SDK 55+.
+ Analytics is re-added at Expo SDK 57.
 ========================================================================

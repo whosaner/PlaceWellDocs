@@ -36,10 +36,10 @@ The active batch, sequenced. Full rows are in the Master Priority List (Priority
 1. **#10 Real jar photos (default image)** — quick visual win; one-component swap in `CategoryPlaceholder`, keyed by existing category/SKU. Low–Med, SDK-agnostic — ship first.
 2. **#12 Guided jar capture (quantity fill markers)** — fully specced (`Docs/specs/PlaceWell_GuidedCapture_Spec.md`); manual fill scale, **no AI**; square-normalizes photos app-wide. Medium.
 3. **#11 Multi-photo (up to 3)** — extends the photo system from #12. Medium.
-4. **#9 Firebase Analytics** — batch with the **Expo SDK 55 upgrade**; plan: `Docs/roadmap/SDK55_Upgrade_And_Analytics_Plan.md`. Medium.
+4. **#9 Firebase Analytics** — batch with the **Expo SDK 57 upgrade**; plan: `Docs/roadmap/SDK57_Upgrade_And_Analytics_Plan.md`. Medium.
 5. **#13 Home sharing** — biggest lift (local-first → cloud accounts, opt-in). High.
 
-**Sequencing note:** the SDK 55 upgrade (needed for #9) is disruptive — do it before #10–12 (build on the new SDK) OR ship #10 first (SDK-agnostic) then upgrade. ⚠️ **#9 and #13 both require updating App Store + Play privacy declarations** (from "Data Not Collected").
+**Sequencing note:** the SDK 57 upgrade (needed for #9) is disruptive — do it before #10–12 (build on the new SDK) OR ship #10 first (SDK-agnostic) then upgrade. ⚠️ **#9 and #13 both require updating App Store + Play privacy declarations** (from "Data Not Collected").
 
 ---
 
@@ -56,7 +56,7 @@ Everything open, in one table (todos + roadmap, de-duplicated). ⭐ = deeper wri
 | 6 | Maestro E2E — Phase 2 | Testing | High | regression suite + `MAESTRO_TEST_MODE` fault injection + GitHub Actions CI |
 | 7 | iOS WidgetKit one-tap scan widget | App | High | native Swift `placewell://scan` |
 | 8 | Etsy/Shopify in-app storefront link | App/Business | High | in-app link into storefront |
-| 9 | Firebase Analytics activation ⭐ | Ops | **Next 4** | Batch with Expo SDK 55 upgrade — **plan: `Docs/roadmap/SDK55_Upgrade_And_Analytics_Plan.md`**. + google-services.json (Android); **must update store privacy on activation** |
+| 9 | Firebase Analytics activation ⭐ | Ops | **Next 4** | Batch with Expo SDK 57 upgrade — **plan: `Docs/roadmap/SDK57_Upgrade_And_Analytics_Plan.md`**. + google-services.json (Android); **must update store privacy on activation** |
 | 10 | Real jar photos as default image ⭐ | App | **Next 1** | Swap default SVG placeholder for real jar photos in the central `CategoryPlaceholder`, keyed by existing category/SKU. Low–Med. NOT a hosted catalog/picker. |
 | 11 | Multi-Photo Labels (up to 3) ⭐ | App | **Next 3** | hero + swipeable carousel; `photoUris: string[]`; extends #12's capture |
 | 12 | Guided jar capture — quantity fill markers ⭐ | App | **Next 2** | Manual fill scale (Full/¾/½/¼/Low) via guided camera + square-normalized image. **No AI/OCR.** Spec: `Docs/specs/PlaceWell_GuidedCapture_Spec.md` |
@@ -110,7 +110,7 @@ When a user scans a label (`/s/`) or order QR (`/o/`) without the app, they see 
 
 ### #9 — Firebase Analytics activation
 `@react-native-firebase` conflicts with Expo SDK 54 New Architecture + Swift AppDelegate. Wrapper already in place (`src/utils/analytics.js`); **zero app code changes** needed on activation.
-- **Option 1:** upgrade to Expo SDK 55+ and re-add `@react-native-firebase/app` + `analytics` (conflict fixed there).
+- **Option 1:** upgrade to Expo SDK 57 (current stable) and re-add `@react-native-firebase/app` + `analytics` (conflict fixed from SDK 55+).
 - **Option 2:** replace with `expo-firebase-analytics` (Expo ecosystem, no AppDelegate changes).
 - **Steps:** npm install the package → update `app.json` plugins → add `google-services.json` (Android) + upload `GoogleService-Info.plist` to EAS again → **update store privacy declarations**.
 
@@ -127,7 +127,7 @@ Allow up to 3 photos per label (angles, contents, on-shelf). Hero shows first ph
 
 ## Related docs
 
-- **SDK 55 + analytics plan: `Docs/roadmap/SDK55_Upgrade_And_Analytics_Plan.md`** (#9)
+- **SDK 57 + analytics plan: `Docs/roadmap/SDK57_Upgrade_And_Analytics_Plan.md`** (#9)
 - Guided jar capture spec: `Docs/specs/PlaceWell_GuidedCapture_Spec.md` + mockup (#12)
 - Build & submit: `Docs/release/iOS_Android_Build_Guide.md`, `Release_Validation_Checklist.md`, `PlaceWellApp/VERIFICATION_CHECKLIST.txt`
 - Store listing + review assets: `Docs/release/store-listing/`

@@ -153,7 +153,7 @@ Why (matches the shipped build, same as Google Data Safety):
 
 Result: your listing shows "Data Not Collected".
 
->>> FUTURE CAVEAT: when you re-add Firebase Analytics at Expo SDK 55+,
+>>> FUTURE CAVEAT: when you re-add Firebase Analytics at Expo SDK 57,
     come back and update App Privacy to declare the analytics data
     (App activity, Diagnostics, Identifiers) before that build ships. <<<
 

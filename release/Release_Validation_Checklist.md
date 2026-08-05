@@ -116,7 +116,7 @@ SHA1:      29:BE:03:5A:97:EB:D9:CD:16:CA:17:15:39:5D:77:96:63:BF:B7:53
 | Android uploaded to Play internal testing | ✅ |
 | App icon | ⏳ Placeholder — replace before App Store submission |
 | Splash screen | ⏳ Placeholder |
-| Firebase config files | ⏳ Deferred to Expo SDK 55+ |
+| Firebase config files | ⏳ Deferred to Expo SDK 57 |
 | Secrets in EAS | ❌ Still in app.json |
 | Privacy policy | ❌ Pending |
 | App Store screenshots | ❌ Pending |
