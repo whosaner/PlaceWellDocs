@@ -1,6 +1,6 @@
 # PlaceWell Unified Roadmap
 
-Last updated: 2026-07-31
+Last updated: 2026-08-05
 
 **Single source of truth** for the PlaceWell ecosystem (app, QR service, UI, PDF generator, admin, business). Everything — launch status, shipped work, the prioritized backlog (the former separate todo list is folded in here), and detailed feature notes — lives in **this one file**. Nothing scattered.
 
@@ -11,7 +11,7 @@ To re-prioritize: edit the **Priority** column in the Master Priority List. Allo
 ## Launch Status 🚀
 
 - **App Store (iOS)** — build **21** (v1.0.0) submitted; **Waiting for Review** (2026-07-30).
-- **Google Play (Android)** — version code **14** (v1.0.0) submitted to the production track; **in review**.
+- **Google Play (Android)** — version code **15** (v1.0.0) on the Production track; **in review** — resubmitted 2026-08-03 after clearing two rejections: invalid demo QR (corrected to the `-84A3` sign-in URL) and the foreground-service permission declaration (removed via `android.blockedPermissions`).
 - Both auto-release on approval (Play: managed publishing off; App Store: automatic release).
 - Store-listing assets, App-Review demo QR codes, and screenshots live in `Docs/release/store-listing/`.
 
@@ -21,7 +21,7 @@ To re-prioritize: edit the **Priority** column in the Master Priority List. Allo
 
 Completed work, grouped. Kept brief on purpose — this roadmap is forward-looking.
 
-- **Launch (App Store + Play)** — production submissions of both apps (v1.0.0); paste-ready store listings (App Store + Play); **App Privacy / Data Safety = "Data Not Collected"**; content ratings (4+/Everyone), target audience 18+, sign-in / app-access + export-compliance declarations; **App Review demo access** via production-signed deterministic QR fixtures + combined review sheet (`Docs/scripts/seed-test-fixtures.ps1`); App Store screenshots (1290×2796); privacy policy live (`placewell.app/privacy`); **Google Play service-account permission fixed** (automated `eas submit --platform android` works); root landing page + AASA/assetlinks deployed.
+- **Launch (App Store + Play)** — production submissions of both apps (v1.0.0); paste-ready store listings (App Store + Play); **App Privacy / Data Safety = "Data Not Collected"**; content ratings (4+/Everyone), target audience 18+, sign-in / app-access + export-compliance declarations; **App Review demo access** via production-signed deterministic QR fixtures + combined review sheet (`Docs/scripts/seed-test-fixtures.ps1`); App Store screenshots (1290×2796); privacy policy live (`placewell.app/privacy`); **Google Play service-account permission fixed** (automated `eas submit --platform android` works); root landing page + AASA/assetlinks deployed; **`support@placewell.app` inbound email forwarding live** (Namecheap free forwarding → niralu.53@gmail.com — makes the privacy-policy / store contact address deliverable).
 - **App experience** — 4-step label wizard; QR scan → lookup → route (LabelSetup / LabelDetail / LabelRecall / BulkImport); bulk import from Order QR (global + per-label room/zone, add-new inline); inline editing on Recall (photo, Best By, In Use Since) and Detail (photo, contents, notes); spice freshness (Best By, In Use Since, refill history); room/zone filter drawer; search; home carousel with correct-label refresh + filter reset; custom branded modals; scan sound + haptics; Coming Soon panel; recently scanned. Plus the iOS photo-capture round: instant PHPicker, native ActionSheet chooser, deterministic retake, photo-card sizing.
 - **Platform** — QR Service on Linode (allocate / lookup / order / scan) backed by Firestore + HMAC-signed URLs; per-label SKU-driven presets across UI → QR → PDF → app; Order QR bulk load + Firestore order record; split scan analytics (`camera_scan_count` / `app_scan_count`, both non-blocking); **scan landing page (7 server-rendered states, App Links / Universal Links)**; `assetlinks.json` (incl. Play signing cert) + `apple-app-site-association` deployed.
 - **Build / ops** — iOS + Android production builds via EAS; **secrets split & moved to EAS** (ALLOCATE vs read-only LOOKUP; HMAC + LOOKUP as EAS secrets, `app.config.js` reads at build time); **production PW monogram icon set** (iOS, Android adaptive w/ gradient background, splash); **cold-start deep-link fix** (leading-slash App Link path routing); Maestro E2E scaffolding (Phase 0 testIDs + Phase 1 smoke suite + scenario generator).
@@ -52,7 +52,6 @@ Everything open, in one table (todos + roadmap, de-duplicated). ⭐ = deeper wri
 | 1 | Print labels — real-world test (every style × template on real containers) | Business | High | Validate physical product + scan on real jars/bins |
 | 2 | Product photography for Etsy (10 shots) | Business | High | See `Docs/etsy/Etsy_Launch_Plan.md` |
 | 3 | Etsy listing go-live (content ready) | Business | High | Blocked on #2 photos |
-| 4 | `support@placewell.app` email forwarding | Ops | Low | Namecheap forward → niralu.53@gmail.com (~2 min); makes the address in the privacy policy deliver |
 | 5 | Deferred Deep Linking ⭐ | App | High | scan→install→route straight to LabelSetup/BulkImport (today: re-scan needed) |
 | 6 | Maestro E2E — Phase 2 | Testing | High | regression suite + `MAESTRO_TEST_MODE` fault injection + GitHub Actions CI |
 | 7 | iOS WidgetKit one-tap scan widget | App | High | native Swift `placewell://scan` |
