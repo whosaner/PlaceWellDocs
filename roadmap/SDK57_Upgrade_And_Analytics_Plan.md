@@ -32,11 +32,69 @@ The SDK 57 upgrade is disruptive (a 3-version RN bump touches native modules). T
 
 ---
 
+## Pre-flight research findings (verified 2026-08-05)
+
+Version data is authoritative — pulled from Expo's bundled-native-modules manifests for `sdk-54` … `sdk-57` (`raw.githubusercontent.com/expo/expo/sdk-XX/packages/expo/bundledNativeModules.json`). Narrative items marked **⟶ verify** must be confirmed against the official release notes during pre-flight (the web changelogs are client-rendered and couldn't be scraped here).
+
+### Version progression — you cross every one of these
+
+| SDK | React Native | React | gesture-handler | reanimated | worklets | screens | datetimepicker |
+|---|---|---|---|---|---|---|---|
+| **54 (now)** | 0.81.5 | 19.1.0 | 2.28 | 4.1.1 | 0.5.1 | 4.16 | 8.4.4 |
+| 55 | 0.83.10 | 19.2.0 | 2.30 | 4.2.1 | 0.7.4 | 4.23 | 8.6.0 |
+| 56 | 0.85.3 | 19.2.3 | 2.31.1 | 4.3.1 | 0.8.3 | 4.26 | **9.1.0** |
+| **57 (target)** | **0.86.2** | 19.2.3 | 2.32 | 4.5.1 | 0.10.1 | 4.26 | 9.1.0 |
+
+- **React Native jumps 0.81.5 → 0.86.2 — five minor releases.** This is the dominant risk. React itself only moves 19.1 → 19.2 (low).
+- **`@react-native-community/datetimepicker` goes major 8 → 9** (at SDK 56).
+- **Expo "unified versioning"** (from SDK 55): every `expo-*` module renumbers to match the SDK major (`expo-camera` 17 → 57.0.x, `expo-audio` 1.1 → 57.0.x). The big version-number jumps are mostly this renumber — `expo install --fix` handles them.
+
+### Our dependency deltas (app `package.json` → SDK 57 target)
+
+| Package | App now | SDK 57 | Risk |
+|---|---|---|---|
+| react-native | 0.81.5 | **0.86.2** | 🔴 5-minor jump — the core risk |
+| react | 19.1.0 | 19.2.3 | 🟢 minor |
+| @react-native-community/datetimepicker | 8.4.4 | **9.1.0** | 🔴 major — isolated to `DatePickerField.js` |
+| react-native-gesture-handler | 2.28 | 2.32 | 🟠 app uses the legacy v1 API |
+| react-native-reanimated | 4.1.1 | 4.5.1 | 🟡 transitive only (not imported by app code) |
+| react-native-worklets (dev) | 0.8.0 | 0.10.1 | 🟡 pre-1.0; rebuild + babel/jest alignment |
+| react-native-screens | 4.16 | 4.26 | 🟡 native; used via navigation |
+| react-native-safe-area-context | 5.6 | 5.7 | 🟢 minor |
+| react-native-svg | 15.15.4 | 15.15.4 | 🟢 already at target |
+| @react-native-async-storage/async-storage | 2.2.0 | 2.2.0 | 🟢 unchanged |
+| expo-camera | 17.0.10 | 57.0.x | 🟡 renumber; re-test scanner |
+| expo-audio | 1.1.1 | 57.0.x | 🟡 renumber; re-test scan sound |
+| expo-build-properties | ^57.0.3 | 57.0.8 | 🟢 already 57.x (anomalous on SDK 54; aligns) |
+| other expo-* (asset/font/haptics/image-picker/…) | 3–31.x | 57.0.x | 🟢 unified renumber via `--fix` |
+
+### Code-mapped watch-outs (what to actually test)
+
+1. **🔴 Date pickers — `src/components/DatePickerField.js`** (the *only* `@react-native-community/datetimepicker` consumer). v8 → **v9 major**. Blast radius is one wrapper, but it drives **Best By / In Use Since** on Recall/Detail/Form. Read the v9 notes; re-test date selection on both platforms.
+2. **🟠 Legacy gesture-handler API** — the app uses the **v1** API (`PanGestureHandler`, `State`) in `BulkImportScreen`, `LabelFormScreen`, `SwipeBackGesture`, `RoomFilterDrawer`. On 2.32 it likely still works but may warn/deprecate. **⟶ verify** it isn't removed; if it is, migrate those 4 files to the new `Gesture.Pan()` API. Test every swipe-to-dismiss sheet/drawer.
+3. **🟡 RN-core `Animated` + `PanResponder`** — `HomeScreen` (carousel), `BulkImportScreen`, `LabelFormScreen` (×2 pickers), `SettingsScreen`, `BiDirectionalSlider`, `SwipeToConfirm`. Stable RN-core API, but with a 5-minor RN jump smoke-test every animated sheet/slider/carousel.
+4. **🟡 reanimated / worklets** — **not imported by app code** (transitive via React Navigation), so low app-code risk; the work is the native rebuild + `babel.config.js` reanimated plugin + `jest` worklets alignment after `--fix`.
+5. **🟢 expo-camera / expo-audio** — renumbered to 57.0.x; re-run the **scanner + scan-sound** smoke (launch-critical paths).
+6. **🟢 New Architecture** — already **ON**, so RN's legacy-arch retirement across this range is low-risk for you; every native dep in the SDK 57 matrix is New-Arch-ready. **⟶ verify** no app-level `newArchEnabled` pin is needed.
+7. **🟢 Firebase** — the New-Arch / static-frameworks conflict that caused the deferral is resolved from ~SDK 55; validate with a **real EAS build** on 57 in Phase 2 (not just a local prebuild).
+
+### Pre-flight reading list
+
+- Expo SDK **55 / 56 / 57** changelogs — `https://expo.dev/changelog/sdk-55` · `/sdk-56` · `/sdk-57`.
+- RN **Upgrade Helper** `0.81.5 → 0.86.2` — `https://react-native-community.github.io/upgrade-helper/?from=0.81.5&to=0.86.2`.
+- RN release notes 0.82–0.86 (New-Arch, removed APIs) — `https://github.com/facebook/react-native/releases`.
+- `datetimepicker` **v9** notes — `https://github.com/react-native-datetimepicker/datetimepicker/releases`.
+- gesture-handler v1→`Gesture` migration — `https://docs.swmansion.com/react-native-gesture-handler/docs/`.
+
+**Net read:** the mechanical bump is `expo install --fix`; the *real* work is (a) the datetimepicker v9 change in one file, (b) confirming the legacy gesture-handler API still works across 4 files, and (c) a full animation + scanner/scan-sound smoke on RN 0.86. Budget the upper end (**3–4 days**) for a 3-SDK / 5-RN-minor jump.
+
+---
+
 ## Phase 1 — Upgrade Expo SDK 54 → 57  (1–2 days; larger than a single-version bump)
 
 **Pre-flight**
 - [ ] Clean git tree; branch `chore/expo-sdk-57`.
-- [ ] Read the **official Expo SDK 55, 56, AND 57 changelogs** (you are crossing three) + the **React Native Upgrade Helper** for the target RN version. List breaking changes touching your deps: reanimated/worklets, gesture-handler, screens, svg, camera, navigation, safe-area-context.
+- [ ] Work through the **Pre-flight research findings** section above (exact version deltas + code-mapped watch-outs). Open the **official Expo SDK 55/56/57 changelogs** + the **RN Upgrade Helper `0.81.5 → 0.86.2`**; confirm the ⟶ verify items (datetimepicker v9, legacy gesture-handler API, RN legacy-arch).
 - [ ] Confirm New Architecture status/migration notes for SDK 57 (expected ON).
 - [ ] Baseline: `npx expo-doctor` + `npx jest --no-coverage` (record current green count).
 
