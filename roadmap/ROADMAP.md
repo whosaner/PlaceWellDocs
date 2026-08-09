@@ -1,6 +1,6 @@
 # PlaceWell Unified Roadmap
 
-Last updated: 2026-08-05
+Last updated: 2026-08-09
 
 **Single source of truth** for the PlaceWell ecosystem (app, QR service, UI, PDF generator, admin, business). Everything — launch status, shipped work, the prioritized backlog (the former separate todo list is folded in here), and detailed feature notes — lives in **this one file**. Nothing scattered.
 
@@ -10,9 +10,9 @@ To re-prioritize: edit the **Priority** column in the Master Priority List. Allo
 
 ## Launch Status 🚀
 
-- **App Store (iOS)** — build **21** (v1.0.0) submitted; **Waiting for Review** (2026-07-30).
-- **Google Play (Android)** — version code **15** (v1.0.0) on the Production track; **in review** — resubmitted 2026-08-03 after clearing two rejections: invalid demo QR (corrected to the `-84A3` sign-in URL) and the foreground-service permission declaration (removed via `android.blockedPermissions`).
-- Both auto-release on approval (Play: managed publishing off; App Store: automatic release).
+- **Google Play (Android)** — ✅ **LIVE on Production** (version code **15**, v1.0.0) — approved & published **2026-08-09**; public listing at `play.google.com/store/apps/details?id=com.placewell.app`. Cleared two rejections en route: invalid demo QR (corrected to the `-84A3` sign-in URL) and the foreground-service permission declaration (removed via `android.blockedPermissions`).
+- **App Store (iOS)** — build **21** (v1.0.0); **Waiting for Review** since 2026-07-30 (~8+ days — abnormally long). Cleared an account-level **EU DSA trader-status** hold on 2026-08-06 (now Active). Plan: give it until **2026-08-10**, then **withdraw from review & re-submit** (fresh submission is evaluated with DSA already Active). Inquiry draft ready in the session `files/AppReview_StatusInquiry.txt`.
+- Auto-release on approval (Play: managed publishing off — already auto-published; App Store: automatic release).
 - Store-listing assets, App-Review demo QR codes, and screenshots live in `Docs/release/store-listing/`.
 
 ---
