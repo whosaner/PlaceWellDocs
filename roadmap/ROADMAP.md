@@ -29,17 +29,22 @@ Completed work, grouped. Kept brief on purpose — this roadmap is forward-looki
 
 ---
 
-## 🎯 Next Up (agreed batch, in order — set 2026-08-02)
+## 🎯 Next Up (agreed batch, in order — re-prioritized 2026-08-09)
 
-The active batch, sequenced. Full rows are in the Master Priority List (Priority = `Next 1..5`); scope in Feature Details.
+The active batch, sequenced. Full rows are in the Master Priority List (Priority = `Next 1..4`); scope in Feature Details.
 
-1. **#10 Real jar photos (default image)** — quick visual win; one-component swap in `CategoryPlaceholder`, keyed by existing category/SKU. Low–Med, SDK-agnostic — ship first.
-2. **#12 Guided jar capture (quantity fill markers)** — fully specced (`Docs/specs/PlaceWell_GuidedCapture_Spec.md`); manual fill scale, **no AI**; square-normalizes photos app-wide. Medium.
-3. **#11 Multi-photo (up to 3)** — extends the photo system from #12. Medium.
-4. **#9 Firebase Analytics** — batch with the **Expo SDK 57 upgrade**; plan: `Docs/roadmap/SDK57_Upgrade_And_Analytics_Plan.md`. Medium.
-5. **#13 Home sharing** — biggest lift (local-first → cloud accounts, opt-in). High.
+1. **#10 Real jar photos (default image)** — quick visual win; one-component swap in `CategoryPlaceholder`, keyed by existing category/SKU. Low–Med, SDK-agnostic. **Blocked on user-provided jar images.** Ship first.
+2. **#12 Guided jar capture (quantity fill markers)** — fully specced (`Docs/specs/PlaceWell_GuidedCapture_Spec.md`); manual fill scale, **no AI**; square-normalizes photos app-wide. Re-adds `expo-image-manipulator`. Medium.
+3. **#13 Household Sharing** — biggest lift (local-first → cloud accounts/sync, opt-in; keep local-first default). ⚠️ changes privacy declarations. High effort.
+4. **#9 Firebase Analytics** — batch with the **Expo SDK 57 upgrade** (do the upgrade first); plan: `Docs/roadmap/SDK57_Upgrade_And_Analytics_Plan.md`. Medium.
 
-**Sequencing note:** the SDK 57 upgrade (needed for #9) is disruptive — do it before #10–12 (build on the new SDK) OR ship #10 first (SDK-agnostic) then upgrade. ⚠️ **#9 and #13 both require updating App Store + Play privacy declarations** (from "Data Not Collected").
+**Deferred from this batch:** #11 Multi-photo (up to 3) — extends #12's capture; will ride along with / after #12 rather than as its own slot.
+
+**Sequencing / timing notes:**
+- ⚠️ **iOS build 21 is still in store review** — per our workflow, hold app-code changes (#10/#12) until it's approved/live to avoid a mid-review rebuild.
+- **#10 needs your jar images** before coding can finish.
+- **#9 requires the SDK 57 upgrade** (3-SDK jump) — do that first; #9 is placed last deliberately.
+- ⚠️ **#9 and #13 both require updating App Store + Play privacy declarations** (from "Data Not Collected").
 
 ---
 
@@ -58,9 +63,9 @@ Everything open, in one table (todos + roadmap, de-duplicated). ⭐ = deeper wri
 | 8 | Etsy/Shopify in-app storefront link | App/Business | High | in-app link into storefront |
 | 9 | Firebase Analytics activation ⭐ | Ops | **Next 4** | Batch with Expo SDK 57 upgrade — **plan: `Docs/roadmap/SDK57_Upgrade_And_Analytics_Plan.md`**. + google-services.json (Android); **must update store privacy on activation** |
 | 10 | Real jar photos as default image ⭐ | App | **Next 1** | Swap default SVG placeholder for real jar photos in the central `CategoryPlaceholder`, keyed by existing category/SKU. Low–Med. NOT a hosted catalog/picker. |
-| 11 | Multi-Photo Labels (up to 3) ⭐ | App | **Next 3** | hero + swipeable carousel; `photoUris: string[]`; extends #12's capture |
+| 11 | Multi-Photo Labels (up to 3) ⭐ | App | Medium | hero + swipeable carousel; `photoUris: string[]`; extends #12's capture — **deferred from the Next batch 2026-08-09** (will ride along with / after #12) |
 | 12 | Guided jar capture — quantity fill markers ⭐ | App | **Next 2** | Manual fill scale (Full/¾/½/¼/Low) via guided camera + square-normalized image. **No AI/OCR.** Spec: `Docs/specs/PlaceWell_GuidedCapture_Spec.md` |
-| 13 | Household Sharing | App | **Next 5** | cloud sync, invite codes, roles (opt-in — keep local-first default); **changes privacy declarations**; shown in Coming Soon panel |
+| 13 | Household Sharing | App | **Next 3** | cloud sync, invite codes, roles (opt-in — keep local-first default); **changes privacy declarations**; shown in Coming Soon panel |
 | 14 | Expiry / Date Reminders | App | Medium | badges, filters, local notifications; shown in Coming Soon panel |
 | 15 | Activity Log (per-label history) | App | Medium | needs shared households |
 | 16 | Custom Fields (user-defined metadata) | App | Medium | |
