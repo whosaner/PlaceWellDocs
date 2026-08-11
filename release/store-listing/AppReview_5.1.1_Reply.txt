@@ -1,0 +1,26 @@
+========================================================================
+ APP STORE CONNECT — REPLY TO APP REVIEW (Guideline 5.1.1(iv))
+ Where: App Store Connect > your app > the rejection message /
+        Resolution Center > Reply. Paste the text below.
+========================================================================
+
+Hello, and thank you for the review.
+
+We have addressed the camera permission issue (Guideline 5.1.1(iv)) in this
+new build:
+
+- The pre-permission screen's button now reads "Continue" (previously
+  "Allow Camera Access"). Tapping it always proceeds directly to the system
+  camera permission prompt.
+
+- We removed the "Not now" button that let users dismiss the message without
+  reaching the system prompt. Users can no longer delay or bypass the
+  permission request from this screen. A standard close (X) control in the
+  corner simply exits the scanner without making a permission choice.
+
+- If a user previously declined and the system prompt can no longer be shown,
+  the button now reads "Open Settings" and links to the Settings app so they
+  can enable the camera.
+
+Please let us know if anything further is needed. Thank you!
+========================================================================
