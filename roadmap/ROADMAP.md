@@ -11,7 +11,7 @@ To re-prioritize: edit the **Priority** column in the Master Priority List. Allo
 ## Launch Status 🚀
 
 - **Google Play (Android)** — ✅ **LIVE on Production** (version code **15**, v1.0.0) — approved & published **2026-08-09**; public listing at `play.google.com/store/apps/details?id=com.placewell.app`. Cleared two rejections en route: invalid demo QR (corrected to the `-84A3` sign-in URL) and the foreground-service permission declaration (removed via `android.blockedPermissions`).
-- **App Store (iOS)** — build **21** (v1.0.0); **Waiting for Review** since 2026-07-30 (~8+ days — abnormally long). Cleared an account-level **EU DSA trader-status** hold on 2026-08-06 (now Active). Plan: give it until **2026-08-10**, then **withdraw from review & re-submit** (fresh submission is evaluated with DSA already Active). Inquiry draft ready in the session `files/AppReview_StatusInquiry.txt`.
+- **App Store (iOS)** — build **21** **REJECTED 2026-08-10** under **Guideline 5.1.1(iv)** (camera pre-permission screen: the "Allow Camera Access" CTA + a "Not now" delay button). **Fixed on `main` (commit `bbb7a09`):** button renamed to "Continue" (always proceeds to the OS request), "Not now" replaced with a top-left close (✕), and an "Open Settings" fallback when previously denied. **Next: rebuild iOS (build 22) + resubmit + reply to the reviewer.** (The earlier EU DSA trader-status hold was cleared 2026-08-06.)
 - Auto-release on approval (Play: managed publishing off — already auto-published; App Store: automatic release).
 - Store-listing assets, App-Review demo QR codes, and screenshots live in `Docs/release/store-listing/`.
 
