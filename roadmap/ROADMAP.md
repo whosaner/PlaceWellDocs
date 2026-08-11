@@ -94,6 +94,7 @@ Everything open, in one table (todos + roadmap, de-duplicated). ⭐ = deeper wri
 | 39 | New Home-Owner Kit (boxed gifting sets) | Business | Future | move-in gifting / builder partnerships |
 | 40 | Strip unused `SYSTEM_ALERT_WINDOW` permission (Android) | Ops | Low | React Native pulls "display over other apps" into the release manifest; PlaceWell doesn't use overlays. Remove via `android.blockedPermissions` (same mechanism as the foreground-service fix). Verify in the AAB after rebuild. |
 | 41 | Firestore backups + disaster recovery | Ops | High | Real label IDs are random (`secrets.choice`) and live ONLY in Firestore — deleting `qr_codes` with no backup permanently orphans every not-yet-activated physical label (camera scans return "not a PlaceWell code"). Enable PITR + daily/weekly scheduled backups + `--delete-protection` on `placewell-prod-60ef3` `(default)`; retain allocation data/PDFs as an independent second copy. Runbook: `Docs/deployment/Firestore_Backup_And_DR_Runbook.md` |
+| 42 | Per-spice remote stock jar images ⭐ | App/Ops | High | Extend #10 from one generic jar-per-SKU to **per-spice** (and later **per-quantity-level**: ¼/½/¾/Full) art — WITHOUT bundling the matrix or shipping an app release per new spice. Host pre-resized **WebP** remotely (Firebase Storage), resolve by `spiceKey`/`labelSku`/`qtyLevel`, cache via **`expo-image`**, keep only 3 small bundled per-SKU fallbacks. Needs a stable `spice_key` from the QR service + a JSON manifest. Full research + phased plan: `Docs/roadmap/Jar_Image_Strategy_Research.md` |
 
 ---
 
@@ -128,11 +129,21 @@ Allow up to 3 photos per label (angles, contents, on-shelf). Hero shows first ph
 ### #12 — Guided jar capture (quantity fill markers)
 **Full spec + mockup: `Docs/specs/PlaceWell_GuidedCapture_Spec.md` + `placewell-guided-capture-mockup.html`.** A guided camera screen that replaces the raw photo picker for jars: a shape-agnostic staging zone frames the jar, the user taps an ordinal **fill level** (Full / ¾ / ½ / ¼ / Low) styled as a measuring scale, and the capture is center-cropped to a fixed **1080×1080 square** (fixes tile mismatch app-wide). **No computer vision, OCR, or 3D — every value is user-set.** Tech: `expo-camera` (already used) + `expo-image-manipulator` (⚠️ removed earlier — re-add for the square crop); no new native deps. Data: `imageUri`, `fillLevel` (enum), `capturedAt`. **3 open design decisions** in spec §9 (default fill, fifth-bucket wording, when the level is set). The earlier "AI 3D quantity vision" moonshot (auto-detected levels, consumption-rate notifications) is deferred separately — this specced **manual** version is v1.
 
+### #42 — Per-spice remote stock jar images
+Evolve #10's placeholder art into a **remote, per-spice (later per-quantity-level) catalog**, driven by the owner's constraint: **add a new spice label without an app-store release.**
+- **Scale:** 28 spices → `3×28 = 84` images near-term; `3×28×4 = 336` with quantity levels (≈600 at 50 spices). Too large to bundle (even as WebP, 34–118 MB) → **don't bundle the matrix.**
+- **Architecture:** host **WebP** (pre-resized 480/720px) on **Firebase Storage** at deterministic URLs (`/jar-stock/v1/spice/{spiceKey}/{labelSku}/{qty}.webp`); resolve via a `stockImageResolver`; cache with **`expo-image`**; a small **manifest.json** lists available art; keep only the 3 generic per-SKU jars bundled as offline fallback.
+- **App changes:** add `expo-image`, the resolver, persist a stable `spiceKey` on labels, thread it through `CategoryPlaceholder`, map `spice_key` in the QR client, and (Phase 2) a `quantityLevel` field + ¼/½/¾/Full picker.
+- **QR service:** add/serve `spice_key` (+ optional `image_key`); generate/upload art + manifest when new spices are added — **no app release needed.**
+- **Fallback chain:** user photo → cached remote → remote → bundled per-SKU → generic container. User photos always win (no conflict with #11); stock per-qty images supersede #12's manual markers for the *no-photo* case.
+- **Full research (scale math, URL/manifest schema, perf/memory, phased plan, citations):** `Docs/roadmap/Jar_Image_Strategy_Research.md`.
+
 ---
 
 ## Related docs
 
 - **SDK 57 + analytics plan: `Docs/roadmap/SDK57_Upgrade_And_Analytics_Plan.md`** (#9)
+- **Jar image strategy (per-spice/qty remote art): `Docs/roadmap/Jar_Image_Strategy_Research.md`** (#42, extends #10/#12)
 - Guided jar capture spec: `Docs/specs/PlaceWell_GuidedCapture_Spec.md` + mockup (#12)
 - Build & submit: `Docs/release/iOS_Android_Build_Guide.md`, `Release_Validation_Checklist.md`, `PlaceWellApp/VERIFICATION_CHECKLIST.txt`
 - Store listing + review assets: `Docs/release/store-listing/`
