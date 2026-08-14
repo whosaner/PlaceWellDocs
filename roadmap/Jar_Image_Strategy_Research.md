@@ -1,5 +1,14 @@
 # Jar Image Strategy Research
 
+> **⚠️ Partially superseded.** This document was written before the art existed and before
+> the key contract was verified. The authoritative implementation spec is
+> **`Docs/roadmap/Stock_Jar_Image_Implementation_Plan.md`**; where the two disagree, that
+> document wins. Specifically outdated here: the 28-spice scale math (the catalog is now
+> **26 spices / 78 images, already rendered**), the Firebase Storage hosting recommendation
+> (now **Linode**), and the assumption that spice keys would match (**only 21 of 28 did**).
+> The fallback chain, `expo-image` caching, resolver seam, and don't-bundle-the-matrix
+> conclusions all still hold.
+
 *Research + design for roadmap #10 / #11 / #12. Created 2026-08-11. App baseline: Expo SDK 54, React Native 0.81; latest placeholder implementation reviewed read-only from `PlaceWellApp` branch `feature/real-jar-photos`.*
 
 ---
