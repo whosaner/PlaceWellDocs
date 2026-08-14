@@ -80,6 +80,15 @@ Phone camera or in-app scanner
 - Style edits update typography/color configuration used by rendered labels and operator choices.
 - Category edits update operator dropdowns and mobile-app category behavior so newly generated labels scan into the correct experience.
 
+### 4. Stock jar art keys (`spice_key`)
+- `data/spice.csv` in PlaceWellUI is the **single source of truth** for `spice_key`, the stable key that binds a label to its remote stock jar image.
+- Keys match the renderer spice IDs in `spice-jar-renderer-code-assets/config/spices/*.json` **1:1** — 26 spices, no orphans on either side. A pytest guard (`PlaceWellQRService/tests/test_spice_catalog_keys.py`) fails if the two ever diverge.
+- `order_builder.build_item_skeletons` resolves the key **server-side by display name** (case- and whitespace-insensitive). Operators never type it, so a typo cannot produce a label with unreachable art. An unknown name resolves to `None`, which falls back to the generic per-SKU jar.
+- The key flows: `spice.csv` -> `order_builder` -> `qr_client` -> `allocate` -> Firestore `qr_codes.spice_key` -> `lookup` / `order` responses -> app.
+- Blanks and Order QRs never carry a key.
+- Labels allocated before this field existed are stamped by `PlaceWellQRService/scripts/backfill_spice_keys.py`, which also maps three superseded printed names (`Cayenne`, `Fennel Seeds`, `Mustard Seeds`) onto their current keys.
+- Full spec: `Docs/roadmap/Stock_Jar_Image_Implementation_Plan.md`.
+
 ## QR URL format and deep-link strategy
 
 ### QR URL format
@@ -115,6 +124,7 @@ https://placewell.app/s/{LABELID}-{SIGNATURE}?n={name}
   "label_name": "Basil",
   "category": "spice",
   "label_sku": "round-1.5",
+  "spice_key": "basil",
   "created_at": "Timestamp",
   "status": "active",
   "camera_scan_count": 0,
