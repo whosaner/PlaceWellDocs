@@ -137,7 +137,7 @@ Evolve #10's placeholder art into a **remote, per-spice (later per-quantity-leve
 - **QR service:** add/serve `spice_key` (+ optional `image_key`); generate/upload art + manifest when new spices are added — **no app release needed.**
 - **Fallback chain:** user photo → cached remote → remote → bundled per-SKU → generic container. User photos always win (no conflict with #11); stock per-qty images supersede #12's manual markers for the *no-photo* case.
 - **⚠️ Corrected by implementation planning:** the art is **already rendered** — 26 spices × 3 SKUs = **78 images** (not 28/84). Key verification found **only 21 of 28 keys matched**; the catalog is now reconciled to exactly the 26 spices that have art (Allspice/Cardamom/Star Anise/White Pepper removed; Cayenne→Cayenne Pepper, Fennel Seeds→Fennel, Mustard Seeds→Mustard Seed; Italian Seasoning + Salt added). Hosting moved from Firebase Storage to **Linode** (infra exists; payload ≈15–25 MB). Remaining work is the **`spice_key` contract**, hosting, and app resolution — not art generation.
-- **Authoritative implementation spec: `Docs/roadmap/Stock_Jar_Image_Implementation_Plan.md`** (answers lookup/offline/caching/fallback/versioning/consistency; Phase 0 is a blocking server-side key reconciliation).
+- **Authoritative implementation spec: `Docs/roadmap/Stock_Image_Implementation_Plan.md`** (answers lookup/offline/caching/fallback/versioning/consistency; Phase 0 is a blocking server-side key reconciliation).
 - **Original research (scale math, URL/manifest schema, perf/memory, citations):** `Docs/roadmap/Jar_Image_Strategy_Research.md`.
 
 ---
@@ -145,7 +145,7 @@ Evolve #10's placeholder art into a **remote, per-spice (later per-quantity-leve
 ## Related docs
 
 - **SDK 57 + analytics plan: `Docs/roadmap/SDK57_Upgrade_And_Analytics_Plan.md`** (#9)
-- **Stock jar image implementation plan (authoritative): `Docs/roadmap/Stock_Jar_Image_Implementation_Plan.md`** (#42)
+- **Stock jar image implementation plan (authoritative): `Docs/roadmap/Stock_Image_Implementation_Plan.md`** (#42)
 - Jar image strategy research (partially superseded): `Docs/roadmap/Jar_Image_Strategy_Research.md` (#42, extends #10/#12)
 - Guided jar capture spec: `Docs/specs/PlaceWell_GuidedCapture_Spec.md` + mockup (#12)
 - Build & submit: `Docs/release/iOS_Android_Build_Guide.md`, `Release_Validation_Checklist.md`, `PlaceWellApp/VERIFICATION_CHECKLIST.txt`

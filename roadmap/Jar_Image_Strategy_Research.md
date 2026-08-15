@@ -2,7 +2,7 @@
 
 > **⚠️ Partially superseded.** This document was written before the art existed and before
 > the key contract was verified. The authoritative implementation spec is
-> **`Docs/roadmap/Stock_Jar_Image_Implementation_Plan.md`**; where the two disagree, that
+> **`Docs/roadmap/Stock_Image_Implementation_Plan.md`**; where the two disagree, that
 > document wins. Specifically outdated here: the 28-spice scale math (the catalog is now
 > **26 spices / 78 images, already rendered**), the Firebase Storage hosting recommendation
 > (now **Linode**), and the assumption that spice keys would match (**only 21 of 28 did**).

@@ -1,7 +1,8 @@
-# Stock Jar Image — Implementation Plan (Roadmap #42)
+# Stock Image — Implementation Plan (Roadmap #42)
 
-*Authoritative implementation spec for per-label stock jar images.*
+*Authoritative implementation spec for per-label stock images.*
 *Created 2026-08-14. Revised 2026-08-14 (rev 2) after a full design review.*
+*Revised 2026-08-14 (rev 3): category-agnostic naming, label-name overlay geometry.*
 
 *Supersedes `Jar_Image_Strategy_Research.md`, which was written before the art was produced
 and before the key contract was verified. Where the two disagree, **this document wins**.*
@@ -11,6 +12,11 @@ and before the key contract was verified. Where the two disagree, **this documen
 > `labelSku`; the manifest gained `defaultQuantity` and a 3-part lookup key; the bundled
 > manifest snapshot was dropped; `expo-image`'s managed cache was replaced with an
 > app-owned cache in `documentDirectory`. Sections 4, 5, 10 and 11 are new or rewritten.
+
+> **Revision 3** removes "jar"/"spice" from all implementation-facing names (§7), since the
+> mechanism must serve future categories, and adds the label-name overlay design that rev 2
+> omitted: §4.6 (geometry), D15–D17, and BC-32…BC-40. **D16 reverses rev 2**: the overlay
+> now renders the *printed* label name, not the user's editable one.
 
 ---
 
@@ -74,6 +80,9 @@ have 404'd.**
 | D12 | **Export lossless WebP at 720×720.** | Measured: 217 KB each, 16.5 MB catalog. Matches the largest real surface (hero card ≈ 774 px at 3×). |
 | D13 | **No bundled manifest snapshot** *(revised)*. | A manifest without image bytes solves nothing offline; it only adds a build-sync artifact. |
 | D14 | **The app owns its image cache in `documentDirectory`.** | `cacheDirectory` is OS-purgeable; a managed library cache cannot be queried synchronously, which would break the no-flicker contract. |
+| D15 | **The cached file is the bare image with a blank label. The composite is never cached.** | One file serves every label using that key/SKU. Baking the name would put it in the cache key, multiply storage by distinct names, force a rewrite on any change, and rasterise text that should stay crisp at every size. |
+| D16 | **The overlay shows the name printed on the physical label — not the user's editable name** *(revised — rev 2 said the opposite)*. | The image exists to help the user recognise a physical object. The printed text cannot change, so rendering an edited name would depict a jar that does not exist. |
+| D17 | **`printedLabelName` is persisted on the label at creation and never written by an app-side edit.** | The server's `label_name` is visible exactly once — during the first lookup. Every later scan resolves locally by `label_id` and never contacts the server. |
 
 > **Firestore is not a hosting option.** It is a document database; binaries do not belong in
 > documents. The real comparison was Firebase **Hosting** (a CDN for static files) — not
@@ -116,8 +125,8 @@ Firebase Hosting, static files only. **No Firebase SDK is used to fetch them** �
 public CDN assets retrieved with an ordinary HTTPS GET. No auth, no tokens, no rules.
 
 ```
-https://<project-id>.web.app/jar-stock/manifest.v1.json
-https://<project-id>.web.app/jar-stock/img/<file>.webp
+https://<project-id>.web.app/stock-images/manifest.v1.json
+https://<project-id>.web.app/stock-images/img/<file>.webp
 ```
 
 The plain `web.app` URL is used for now; a custom domain (`img.placewell.app`) can be added
@@ -131,7 +140,7 @@ later by changing only `baseUrl` in the manifest — no app change.
   "manifestRevision": 7,
   "generatedAt": "2026-08-14T17:20:00Z",
   "rendererVersion": "0.9.0",
-  "baseUrl": "https://<project-id>.web.app/jar-stock/img/",
+  "baseUrl": "https://<project-id>.web.app/stock-images/img/",
 
   "quantities": ["almost-full"],
   "defaultQuantity": "almost-full",
@@ -191,13 +200,13 @@ they are 2054 KB each and decode to ~6 MB RAM.
     "public": "public",
     "headers": [
       {
-        "source": "/jar-stock/img/**",
+        "source": "/stock-images/img/**",
         "headers": [
           { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
         ]
       },
       {
-        "source": "/jar-stock/manifest.v1.json",
+        "source": "/stock-images/manifest.v1.json",
         "headers": [
           { "key": "Cache-Control", "value": "public, max-age=300, must-revalidate" }
         ]
@@ -214,11 +223,92 @@ auth would break caching for no security benefit.
 
 | Module | Responsibility |
 |---|---|
-| `jarArtService` | The **only** code that fetches, caches, and resolves. Owns the manifest cache, the image cache, the in-memory index, and the failure ledger. |
-| `LabeledJarPhoto` | Renders image + label-name overlay using manifest geometry. |
+| `stockImageService` | The **only** code that fetches, caches, and resolves. Owns the manifest cache, the image cache, the in-memory index, and the failure ledger. |
+| `LabeledStockImage` | Renders image + label-name overlay using manifest geometry. |
 | `CategoryPlaceholder` | Existing seam; unchanged public API. Screens keep calling it. |
 
 **No screen ever builds a URL or calls `fetch` for art.**
+
+---
+
+### 4.6 Label name overlay
+
+The renderer emits a **blank** label (`"mode": "dynamic"`) plus normalised geometry. The app
+draws the name at render time as a native `<Text>` node. Nothing is baked (D15).
+
+#### 4.6.1 The three SKUs differ materially
+
+| SKU | centerX | centerY | width | height |
+|---|---:|---:|---:|---:|
+| `round-1.5` | 0.500 | 0.511 | 0.235 | 0.080 |
+| `square-1.75` | 0.504 | 0.538 | 0.235 | 0.105 |
+| `rect-portrait` | 0.502 | 0.523 | **0.160** | 0.100 |
+
+All three share `canvas: 1254 × 1254`, `rotationDegrees: 0`, `maximumLines: 2`,
+`textAlign: center`, `textTransform: uppercase`.
+
+`rect-portrait`'s box is **47% narrower** than the other two and sits lower. `SpiceJarPlaceholder`
+currently hardcodes `top: '40%'` and `width: '68%'` for every SKU, which is wrong for all
+three — this is why geometry must come from the manifest (BC-33).
+
+#### 4.6.2 Step 1 — contain-fit
+
+Masters are square; containers are not. Letterboxing is always in play, so the label box must
+be derived from the **rendered image rectangle**, never the container (BC-32).
+
+```
+scale     = min(containerW / canvasW, containerH / canvasH)
+renderedW = canvasW × scale       originX = (containerW − renderedW) / 2
+renderedH = canvasH × scale       originY = (containerH − renderedH) / 2
+```
+
+#### 4.6.3 Step 2 — normalised geometry → container coordinates
+
+```
+boxX = originX + (centerX − width  / 2) × renderedW
+boxY = originY + (centerY − height / 2) × renderedH
+boxW = width  × renderedW
+boxH = height × renderedH
+```
+
+**Worked example** — `round-1.5` in the recall hero card (258 × 348 pt):
+
+```
+scale     = min(258/1254, 348/1254) = 0.2057
+rendered  = 258 × 258      originX = 0      originY = (348 − 258)/2 = 45
+boxX = 0  + (0.500 − 0.1175) × 258 =  98.7
+boxY = 45 + (0.511 − 0.040)  × 258 = 166.5
+boxW = 0.235 × 258 =  60.6
+boxH = 0.080 × 258 =  20.6
+```
+
+#### 4.6.4 Step 3 — text fitting
+
+1. Apply `textTransform` (`uppercase`).
+2. Set `numberOfLines = maximumLines` and `textAlign` from the manifest.
+3. Seed `fontSize` from `boxH / maximumLines × capHeightFactor`, then allow
+   `adjustsFontSizeToFit` with `minimumFontScale` to shrink long names.
+4. Apply `rotationDegrees` as a transform. It is `0` for all current SKUs, but it is in the
+   schema and must be honoured.
+
+Because every value derives from normalised geometry, the overlay lands in the same place
+relative to the jar at **every** size preset (BC-34).
+
+#### 4.6.5 Which name is drawn
+
+Precedence (D16):
+
+```
+① printedLabelName      server-provided, immutable — the physical truth
+② manifest displayName  catalog name for that imageKey (pre-backfill labels)
+③ user's name           blanks / handwritten labels, where nothing was printed
+```
+
+Rung ③ is correct for blank labels specifically: nothing was printed, the user wrote on the
+label themselves, so their name *is* the closest thing to physical truth.
+
+Editing a label's name in the app changes headings, search, and sorting — **never the image**
+(BC-36).
 
 ---
 
@@ -265,7 +355,7 @@ Numbered, individually testable. Test suites in §11 reference these IDs.
 | **BC-18** | Images are written to `documentDirectory`, never `cacheDirectory`. |
 | **BC-19** | A cached image triggers **zero** network calls on re-render. |
 | **BC-20** | Download failure renders the placeholder and records an entry in the failure ledger keyed by URL. |
-| **BC-21** | Transient failures (timeout, offline, 5xx) retry on the next natural render of that jar, with backoff: next session → 1 h → 6 h → 24 h cap. |
+| **BC-21** | Transient failures (timeout, offline, 5xx) retry on the next natural render of that image, with backoff: next session → 1 h → 6 h → 24 h cap. |
 | **BC-22** | A `404` is recorded as permanent and is **not** retried on that URL. |
 | **BC-23** | A changed content hash produces a new URL, which is absent from the ledger and therefore fetched normally — self-healing after a corrected deploy. |
 | **BC-24** | There is **no startup sweep** that retries all previously failed images. |
@@ -281,6 +371,20 @@ Numbered, individually testable. Test suites in §11 reference these IDs.
 | **BC-29** | Batch downloads are capped at 4–6 concurrent. |
 | **BC-30** | Batch partial failure is tolerated: successes are cached, failures are ledgered, no error UI, no retry storm. |
 | **BC-31** | Stock art is warmed **even when the user sets their own photo**, so a later removal reveals it instantly with no fetch. |
+
+### 5.6 Label name overlay
+
+| ID | Contract |
+|---|---|
+| **BC-32** | The label box is computed from the **rendered image rectangle** (after contain-fit letterboxing), never from the raw container. Asserted with a deliberately non-square container. |
+| **BC-33** | Geometry comes from the manifest. No position, size, or font value for the overlay is hardcoded in a component. |
+| **BC-34** | For a given SKU, the overlay's position relative to the image is identical across all size presets (`full`/`wizard`/`tile`/`mini`) when normalised. |
+| **BC-35** | All three SKUs produce distinct, correct boxes from the same code path — `rect-portrait` in particular is narrower and lower. |
+| **BC-36** | Editing a label's `name` does **not** change the rendered overlay. |
+| **BC-37** | Overlay name precedence is exactly `printedLabelName` → manifest `displayName` → `name`. |
+| **BC-38** | `printedLabelName` is written once at creation (from `lookupLabel` or `lookupOrder`) and is never mutated by any app-side edit path. |
+| **BC-39** | The cache key excludes the name. Two labels with different names but the same `imageKey\|labelSku\|quantity` share **one** cached file and issue **one** download. |
+| **BC-40** | `textTransform`, `textAlign`, `maximumLines` and `rotationDegrees` from the manifest are all applied. |
 
 ---
 
@@ -319,13 +423,16 @@ device, ever. Only the manifest revalidates, usually as a cheap `304`.
 
 ### Q5 — Label name and local storage
 
-The renderer emits a **blank** label with `"mode": "dynamic"` plus normalised geometry. The
-app renders the transparent WebP, then absolutely positions a `<Text>` using the manifest's
-`label` block, scaled to the **rendered image rectangle** (accounting for `contain`
-letterboxing) — not the container.
+Geometry and text fitting are specified in full in §4.6. Summary:
 
-The composite "image + name" is never written to disk; it is recomposed each render, which
-costs nothing and stays correct after a rename.
+- The renderer emits a **blank** label plus normalised geometry; the app draws the name as a
+  native `<Text>` positioned from the **rendered image rect**, not the container (BC-32).
+- The composite is **never** written to disk (D15). The cached file is the bare image, shared
+  by every label with the same `imageKey|labelSku|quantity` (BC-39). Recomposing each render
+  costs nothing and keeps text crisp at every preset.
+- The name drawn is the **printed** one, not the user's editable name (D16, §4.6.5). A
+  rename therefore cannot invalidate a cached image, and "re-render on rename" is not a case
+  that exists (BC-36).
 
 **Prerequisite:** bundle the overlay font so text metrics are identical across devices.
 
@@ -389,6 +496,8 @@ printed labels**. It must happen before the backfill runs; afterwards it becomes
 
 Files renamed: `backfill_spice_keys.py` → `backfill_image_keys.py`,
 `test_spice_catalog_keys.py` → `test_image_catalog_keys.py`.
+Functions renamed: `build_spice_key_index()` → `build_image_key_index()`,
+`resolve_spice_key()` → `resolve_image_key()`.
 
 ---
 
@@ -397,7 +506,7 @@ Files renamed: `backfill_spice_keys.py` → `backfill_image_keys.py`,
 The rendered output (78 × {PNG, lossless WebP, JSON sidecar} ≈ 300–400 MB) currently sits in
 `C:\PlaceWell\Images`, untracked. Proposed:
 
-- A dedicated repo (e.g. `PlaceWell-JarStockMasters`), **not** inside the renderer repo.
+- A dedicated repo (e.g. `PlaceWell-StockImageMasters`), **not** inside the renderer repo.
 - **Git LFS** for `*.png` and `*.webp`, so re-renders do not bloat every clone forever.
 - Keep the existing `<labelSku>/<imageKey>/<quantity>/` layout — it matches the renderer's
   own output and the per-SKU `batch-manifest.json` paths remain valid.
@@ -431,10 +540,33 @@ non-spice categories can reuse it.
 
 ### Backfill notes
 
-Labels already allocated carry no key. The migration maps `label_name → image_key`, including
-the three superseded names (`Cayenne`, `Fennel Seeds`, `Mustard Seeds`). Physical labels in
-customers' hands keep their printed text — harmless, provided the key is correct. Labels for
-the 4 removed spices resolve to the built-in placeholder, which is working as designed.
+Labels already allocated carry neither field. The migration maps `label_name → image_key` and
+also persists `printedLabelName`, including the three superseded names (`Cayenne`,
+`Fennel Seeds`, `Mustard Seeds`) — for those, `printedLabelName` must be the **old** printed
+text, not the new catalog name, since that is what is physically on the jar. Labels for the 4
+removed spices resolve to the built-in placeholder, which is working as designed.
+
+### Capture points for `printedLabelName`
+
+The server's `label_name` is visible to the app exactly **once**. `ScannerScreen` resolves a
+known label locally via `getLabelById(labelId)` and never calls the server again:
+
+```
+scan → validateQRCode (local HMAC, works offline) → getLabelById(labelId)
+   ├── FOUND     → navigate. NO server call, ever again.
+   └── NOT FOUND → lookupLabel()  ← the only moment label_name is available
+```
+
+So both creation paths must capture it:
+
+| Path | Entry point |
+|---|---|
+| Single label | `lookupLabel()` → label creation |
+| Bulk / order | `lookupOrder()` → `orderLabels` → `bulkCreateLabels()` |
+
+Missing it at creation means the value is unrecoverable without a network round-trip per
+label — exactly what this flow is designed to avoid. Labels created before this ships are
+reachable only via the backfill above.
 
 ---
 
@@ -455,11 +587,12 @@ The export must be **deterministic and repeatable** — same masters in, same ha
 
 ### 11.1 Implementation
 
-- `jarArtService` (§4.5) — manifest cache + ETag, image cache in `documentDirectory`,
+- `stockImageService` (§4.5) — manifest cache + ETag, image cache in `documentDirectory`,
   in-memory index, failure ledger with backoff, prefetch API.
-- Persist `imageKey` through `storage.js`, `qrService.js`, and `bulkCreateLabels`.
-- `LabeledJarPhoto` + wiring through `CategoryPlaceholder`.
-- Fix `photoUri` persistence (§12 risk 1).
+- Persist `imageKey` **and `printedLabelName`** through `storage.js`, `qrService.js`, and
+  `bulkCreateLabels`. `printedLabelName` must be excluded from every edit path.
+- `LabeledStockImage` + wiring through `CategoryPlaceholder`, implementing §4.6.
+- Fix `photoUri` persistence (§13 risk 1).
 
 ### 11.2 Test suites
 
@@ -467,16 +600,18 @@ Each maps to behaviour contracts in §5.
 
 | Suite | Covers | Key assertions |
 |---|---|---|
-| `jarArtService.manifest.test.js` | BC-03…BC-07 | cold fetch writes cache + ETag; `If-None-Match` sent; `304` writes nothing; unknown `schemaVersion` ignored; stale served offline |
-| `jarArtService.manifestFailure.test.js` | BC-08, BC-09 | failure → placeholder, no throw; retry throttled to 1 per 15 min; retried on cold start |
-| `jarArtService.resolve.test.js` | BC-10…BC-16 | precedence order; `default` → `defaultQuantity`; quantity miss falls back; null key is a normal branch; identical cache key across presets |
-| `jarArtService.imageFetch.test.js` | BC-17…BC-19 | URL = `baseUrl + file`; written to `documentDirectory` **not** `cacheDirectory`; second render issues **0** requests |
-| `jarArtService.imageFailure.test.js` | BC-20, BC-22 | failure → placeholder + ledger entry; `404` marked permanent |
-| `jarArtService.imageRetry.test.js` | BC-21, BC-23, BC-24 | backoff 1 h/6 h/24 h via fake timers; `404` never retried; new hash fetched normally; no startup sweep |
-| `jarArtService.coldStart.test.js` | BC-01, BC-02 | `initializeStorage()` resolves with no art request; no timers or `AppState` listeners registered |
+| `stockImageService.manifest.test.js` | BC-03…BC-07 | cold fetch writes cache + ETag; `If-None-Match` sent; `304` writes nothing; unknown `schemaVersion` ignored; stale served offline |
+| `stockImageService.manifestFailure.test.js` | BC-08, BC-09 | failure → placeholder, no throw; retry throttled to 1 per 15 min; retried on cold start |
+| `stockImageService.resolve.test.js` | BC-10…BC-16 | precedence order; `default` → `defaultQuantity`; quantity miss falls back; null key is a normal branch; identical cache key across presets |
+| `stockImageService.imageFetch.test.js` | BC-17…BC-19 | URL = `baseUrl + file`; written to `documentDirectory` **not** `cacheDirectory`; second render issues **0** requests |
+| `stockImageService.imageFailure.test.js` | BC-20, BC-22 | failure → placeholder + ledger entry; `404` marked permanent |
+| `stockImageService.imageRetry.test.js` | BC-21, BC-23, BC-24 | backoff 1 h/6 h/24 h via fake timers; `404` never retried; new hash fetched normally; no startup sweep |
+| `stockImageService.coldStart.test.js` | BC-01, BC-02 | `initializeStorage()` resolves with no art request; no timers or `AppState` listeners registered |
 | `BulkImportScreen.artPrefetch.test.js` | BC-27…BC-30 | 30 labels → M unique requests (dedupe); concurrency cap never exceeded; partial failure renders no error UI |
 | `LabelFormScreen.artPrefetch.test.js` | BC-25, BC-26, BC-31 | manifest prefetch on mount, unawaited; image prefetch on Next; art warmed even when a user photo is set |
-| `LabeledJarPhoto.noFlicker.test.js` | BC-11, BC-12 | cached art present on the **first** committed frame; uncached never swaps mid-view |
+| `LabeledStockImage.noFlicker.test.js` | BC-11, BC-12 | cached art present on the **first** committed frame; uncached never swaps mid-view |
+| `LabeledStockImage.geometry.test.js` | BC-32…BC-35, BC-40 | exact pixel boxes for all three SKUs at several container sizes, incl. a **non-square** container to catch letterboxing regressions; no hardcoded geometry; `rect-portrait` distinct from the other two; transform/align/lines applied |
+| `LabeledStockImage.overlayName.test.js` | BC-36…BC-39 | precedence `printedLabelName`→`displayName`→`name`; renaming leaves the overlay unchanged; `printedLabelName` never mutated by edit paths; two differently-named labels share one cached file and one download |
 
 ### 11.3 Note on asserting "latency"
 

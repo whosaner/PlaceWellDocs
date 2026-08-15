@@ -87,7 +87,7 @@ Phone camera or in-app scanner
 - The key flows: `spice.csv` -> `order_builder` -> `qr_client` -> `allocate` -> Firestore `qr_codes.spice_key` -> `lookup` / `order` responses -> app.
 - Blanks and Order QRs never carry a key.
 - Labels allocated before this field existed are stamped by `PlaceWellQRService/scripts/backfill_spice_keys.py`, which also maps three superseded printed names (`Cayenne`, `Fennel Seeds`, `Mustard Seeds`) onto their current keys.
-- Full spec: `Docs/roadmap/Stock_Jar_Image_Implementation_Plan.md`.
+- Full spec: `Docs/roadmap/Stock_Image_Implementation_Plan.md`.
 
 ## QR URL format and deep-link strategy
 
