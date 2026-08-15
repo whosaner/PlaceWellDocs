@@ -138,7 +138,10 @@ app-store release.**
 - **Identity:** server-owned `image_key`, established `label_sku`, and `imageKey|labelSku|quantity` semantic lookup. The app never derives an art key from editable text.
 - **Fallback:** five PNGs ship in the app — 3 SKU jars plus storage-box and generic-container — with generated geometry and offline label-name overlay.
 - **App seam:** one `LabelArtwork` component owns user photo → cached/downloaded stock → bundled fallback across all surfaces.
-- **Current status:** the five-asset fallback foundation landed in `PlaceWellApp` commit `745581d`; remote export/hosting, server rename/backfill, cache service, enrichment, and full `LabelArtwork` migration remain.
+- **Current status:** the five-asset fallback foundation landed in `745581d`; shared
+  deterministic label fitting, glyph metrics, QR exclusion geometry and final surface sizes
+  landed in `78f5150`. Remote export/hosting, server rename/backfill, cache service,
+  enrichment, and full `LabelArtwork` migration remain.
 - **Authoritative implementation spec: `Docs/roadmap/Stock_Image_Implementation_Plan.md`** (answers lookup/offline/caching/fallback/versioning/consistency; Phase 0 is a blocking server-side key reconciliation).
 - **Original research (scale math, URL/manifest schema, perf/memory, citations):** `Docs/roadmap/Jar_Image_Strategy_Research.md`.
 

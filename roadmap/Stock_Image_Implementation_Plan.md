@@ -38,13 +38,13 @@ and before the key contract was verified. Where the two disagree, **this documen
 > and **disables Hosting** rather than billing; and `rect-portrait` is narrower but **not**
 > lower than both other SKUs (its `centerY` sits between them).
 >
-> The same review raised twelve further MAJOR findings. Rev 5 resolves M3 and narrows M2 to
-> one remaining font-face selection; the others remain open — see §14.
+> The same review raised twelve further MAJOR findings. Rev 5 resolves M2/M3; the others
+> remain open — see §14.
 
 > **Revision 5** replaces the square/lossless delivery assumption with measured,
 > content-cropped assets; replaces iOS-only `adjustsFontSizeToFit` with a deterministic
-> glyph-width contract and hard clipping; and records the bundled fallback that landed in
-> `PlaceWellApp` commit `745581d`. Adds **D24–D26** and **BC-50…BC-59**. D12 and D23 are
+> glyph-width contract and hard clipping; and records the bundled fallback delivered by
+> `PlaceWellApp` commits `745581d` and `78f5150`. Adds **D24–D26** and **BC-50…BC-59**. D12 and D23 are
 > revised. M2/M3 and risk 9/10 are resolved or narrowed in §13–§14.
 
 ---
@@ -450,7 +450,9 @@ about image bytes, and geometry for stock art is never needed without stock art.
 
 #### 4.7.5 Delivered assets and validation *(implemented in rev 5)*
 
-`PlaceWellApp` commit `745581d` replaces the three legacy placeholders with this set:
+`PlaceWellApp` commit `745581d` replaces the three legacy placeholders with this set;
+`78f5150` adds the shared deterministic overlay, generated glyph metrics, QR bounds, and
+exact surface-size contract:
 
 | Key | Axis | Delivered pixels | PNG |
 |---|---|---:|---:|
@@ -474,19 +476,19 @@ The deterministic build script is `PlaceWellApp\scripts\build-fallback-artwork.p
 The current script is crop/scale-idempotent when re-run against its own output. A
 **release-reproducible byte-for-byte build is not yet proven** because the authoring inputs,
 jar configs, and Pillow/NumPy versions live outside the app repo. Phase 1 must pin those
-inputs and checksums before BC-57 becomes a release gate. Twenty-four focused app tests
-currently assert asset coverage, dimensions, key resolution, ellipse containment, geometry
-positioning, casing, clipping, legibility suppression, and contain-fit; they do not execute
-the external build pipeline.
+inputs and checksums before BC-57 becomes a release gate. The app suite now contains
+**326 tests across 25 suites**, including focused coverage for asset identity, dimensions,
+key resolution, ellipse/QR containment, geometry positioning, glyph sanitization and
+metrics, whole-word wrapping, ellipsis, clipping, legibility suppression, and contain-fit.
+It does not execute the external release build pipeline.
 
 **Why PNG:** these files are the final offline rung; a decode failure has no lower fallback.
 PNG costs 3.34 MB but is universal. WebP q95 would be much smaller, but remains reserved for
 downloaded stock art until iOS decode is proven.
 
-**Sizing:** the shared renderer and 240 pt baseline have landed. Phase 2 must finish the
-surface contract in D26: change `mini` from the current 67.2 pt to the real 52 pt thumbnail,
-and change `LabelRecallScreen` from `tile` to `full`. Those are known code changes, not
-visual-tuning experiments.
+**Sizing:** D26 is implemented: full/wizard = 240 pt, tile = 120 pt, and mini = 52 pt.
+`LabelRecallScreen` uses full artwork, and `CategoryPlaceholder` no longer adds vertical
+padding that could crop the 240 pt fallback on a narrow device.
 
 **The baked-in sample QR is retained** as decorative realism on the 78 masters and all five
 bundled fallbacks. It is never presented as scannable. The category text boxes deliberately
@@ -678,7 +680,7 @@ asset or geometry path.
 | Surface | Measured container | Required fallback size |
 |---|---:|---:|
 | Home carousel | ≈267 × 360 pt | `full` — 240 pt |
-| Label Recall hero | 258 × 348 pt | `full` — 240 pt *(currently wrong: `tile`)* |
+| Label Recall hero | 258 × 348 pt | `full` — 240 pt |
 | Label Detail | 258 × 348 pt | `full` — 240 pt |
 | Label Setup photo step | wizard viewport | `wizard` — 240 pt |
 | RoomSection tile | square two-column tile | `tile` — 120 pt |
@@ -872,7 +874,7 @@ reachable only via the backfill above.
    `safeWidth`, byte size, SHA-256, and the versioned typography record. Drop `label.text`.
 7. Generate the uppercase glyph advance-width table from the exact bundled `fontId`. Fail
    export if the font or metrics artifact is absent.
-8. Emit `qrBounds` for the two category fallbacks and prove non-intersection with their text
+8. Preserve the implemented category `qrBounds` and prove non-intersection with their text
    boxes (BC-59).
 9. Validate catalog keys, all geometry bounds, the ellipse chord calculation, dimensions,
    hashes, byte sizes, content types, and deterministic output.
@@ -900,13 +902,13 @@ The export must be **deterministic and repeatable** — same masters in, same ha
   (§9.1, D19, BC-45/46).
 - **`LabelArtwork`** (D18) owning photo → stock → fallback; migrate all 5 call sites off
   their local ternary. `CategoryPlaceholder` stays as the fallback leaf.
-- Extract `LabelTextOverlay` from the landed fallback renderer and make both
-  `BundledArtwork` and `LabeledStockImage` use it. It owns glyph-table fitting, safe width,
-  hard clipping, and legibility suppression (BC-50…BC-55).
+- Reuse the implemented `LabelTextOverlay` from `78f5150`; make `LabeledStockImage` use the
+  same component. It owns glyph-table fitting, safe width, hard clipping, sanitization,
+  whole-word ellipsis, and legibility suppression (BC-50…BC-55).
 - `LabeledStockImage` implements image placement and reserved empty space during decode
   (BC-42), delegating all overlay rendering to `LabelTextOverlay`.
 - Reuse the implemented five-asset fallback registry and generated geometry from
-  `PlaceWellApp` commit `745581d` (D22, D23, D26, §4.7).
+  `PlaceWellApp` commits `745581d` and `78f5150` (D22, D23, D26, §4.7).
 - Fix `photoUri` persistence (§13 risk 1).
 
 ### 11.2 Test suites
@@ -977,10 +979,8 @@ fall back to `defaultQuantity` (BC-14).
    iOS 15.1+, so this is expected to work, but it is **unverified** and blocks Phase 2.
 9. **Resolved in `PlaceWellApp` `745581d`:** the bundled registry consumes `labelSku` and
    selects all three jar shapes; category fallbacks are also first-class.
-10. **Surface-size cleanup remains:** `LabelRecallScreen` still passes `tile` inside a
-    258 × 348 pt hero, and `mini` is currently 67.2 pt inside a 52 pt thumbnail. D26 and
-    Q7 define the exact replacements (`full`, and 52 pt respectively); this is a bounded
-    Phase-2 code change, not an open visual-design question.
+10. **Resolved in `PlaceWellApp` `78f5150`:** Label Recall uses `full`, mini is exactly
+    52 pt, and placeholder padding no longer clips the 240 pt fallback on narrow devices.
 
 ---
 
