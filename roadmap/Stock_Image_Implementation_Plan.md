@@ -4,6 +4,8 @@
 *Created 2026-08-14. Revised 2026-08-14 (rev 2) after a full design review.*
 *Revised 2026-08-14 (rev 3): category-agnostic naming, label-name overlay geometry.*
 *Revised 2026-08-14 (rev 4): resolves 5 blocking flaws from an adversarial design review.*
+*Revised 2026-08-15 (rev 5): measured delivery sizes, deterministic text containment,
+and the implemented five-asset bundled fallback.*
 
 *Supersedes `Jar_Image_Strategy_Research.md`, which was written before the art was produced
 and before the key contract was verified. Where the two disagree, **this document wins**.*
@@ -36,7 +38,14 @@ and before the key contract was verified. Where the two disagree, **this documen
 > and **disables Hosting** rather than billing; and `rect-portrait` is narrower but **not**
 > lower than both other SKUs (its `centerY` sits between them).
 >
-> Twelve further MAJOR findings from the same review are **not yet resolved** — see §14.
+> The same review raised twelve further MAJOR findings. Rev 5 resolves M3 and narrows M2 to
+> one remaining font-face selection; the others remain open — see §14.
+
+> **Revision 5** replaces the square/lossless delivery assumption with measured,
+> content-cropped assets; replaces iOS-only `adjustsFontSizeToFit` with a deterministic
+> glyph-width contract and hard clipping; and records the bundled fallback that landed in
+> `PlaceWellApp` commit `745581d`. Adds **D24–D26** and **BC-50…BC-59**. D12 and D23 are
+> revised. M2/M3 and risk 9/10 are resolved or narrowed in §13–§14.
 
 ---
 
@@ -90,14 +99,14 @@ have 404'd.**
 | D2 | **The catalog is exactly the 26 entries that have art.** | Guarantees 1:1 coverage; no orphans on either side. |
 | D3 | **The server owns the key. The app never derives it.** | Renames, typos, translations and re-branding stay safe. |
 | D4 | **Static manifest + immutable content-hashed URLs.** No per-image lookup API. | Cacheable, offline-tolerant, zero server load. |
-| D5 | **Host on Firebase Hosting** *(revised — was Linode)*. | A replicated CDN with an SLA and edge latency beats a single Linode VM. Free tier (10 GB storage / 10 GB month) dwarfs a 16.5 MB payload. |
-| D6 | **The label name is overlaid at runtime, never baked into the image.** | Users rename labels; baking destroys cache efficiency and correctness. |
+| D5 | **Host on Firebase Hosting** *(revised — was Linode)*. | A replicated CDN with an SLA and edge latency beats a single Linode VM. Egress, not storage, is the binding quota; Blaze and alerts are launch requirements. |
+| D6 | **The label name is overlaid at runtime, never baked into the image.** | One bare image serves every physical label with the same art identity; the immutable printed name is composed from label metadata without multiplying cached files. |
 | D7 | **Stock art is derived state, never stored on the label.** | Photo add/remove needs no revert logic. |
 | D8 | **Field is `image_key` / `imageKey`** *(revised — was `spice_key`)*. | The mechanism was never spice-specific; `load_items_from_csv` is already category-parameterised. |
 | D9 | **SKU field is `label_sku` / `labelSku`** *(never `jarSku` or `product_sku`)*. | Already the established name in all three codebases (22 files). |
 | D10 | **Lookup key is `imageKey\|labelSku\|quantity`** — 3-part from day one. | Phase 3 fill levels then require no schema or resolver change. |
 | D11 | **Manifest declares `defaultQuantity`**; the app substitutes it. | One line, server-controlled; avoids duplicating all 78 entries or per-entry aliases. |
-| D12 | **Export lossless WebP at 720×720.** | Measured: 217 KB each, 16.5 MB catalog. Matches the largest real surface (hero card ≈ 774 px at 3×). |
+| D12 | **Export content-cropped lossy WebP at quality 95 with alpha quality 100** *(revised — rev 4 said lossless 720×720)*. | Measured q95 preserves transparency and costs less than the old uncropped lossless plan while delivering more useful object pixels. Delivery dimensions are per-SKU and non-square; see D24. |
 | D13 | **No bundled manifest snapshot** *(revised)*. | A manifest without image bytes solves nothing offline; it only adds a build-sync artifact. |
 | D14 | **The app owns its image cache in `documentDirectory`.** | `cacheDirectory` is OS-purgeable; a managed library cache cannot be queried synchronously, which would break the no-flicker contract. |
 | D15 | **The cached file is the bare image with a blank label. The composite is never cached.** | One file serves every label using that key/SKU. Baking the name would put it in the cache key, multiply storage by distinct names, force a rewrite on any change, and rasterise text that should stay crisp at every size. |
@@ -108,7 +117,10 @@ have 404'd.**
 | D20 | **No visible swap, ever — including the decode window.** Reserved empty space is shown until pixels are ready. | RN `<Image>` decodes even `file://` sources asynchronously, so "correct pixels on the first committed frame" is unachievable by any implementation. Blank → art is not a swap; placeholder → art is. |
 | D21 | **Resolution is latched *within* a re-resolve boundary and re-resolved *at* one.** Boundaries are screen focus and wizard step change. | A screen-lifetime latch is wrong on two counts: React Navigation keeps screens mounted for a whole session, and the wizard's steps are slides inside one screen. |
 | D22 | **Geometry travels with the artwork it describes.** Downloaded art uses manifest geometry; bundled art uses a bundled constant. | Removes the last dependency between the offline fallback and the network. Preserves D13 exactly, because geometry for *stock* art is never needed without stock art. |
-| D23 | **The bundled fallback is 3 SKU-accurate empty jars, each with a blank white label patch**, replacing the single generic silhouette. | Blank labels, the 4 discontinued spices, and anything outside the catalog have no `imageKey` and will **never** receive stock art — the fallback is their *permanent* artwork, not an edge case. See §4.7. |
+| D23 | **The bundled fallback is five transparent PNGs:** 3 SKU-accurate empty jars keyed by `labelSku`, plus `storage-box` and `generic-container` keyed by category. | This completes first-class fallback coverage for every current product category. Blank/unknown labels may use it permanently, so it cannot be treated as a temporary loading graphic. See §4.7. |
+| D24 | **Delivery is content-cropped and contain-fitted into an 800 × 1080 physical-pixel envelope, never upscaled.** Geometry is renormalised onto the crop. | 800 × 1080 is the largest measured art surface (`HomeScreen` at 430 pt and 3×). Transparent margins were consuming resolution without improving fidelity; wide category art also proved that “1080 px tall” cannot be a universal rule. |
+| D25 | **Text fitting is deterministic and platform-independent.** Use a generated uppercase glyph advance-width table, greedy word wrapping, an inscribed `safeWidth`, a legibility floor, ellipsis, and a hard-clipped box. Never depend on `adjustsFontSizeToFit`. | React Native declares `adjustsFontSizeToFit` in `TextPropsIOS`; it silently provides no containment guarantee on Android. The round sticker's declared box is 4.3% too wide at its binding edge. |
+| D26 | **Bundled artwork is normalised into a 240 pt square and contain-fitted without stretching.** `full`/`wizard` = 240 pt, `tile` = 120 pt, `mini` = 52 pt. | The new category art is landscape (1.053 and 1.168) while jars range from 0.411 to 0.712. Keeping the old 150 × 240 footprint would make category art roughly half the jars' visual weight; `mini` must fit the actual 52 pt thumbnail rather than depend on clipping. |
 
 > **Firestore is not a hosting option.** It is a document database; binaries do not belong in
 > documents. The real comparison was Firebase **Hosting** (a CDN for static files) — not
@@ -171,17 +183,32 @@ later by changing only `baseUrl` in the manifest — no app change.
   "quantities": ["almost-full"],
   "defaultQuantity": "almost-full",
 
-  // Canvas + label geometry are per SKU, not per image — the renderer copies the
-  // same block into all 26 sidecars for a SKU. Hoisted here to avoid 78x repetition.
+  // Delivered dimensions + transformed geometry are per SKU. Export crops every
+  // master to its alpha content box and renormalises geometry onto that crop.
   "skus": {
     "round-1.5": {
-      "canvas": { "width": 720, "height": 720 },   // the DELIVERED size, not the master's 1254
+      "canvas": { "width": 740, "height": 1080 },
       "label": {
         "shape": "rectangle",
-        "centerX": 0.500, "centerY": 0.511,
-        "width": 0.235, "height": 0.080,
-        "rotationDegrees": 0, "maximumLines": 2,
-        "textAlign": "center", "textTransform": "uppercase"
+        "centerX": 0.50065, "centerY": 0.51232,
+        "width": 0.38421, "height": 0.08957,
+        "safeWidth": 0.36851,
+        "rotationDegrees": 0
+      },
+      "typography": {
+        "fontId": "placewell-label-v1",
+        "fontWeight": 500,
+        "lineHeight": 1.12,
+        "letterSpacingEm": 0.14,
+        "color": "#17132f",
+        "verticalAlign": "center",
+        "includeFontPadding": false,
+        "allowFontScaling": false,
+        "startSizeFactor": 0.27,
+        "minimumFontPixels": 6,
+        "maximumLines": 2,
+        "textAlign": "center",
+        "textTransform": "uppercase"
       }
     },
     "square-1.75": { "canvas": {}, "label": {} },
@@ -193,7 +220,9 @@ later by changing only `baseUrl` in the manifest — no app change.
     "turmeric|round-1.5|almost-full": {
       "displayName": "Turmeric",
       "file": "turmeric__round-1.5__almost-full.a91f3c.webp",
-      "w": 720, "h": 720
+      "w": 740, "h": 1080,
+      "bytes": 187612,
+      "sha256": "<full-file-sha256>"
     }
   }
 }
@@ -204,6 +233,9 @@ Notes:
 - **`label.text` from the sidecar is deliberately dropped.** The user's own label name is
   drawn at runtime; ours would be wrong after any rename.
 - Geometry travels with the manifest entry, so art and overlay can never desynchronise.
+- `fontId` identifies both a bundled font file and its generated glyph advance-width table.
+  Export fails if either artifact is absent. The final font face must be selected before
+  Phase 1; the fitting algorithm and all other typography values are fixed here.
 - Approx. 12–15 KB for 78 entries; one request.
 
 ### 4.3 Image URLs
@@ -215,8 +247,10 @@ Notes:
 Immutable by construction: different bytes produce a different hash, therefore a different
 URL. There is no cache-busting step and no purge step.
 
-One size variant, **720×720 lossless WebP** (D12). The 1254² masters are never shipped —
-they are 2054 KB each and decode to ~6 MB RAM.
+One content-cropped variant per SKU, **lossy WebP q95 with alpha quality 100** (D12/D24).
+The export contain-fits into 800 × 1080 physical pixels and never upscales. Current measured
+delivery dimensions are 740 × 1080 (`round-1.5`), 743 × 1044 (`square-1.75`), and
+385 × 937 (`rect-portrait`). The 1254² authoring canvas is never shipped.
 
 ### 4.4 `firebase.json` cache headers
 
@@ -250,8 +284,10 @@ auth would break caching for no security benefit.
 | Module | Responsibility |
 |---|---|
 | `stockImageService` | The **only** code that fetches, caches, and resolves. Owns the manifest cache, the image cache, the in-memory index, and the failure ledger. |
+| `LabelArtwork` | The only screen-facing artwork component. Owns photo → stock → bundled fallback and the re-resolve latch. |
 | `LabeledStockImage` | Renders image + label-name overlay using manifest geometry. |
-| `CategoryPlaceholder` | Existing seam; unchanged public API. Screens keep calling it. |
+| `LabelTextOverlay` | Shared geometry + glyph-table fitter used by both downloaded stock art and bundled fallback art. This is the only implementation of BC-50…BC-55. |
+| `CategoryPlaceholder` | Existing bundled-fallback resolver. Becomes the bottom rung under `LabelArtwork`; screens no longer decide precedence before calling it. |
 
 **No screen ever builds a URL or calls `fetch` for art.**
 
@@ -262,25 +298,27 @@ auth would break caching for no security benefit.
 The renderer emits a **blank** label (`"mode": "dynamic"`) plus normalised geometry. The app
 draws the name at render time as a native `<Text>` node. Nothing is baked (D15).
 
-#### 4.6.1 The three SKUs differ materially
+#### 4.6.1 Delivered geometry differs materially
 
 | SKU | centerX | centerY | width | height |
 |---|---:|---:|---:|---:|
-| `round-1.5` | 0.500 | 0.511 | 0.235 | 0.080 |
-| `square-1.75` | 0.504 | 0.538 | 0.235 | 0.105 |
-| `rect-portrait` | 0.502 | 0.523 | **0.160** | 0.100 |
+| `round-1.5` | 0.50065 | 0.51232 | 0.38421 | 0.08957 |
+| `square-1.75` | 0.55184 | 0.56289 | 0.39662 | 0.12612 |
+| `rect-portrait` | 0.50781 | 0.54412 | **0.52114** | 0.13383 |
 
-All three share `canvas: 720 × 720` **as delivered** (the masters are 1254 × 1254),
-`rotationDegrees: 0`, `maximumLines: 2`, `textAlign: center`, `textTransform: uppercase`.
+These values are the original sidecar geometry transformed onto each alpha-content crop.
+They are deliberately different from the 1254² authoring values. All three retain
+`rotationDegrees: 0`, `maximumLines: 2`, `textAlign: center`, and
+`textTransform: uppercase`.
 
-`rect-portrait`'s box is **47% narrower** than the other two. `SpiceJarPlaceholder`
-currently hardcodes `top: '40%'` and `width: '68%'` for every SKU, which is wrong for all
-three — this is why geometry must come from the manifest (BC-33).
+Do not compare the transformed widths to infer physical sticker size: each denominator is a
+different crop width. Geometry must be consumed with the matching delivered canvas
+(BC-33/BC-50).
 
 #### 4.6.2 Step 1 — contain-fit
 
-Masters are square; containers are not. Letterboxing is always in play, so the label box must
-be derived from the **rendered image rectangle**, never the container (BC-32).
+Delivered art and containers may both be non-square. Letterboxing is always in play, so the
+label box must be derived from the **rendered image rectangle**, never the container (BC-32).
 
 ```
 scale     = min(containerW / canvasW, containerH / canvasH)
@@ -298,40 +336,54 @@ boxH = height × renderedH
 ```
 
 **Resolution invariance.** `canvas` is consumed only for its **aspect ratio** — its absolute
-size cancels out. Same 258 × 348 container:
+size cancels out. A proportional resolution change cannot move the box:
 
 ```
-canvas 1254²:  scale = 258/1254 = 0.2057 → renderedW = 1254 × 0.2057 = 258
-canvas  720²:  scale = 258/720  = 0.3583 → renderedW =  720 × 0.3583 = 258
+canvas 740×1080: scale = min(258/740, 348/1080) = 0.3222
+rendered = 238.4 × 348
+
+canvas 370×540:  scale = min(258/370, 348/540) = 0.6444
+rendered = 238.4 × 348
 ```
 
-Identical. Because geometry is normalised and font size is seeded from `boxH`, the entire
-overlay is resolution-independent — which is why downscaling masters 1254 → 720 requires **no
-geometry change at all** (BC-49). The manifest nonetheless records the **delivered** 720 × 720
-rather than the master's 1254 × 1254, so the field never describes files that do not exist.
+Identical. Cropping is different: it changes the canvas aspect and therefore requires
+renormalising geometry once during export (BC-50). The manifest always records the delivered
+dimensions and transformed geometry, never the authoring canvas.
 
 **Worked example** — `round-1.5` in the recall hero card (258 × 348 pt):
 
 ```
-scale     = min(258/1254, 348/1254) = 0.2057
-rendered  = 258 × 258      originX = 0      originY = (348 − 258)/2 = 45
-boxX = 0  + (0.500 − 0.1175) × 258 =  98.7
-boxY = 45 + (0.511 − 0.040)  × 258 = 166.5
-boxW = 0.235 × 258 =  60.6
-boxH = 0.080 × 258 =  20.6
+scale     = min(258/740, 348/1080) = 0.3222
+rendered  = 238.4 × 348      originX = 9.8      originY = 0
+boxX = 9.8 + (0.50065 − 0.38421/2) × 238.4 = 83.3
+boxY = 0   + (0.51232 − 0.08957/2) × 348   = 162.7
+boxW = 0.38421 × 238.4 = 91.6
+boxH = 0.08957 × 348   = 31.2
 ```
 
 #### 4.6.4 Step 3 — text fitting
 
-1. Apply `textTransform` (`uppercase`).
-2. Set `numberOfLines = maximumLines` and `textAlign` from the manifest.
-3. Seed `fontSize` from `boxH / maximumLines × capHeightFactor`, then allow
-   `adjustsFontSizeToFit` with `minimumFontScale` to shrink long names.
-4. Apply `rotationDegrees` as a transform. It is `0` for all current SKUs, but it is in the
-   schema and must be honoured.
+`adjustsFontSizeToFit` is forbidden: React Native declares it in `TextPropsIOS`, so it
+cannot be the Android containment contract.
+
+The export emits an uppercase glyph advance-width table for `fontId` (roughly 70 glyphs,
+1–2 KB). Runtime fitting is pure arithmetic:
+
+1. Apply `textTransform` and disable OS scaling (`allowFontScaling={false}`).
+2. Use `safeWidth`, not raw `label.width`. For an ellipse, export computes the narrowest
+   available chord at the text box's top/bottom edge. For `round-1.5`, transformed
+   `safeWidth` is `0.36851` vs raw width `0.38421`.
+3. Seed size from `boxH × startSizeFactor`, then greedily wrap at spaces using glyph advances,
+   fixed tracking, and `lineHeight`. Never split a word.
+4. Decrease size in deterministic increments until width, height, and `maximumLines` fit.
+5. If the legibility floor is reached, use fewer lines where that helps; then ellipsize.
+   At a size where no readable glyph can fit, suppress the overlay.
+6. Render inside a hard-clipped (`overflow: hidden`) box. This is the final containment
+   guarantee even for an unsupported glyph, emoji, malformed metrics, or RTL input.
+7. Apply `rotationDegrees`. It is `0` for current assets but remains part of the schema.
 
 Because every value derives from normalised geometry, the overlay lands in the same place
-relative to the jar at **every** size preset (BC-34).
+relative to the artwork at **every** size preset (BC-34).
 
 #### 4.6.5 Which name is drawn
 
@@ -358,13 +410,15 @@ Blank labels, the 4 discontinued spices, and anything outside the 26-item catalo
 temporary offline state — it is the *permanent, only* artwork they will ever have. It must be
 designed as a first-class rendering, not a degradation.
 
-#### 4.7.2 Three SKU-accurate jars, not one generic one (D23)
+#### 4.7.2 Five assets cover both identity axes (D23)
 
-Today a single generic round silhouette (`spice-jar-large-transparent.png`, 1200 × 1920)
-serves all three SKUs, so a `rect-portrait` customer sees a jar that is not the one in their
-hand — directly contrary to the purpose of #42. Replace it with three empty transparent jars
-matching the real SKU shapes. The renderer already produces all three, so the marginal cost
-is low.
+The bundled set has two lookup axes:
+
+- `round-1.5`, `square-1.75`, `rect-portrait` — selected by immutable `labelSku`.
+- `storage-box`, `generic-container` — selected by category/placeholder when no SKU applies.
+
+Unknown keys resolve to `generic-container`; a missing/unknown jar SKU resolves to
+`round-1.5`. Resolution always returns drawable art.
 
 #### 4.7.3 Each carries a blank white label patch
 
@@ -385,7 +439,7 @@ the entire content of that image — which is why rung ③ of §4.6.5 matters mo
 | Artwork source | Geometry source |
 |---|---|
 | Downloaded stock image | Manifest entry for that `labelSku` |
-| Bundled fallback jar | Bundled constant, shipped in the same binary |
+| Bundled fallback | `assets/fallback/geometry.json`, shipped beside the five PNGs |
 
 There is no reachable state with art but no geometry: stock art can only exist if the
 manifest that named its URL was fetched, and BC-47 forbids evicting that manifest while the
@@ -393,37 +447,52 @@ art survives. Bundled art and bundled geometry version together with the binary,
 cannot skew. **D13 therefore stands unchanged** — rev 2's rejection of a bundled manifest was
 about image bytes, and geometry for stock art is never needed without stock art.
 
-#### 4.7.5 Delivered assets and validation *(rev 4)*
+#### 4.7.5 Delivered assets and validation *(implemented in rev 5)*
 
-Three `1254 × 1254` RGBA PNGs, named exactly by `labelSku`. They are the **real renders,
-emptied** — same jar, same sticker, same QR, same blank name area.
+`PlaceWellApp` commit `745581d` replaces the three legacy placeholders with this set:
 
-| SKU | Jar | Sticker | Source PNG |
-|---|---|---|---|
-| `round-1.5` | square spice jar, black screw lid | round, with a name rule | 750 KB |
-| `square-1.75` | clamp-top jar, wire bail | square, bordered | 883 KB |
-| `rect-portrait` | tall square spice jar, black lid | rectangular portrait | 526 KB |
+| Key | Axis | Delivered pixels | PNG |
+|---|---|---:|---:|
+| `round-1.5` | SKU | 740 × 1080 | 697 KB |
+| `square-1.75` | SKU | 743 × 1044 | 832 KB |
+| `rect-portrait` | SKU | 385 × 937 | 468 KB |
+| `storage-box` | category | 800 × 760 | 975 KB |
+| `generic-container` | category | 800 × 685 | 451 KB |
 
-**Geometry validated against the real art.** The `round-1.5` turmeric sidecar reads
-`centerX 0.5, centerY 0.511, width 0.235, height 0.08` — identical to §4.6.1. Overlaying that
-box on both the empty jar and the turmeric master puts it in the same place to the pixel, so
-fallback → stock is continuous exactly as D22/D23 intended. The masters are themselves
-blank-labelled (`"mode": "dynamic"`), confirming §4.6's premise.
+Total: **3.34 MB for five assets**, down from **4.18 MB for three** legacy assets.
 
-**Bundle format: 720 px PNG** — 830 KB for all three (512 px would be 439 KB). WebP is ~30%
-smaller, but the fallback is the one asset that must never fail to decode and iOS WebP
-support is still unverified (§13 risk 8). Not worth the coupling.
+The deterministic build script is `PlaceWellApp\scripts\build-fallback-artwork.py`. It:
 
-**The baked-in sample QR is retained** as decorative realism. It is identical on all 78
-masters and all 3 fallbacks, and is never presented as scannable. Removing it would require
-re-rendering the entire catalog.
+1. crops each 1254² authoring canvas to its alpha content box;
+2. contain-fits it into 800 × 1080 physical pixels without upscaling;
+3. renormalises the label geometry onto that crop;
+4. measures the category assets' clear text area above their baked-in QR;
+5. computes elliptical `safeWidth`; and
+6. writes PNGs plus `assets/fallback/geometry.json`.
 
-> **New risk — the text box overflows the round sticker.** On `round-1.5` the box is a
-> 295 px-wide rectangle, but the circular sticker narrows toward the top, so text at full
-> width spills off the label onto glass. `rect-portrait` (201 px box in a rectangular label)
-> and `square-1.75` both fit comfortably. **Round labels need an inscribed-width
-> constraint**, not the raw box width. This is concrete evidence for open findings M2/M3 and
-> must be resolved with the typography contract.
+The current script is crop/scale-idempotent when re-run against its own output. A
+**release-reproducible byte-for-byte build is not yet proven** because the authoring inputs,
+jar configs, and Pillow/NumPy versions live outside the app repo. Phase 1 must pin those
+inputs and checksums before BC-57 becomes a release gate. Twenty-four focused app tests
+currently assert asset coverage, dimensions, key resolution, ellipse containment, geometry
+positioning, casing, clipping, legibility suppression, and contain-fit; they do not execute
+the external build pipeline.
+
+**Why PNG:** these files are the final offline rung; a decode failure has no lower fallback.
+PNG costs 3.34 MB but is universal. WebP q95 would be much smaller, but remains reserved for
+downloaded stock art until iOS decode is proven.
+
+**Sizing:** the shared renderer and 240 pt baseline have landed. Phase 2 must finish the
+surface contract in D26: change `mini` from the current 67.2 pt to the real 52 pt thumbnail,
+and change `LabelRecallScreen` from `tile` to `full`. Those are known code changes, not
+visual-tuning experiments.
+
+**The baked-in sample QR is retained** as decorative realism on the 78 masters and all five
+bundled fallbacks. It is never presented as scannable. The category text boxes deliberately
+stop above it; the round sticker uses its inscribed `safeWidth`. The ellipse constraint is
+already generated and regression-tested. Phase 1 must also emit category `qrBounds` into
+`geometry.json`; only then can QR non-intersection become a stable release assertion rather
+than a one-time visual measurement.
 
 ---
 
@@ -492,14 +561,20 @@ Numbered, individually testable. Test suites in §11 reference these IDs.
 | ID | Contract |
 |---|---|
 | **BC-32** | The label box is computed from the **rendered image rectangle** (after contain-fit letterboxing), never from the raw container. Asserted with a deliberately non-square container. |
-| **BC-33** | Geometry comes from the manifest. No position, size, or font value for the overlay is hardcoded in a component. |
+| **BC-33** | Geometry and typography come from the manifest/bundled geometry record. No position, size, font metric, or fitting threshold is hardcoded in a screen component. |
 | **BC-34** | For a given SKU, the overlay's position relative to the image is identical across all size presets (`full`/`wizard`/`tile`/`mini`) when normalised. |
-| **BC-35** | All three SKUs produce distinct, correct boxes from the same code path. Assert exact coordinates — `rect-portrait` is **narrower** than both others, but its `centerY` (0.523) sits *between* `round-1.5` (0.511) and `square-1.75` (0.538), so no qualitative ordering claim is valid. |
+| **BC-35** | All three SKUs produce distinct, correct boxes from the same code path. Assert the delivered-crop golden coordinates in §4.6.1; do not infer qualitative physical size from normalised values whose crop denominators differ. |
 | **BC-36** | Editing a label's `name` does **not** change the rendered overlay. |
 | **BC-37** | Overlay name precedence is exactly `printedLabelName` → manifest `displayName` → `name`. |
 | **BC-38** | `printedLabelName` is written once at creation (from `lookupLabel` or `lookupOrder`) and is never mutated by any app-side edit path. |
 | **BC-39** | The cache key excludes the name. Two labels with different names but the same `imageKey\|labelSku\|quantity` share **one** cached file and issue **one** download. |
 | **BC-40** | `textTransform`, `textAlign`, `maximumLines` and `rotationDegrees` from the manifest are all applied. |
+| **BC-50** | Exporting a content crop renormalises `centerX`, `centerY`, `width`, `height`, `safeWidth`, and any mask bounds onto the delivered canvas. Golden values are asserted independently from runtime fixtures. |
+| **BC-51** | `round-1.5` uses `safeWidth = 0.36851` on the delivered crop. Its raw width (`0.38421`) is proven to cross the ellipse; the safe box is proven to remain inside at both horizontal edges. |
+| **BC-52** | Android and iOS use the same glyph advance-width table and greedy wrapping algorithm. `adjustsFontSizeToFit` is absent from the implementation. |
+| **BC-53** | `allowFontScaling` is false; `fontId`, weight, line height, tracking, colour, vertical alignment, and `includeFontPadding` match the geometry record. |
+| **BC-54** | At the legibility floor, fitting reduces line count before ellipsizing. If one readable glyph cannot fit, the overlay is suppressed. |
+| **BC-55** | The label box has `overflow: hidden`; no name, including one long token, emoji, unsupported glyphs, or RTL text, can paint outside it. |
 
 ### 5.7 Startup, decode, and enrichment *(new in rev 4)*
 
@@ -512,8 +587,12 @@ Numbered, individually testable. Test suites in §11 reference these IDs.
 | **BC-45** | Enrichment synthesises the HMAC signature locally via `computeSignature(labelId)` and reuses the existing `/api/qr/lookup/{id}-{sig}` endpoint. A label first seen via `placewell://scan/ID` (no signature) is still enriched. |
 | **BC-46** | `printedLabelName` is captured from the QR URL's `?n=` parameter with **no network call** on the standard scan path. |
 | **BC-47** | The manifest cache is **never evicted while any image it references remains cached**, so no reachable state has art without geometry. |
-| **BC-48** | With no manifest and no network, a label still renders its SKU-accurate bundled jar **with its name**, using bundled geometry (D22, D23). |
-| **BC-49** | The computed box is **identical for `canvas` 1254 × 1254 and 720 × 720** at the same container size. `canvas` is consumed for aspect ratio only, so a resolution change can never move the overlay. |
+| **BC-48** | With no manifest and no network, a label still renders its resolved SKU/category bundled fallback **with its name**, using bundled geometry (D22, D23). |
+| **BC-49** | The computed box is identical for two proportionally equivalent canvas sizes at the same container size. `canvas` is consumed for aspect ratio only; resolution changes cannot move the overlay. Cropping is separately covered by BC-50. |
+| **BC-56** | The bundled registry contains exactly five drawable keys: 3 SKU keys and 2 category keys. Unknown category → `generic-container`; unknown/missing jar SKU → `round-1.5`. |
+| **BC-57** | Every bundled file is PNG, lies within 800 × 1080, and is never stretched or upscaled by the build. The release pipeline pins source checksums, jar configs, Python, Pillow and NumPy versions; only that pinned pipeline must reproduce byte-identical files and geometry. |
+| **BC-58** | Full/wizard fallback art contain-fits 240 pt, tile 120 pt, and mini 52 pt. Wide category art fits by width, tall jar art by height; no wrapper clips an oversized fallback. |
+| **BC-59** | Category geometry includes explicit `qrBounds`. The label rectangle and QR exclusion rectangle have an empty intersection for both category assets. |
 
 ---
 
@@ -536,9 +615,9 @@ with nothing to draw.**
 | Scenario | Result |
 |---|---|
 | Offline, art seen before | Cached art, full fidelity (BC-19) |
-| Offline, never seen, manifest cached | SKU-accurate bundled jar + name |
-| Offline, never seen, no manifest | SKU-accurate bundled jar + name (BC-48) |
-| Offline, blank/unknown label | SKU-accurate bundled jar + name — **permanently**, §4.7.1 |
+| Offline, never seen, manifest cached | Resolved SKU/category fallback + name |
+| Offline, never seen, no manifest | Resolved SKU/category fallback + name (BC-48) |
+| Offline, blank/unknown label | Resolved bundled fallback + name — **permanently**, §4.7.1 |
 
 The manifest is served stale indefinitely while offline (BC-06). **No manifest is bundled**
 (D13): without image bytes it would change nothing, since a never-connected device cannot
@@ -546,7 +625,7 @@ have art either way.
 
 > **Rev 4 closed a hole here.** Rev 2 promised "placeholder **+ name**" with no manifest,
 > while requiring all overlay geometry to come from the manifest — a contradiction. Resolved
-> by D22: geometry travels with the artwork, so the bundled jar carries bundled geometry and
+> by D22: geometry travels with the artwork, so bundled art carries bundled geometry and
 > needs no network. D13 is unaffected. See §4.7.4.
 
 ### Q4 — Download once
@@ -561,6 +640,9 @@ Geometry and text fitting are specified in full in §4.6. Summary:
 
 - The renderer emits a **blank** label plus normalised geometry; the app draws the name as a
   native `<Text>` positioned from the **rendered image rect**, not the container (BC-32).
+- Fitting uses a bundled-font glyph table, deterministic wrapping, `safeWidth`, ellipsis, a
+  legibility floor, and hard clipping (D25). It does not rely on iOS-only
+  `adjustsFontSizeToFit`.
 - The composite is **never** written to disk (D15). The cached file is the bare image, shared
   by every label with the same `imageKey|labelSku|quantity` (BC-39). Recomposing each render
   costs nothing and keeps text crisp at every preset.
@@ -568,7 +650,8 @@ Geometry and text fitting are specified in full in §4.6. Summary:
   rename therefore cannot invalidate a cached image, and "re-render on rename" is not a case
   that exists (BC-36).
 
-**Prerequisite:** bundle the overlay font so text metrics are identical across devices.
+**Prerequisite:** select and bundle the exact `fontId` face, then generate and version its
+glyph table. Export and app builds fail if either artifact is missing.
 
 ### Q6 — User photo add / remove
 
@@ -586,8 +669,21 @@ is instant and flicker-free.
 
 Art renders in seven places: `HomeScreen`, `LabelCard`, `RoomSection`, `LabelDetailScreen`,
 `LabelRecallScreen`, `LabelFormScreen`, and the photo viewer. Consistency is structural: one
-resolver (§4.5), one component, one cache key (BC-16). Surfaces differ only in size preset —
-never in *which* image appears.
+resolver (§4.5), one component, one cache key (BC-16). The bundled baseline is a 240 pt
+contain-fit square (D26); each surface selects only the documented scale, never a separate
+asset or geometry path.
+
+| Surface | Measured container | Required fallback size |
+|---|---:|---:|
+| Home carousel | ≈267 × 360 pt | `full` — 240 pt |
+| Label Recall hero | 258 × 348 pt | `full` — 240 pt *(currently wrong: `tile`)* |
+| Label Detail | 258 × 348 pt | `full` — 240 pt |
+| Label Setup photo step | wizard viewport | `wizard` — 240 pt |
+| RoomSection tile | square two-column tile | `tile` — 120 pt |
+| LabelCard thumbnail | 52 × 52 pt | `mini` — 52 pt *(currently 67.2 and clipped)* |
+
+This table is the acceptance target. No surface-specific aspect-ratio tweak is permitted;
+all use `resizeMode="contain"` through the shared renderer.
 
 > **Rev 4:** this was aspirational, not true. `CategoryPlaceholder` receives
 > `{ placeholder, category, labelName, labelSku, size, onPress }` — no `imageKey`,
@@ -604,17 +700,19 @@ never in *which* image appears.
 | Availability | Replicated CDN with SLA | Single VM; reboots, disk, cert renewal |
 | Latency | Edge nodes | One region |
 | Free tier (Spark) | 10 GB storage / **10 GB egress per month** | n/a (already paid) |
-| Payload | 16.5 MB for the *complete* catalog | Same |
-| Free-tier capacity | **~620 full-catalog downloads/month** | Unmetered |
+| Payload | estimated **≈14 MB** for the complete q95 catalog; final deterministic export is authoritative | Same |
+| Free-tier capacity | approximately **700 full-catalog downloads/month** at 14 MB | Unmetered |
 | Behaviour at quota | Spark **disables Hosting** — it does not auto-bill | Degrades under load |
 | Cost beyond free | $0.15/GB, requires **Blaze** | Zero marginal |
 
 **Decision: Firebase Hosting (D5).** Revision 1 chose Linode to avoid new infrastructure;
 availability is the better objective.
 
-> **Corrected in rev 4.** Revision 2 claimed the payload was "0.16% of quota" and cost
-> "≈ $11 at 10k users/mo". Both were wrong. Storage is 0.16% of quota; **egress is the
-> binding constraint**, and 10 GB/month divided by 16.5 MB is only ~620 complete catalogs.
+> **Corrected in rev 4 and re-estimated in rev 5.** Revision 2 claimed the payload was
+> "0.16% of quota" and cost "≈ $11 at 10k users/mo". Both were wrong. Storage is not the
+> binding constraint; **egress is**. Rev 5's q95/cropped measurement reduces the provisional
+> complete catalog from 16.5 MB to approximately 14 MB, but Phase 1 must publish the exact
+> deterministic total before any capacity claim is treated as final.
 > Real usage is far below a full catalog per user — most users own a handful of spices — but
 > the figure has never been modelled, and the $11 number had no usage model behind it.
 >
@@ -759,15 +857,29 @@ reachable only via the backfill above.
 
 ## 10. Phase 1 — export and hosting
 
-1. Read the 78 sidecars from the masters repo (§8).
-2. Downscale masters 1254² → 720², encode **lossless WebP** (D12).
-3. Content-hash each file; name it `{imageKey}__{labelSku}__{quantity}.{hash}.webp`.
-4. Generate `manifest.v1.json` (§4.2) — geometry from the sidecars, `label.text` dropped, and
-   `canvas` **rewritten to the delivered 720 × 720**. Normalised geometry is copied unchanged:
-   downscaling cannot move the overlay (BC-49).
-5. Downscale the 3 fallback jars 1254 → 720 and bundle them as **PNG** in the app (§4.7.5).
-6. Deploy to Firebase Hosting with the headers in §4.4.
-7. Verify: `Content-Type: image/webp`, `immutable` on images, `must-revalidate` on manifest.
+1. Create a pinned release-input bundle: 78 masters + sidecars, 5 fallback authoring PNGs,
+   jar configs, checksums, Python version, Pillow version, and NumPy version. The build must
+   not depend on mutable absolute paths outside that bundle.
+2. Read the 78 sidecars from the pinned masters input (§8).
+3. Crop each master to its alpha content box; transform label/mask geometry from the 1254²
+   authoring canvas onto that crop (BC-50).
+4. Contain-fit the crop into 800 × 1080 without upscaling and encode **WebP q95,
+   alpha-quality 100** (D12/D24).
+5. Content-hash each file; name it `{imageKey}__{labelSku}__{quantity}.{hash}.webp`.
+6. Generate `manifest.v1.json` (§4.2) with delivered dimensions, transformed geometry,
+   `safeWidth`, byte size, SHA-256, and the versioned typography record. Drop `label.text`.
+7. Generate the uppercase glyph advance-width table from the exact bundled `fontId`. Fail
+   export if the font or metrics artifact is absent.
+8. Emit `qrBounds` for the two category fallbacks and prove non-intersection with their text
+   boxes (BC-59).
+9. Validate catalog keys, all geometry bounds, the ellipse chord calculation, dimensions,
+   hashes, byte sizes, content types, and deterministic output.
+10. The five bundled PNGs and `geometry.json` are already implemented by
+   `PlaceWellApp\scripts\build-fallback-artwork.py` (§4.7.5); verify the app's generated
+   artifacts match the release input.
+11. Deploy to Firebase Hosting with the headers in §4.4.
+12. Verify `Content-Type: image/webp`, `immutable` on images, `must-revalidate` on manifest,
+    and publish the exact complete-catalog byte total for the egress model.
 
 The export must be **deterministic and repeatable** — same masters in, same hashes out.
 
@@ -786,9 +898,13 @@ The export must be **deterministic and repeatable** — same masters in, same ha
   (§9.1, D19, BC-45/46).
 - **`LabelArtwork`** (D18) owning photo → stock → fallback; migrate all 5 call sites off
   their local ternary. `CategoryPlaceholder` stays as the fallback leaf.
-- `LabeledStockImage` implementing §4.6, with reserved empty space during decode (BC-42).
-- Produce and bundle the 3 SKU-accurate fallback jars with white label patches, plus their
-  bundled geometry constant (D22, D23, §4.7).
+- Extract `LabelTextOverlay` from the landed fallback renderer and make both
+  `BundledArtwork` and `LabeledStockImage` use it. It owns glyph-table fitting, safe width,
+  hard clipping, and legibility suppression (BC-50…BC-55).
+- `LabeledStockImage` implements image placement and reserved empty space during decode
+  (BC-42), delegating all overlay rendering to `LabelTextOverlay`.
+- Reuse the implemented five-asset fallback registry and generated geometry from
+  `PlaceWellApp` commit `745581d` (D22, D23, D26, §4.7).
 - Fix `photoUri` persistence (§13 risk 1).
 
 ### 11.2 Test suites
@@ -810,8 +926,10 @@ Each maps to behaviour contracts in §5.
 | `LabelArtwork.precedence.test.js` | BC-10, BC-42 | one component owns photo → stock → fallback; all 5 migrated call sites resolve identically from the same inputs; no call site retains a local ternary |
 | `stockImageService.startup.test.js` | BC-01, BC-41, BC-43 | index warmed in `prepare()` before `setAppReady(true)`; disk-only, zero network; prefetch warms the decoded bitmap |
 | `enrichment.writeOnce.test.js` | BC-44, BC-45, BC-46 | `null → value` only, never overwrite, enforced in `saveLabel`; deep-link label with no signature is still enriched via `computeSignature`; `?n=` captured with zero network calls |
-| `fallback.bundled.test.js` | BC-47, BC-48 | manifest never evicted while referenced art is cached; with no manifest and no network, the correct SKU jar renders **with** its name from bundled geometry |
-| `LabeledStockImage.geometry.test.js` | BC-32…BC-35, BC-40, BC-49 | exact pixel boxes for all three SKUs at several container sizes, incl. a **non-square** container to catch letterboxing regressions; no hardcoded geometry; `rect-portrait` distinct from the other two; transform/align/lines applied; **box identical at `canvas` 1254 and 720** |
+| `fallback.bundled.test.js` | BC-47, BC-48, BC-56, BC-58 | exactly 5 keys; SKU/category resolution; PNG dimensions; 240/120/52 pt contain-fit; wide fits by width/tall by height |
+| Release-pipeline fallback integration | BC-57, BC-59 | pinned inputs reproduce byte-identical PNG/geometry artifacts; explicit `qrBounds`; category text and QR rectangles do not intersect |
+| `LabeledStockImage.geometry.test.js` | BC-32…BC-35, BC-40, BC-49…BC-51 | exact golden pixel boxes for all three delivered crops at several container sizes; non-square letterboxing; proportional-resolution invariance; independent crop-transform golden values; round ellipse containment |
+| `LabelTextOverlay.textFit.test.js` | BC-52…BC-55 | run the same cases against manifest and bundled geometry: Android/iOS share glyph metrics and line breaks; no `adjustsFontSizeToFit`; longest catalog name, two words, one long token, empty, emoji and RTL; legibility suppression; ellipsis; hard clip |
 | `LabeledStockImage.overlayName.test.js` | BC-36…BC-39 | precedence `printedLabelName`→`displayName`→`name`; renaming leaves the overlay unchanged; `printedLabelName` never mutated by edit paths; two differently-named labels share one cached file and one download |
 
 ### 11.3 Note on asserting "latency"
@@ -855,25 +973,25 @@ fall back to `defaultQuantity` (BC-14).
 8. **WebP decode support must be verified on iOS** for React Native's `<Image>` at
    SDK 54 / RN 0.81. Native `UIImage` WebP support exists from iOS 14; Expo SDK 54 targets
    iOS 15.1+, so this is expected to work, but it is **unverified** and blocks Phase 2.
-9. **`SpiceJarPlaceholder` currently ignores `labelSku`** and renders one PNG for all SKUs.
-   The per-SKU seam must be built for the fallback to be SKU-correct.
-10. **`LabelRecallScreen` renders the placeholder at `size="tile"` (75×120) inside a hero
-    card of `SCREEN_WIDTH × 0.60` (≈258×348 pt).** The art looks lost because of this scale
-    mismatch, not because of resolution. Fixing it is an app-side change independent of
-    hosting.
+9. **Resolved in `PlaceWellApp` `745581d`:** the bundled registry consumes `labelSku` and
+   selects all three jar shapes; category fallbacks are also first-class.
+10. **Surface-size cleanup remains:** `LabelRecallScreen` still passes `tile` inside a
+    258 × 348 pt hero, and `mini` is currently 67.2 pt inside a 52 pt thumbnail. D26 and
+    Q7 define the exact replacements (`full`, and 52 pt respectively); this is a bounded
+    Phase-2 code change, not an open visual-design question.
 
 ---
 
-## 14. Open findings from the rev-4 design review
+## 14. Findings from the rev-4 design review
 
-The GPT-5.6 Sol review raised 12 further **MAJOR** findings that are acknowledged but **not
-yet resolved**. Each needs a decision before the phase named in the last column.
+The GPT-5.6 Sol review raised 12 further **MAJOR** findings. The table retains resolved rows
+for traceability; unresolved rows need a decision before the phase named in the last column.
 
 | # | Area | Finding | Decide before |
 |---|---|---|---|
 | M1 | D10–D11, BC-16/39 | The spec conflates the **semantic lookup key** with **asset identity**. If cache files are keyed by `imageKey\|labelSku\|quantity`, a new content-hash URL still resolves the old file. Needs an explicit index: lookup key → asset identity (URL or SHA-256) + geometry revision. | Phase 2 |
-| M2 | §4.6.4, BC-33 | **Typography is under-specified**: no font family, weight, line height, letter spacing, colour, vertical alignment, `includeFontPadding`, `allowFontScaling`, concrete `capHeightFactor`, or minimum scale. The renderer's own docs specify different rules (`box.height × 0.27`, fixed line height/tracking). BC-33 cannot be satisfied while these are absent from the manifest. | Phase 1 |
-| M3 | §4.6, size presets | At `mini` (42 pt), `rect-portrait`'s text box is ≈ **6.7 × 4.2 pt** — not legible at any font size. Need a minimum-legible-size threshold below which the overlay is suppressed. | Phase 2 |
+| M2 | §4.6.4, BC-33 | **Narrowed in rev 5.** Manifest fields now fix weight, line height, tracking, colour, alignment, platform flags, start factor, minimum, fitting algorithm and glyph metrics. The only unresolved choice is the exact licensed `fontId` face; Phase 1 cannot export until it is selected and bundled. | Phase 1 |
+| M3 | §4.6, size presets | **Resolved in rev 5 (D25, BC-54).** A legibility floor reduces line count, then ellipsizes, then suppresses the overlay if one readable glyph cannot fit. | done |
 | M4 | BC-04–BC-08, BC-17–BC-23 | **No atomicity or integrity design for cache writes.** Expo FileSystem can leave partial files on Android, and a truncated file then counts as cached forever. Need: download to temp → verify SHA-256 + byte size + content type → atomic move. Manifest needs a digest and full validation before replacing last-known-good. `304` with a missing/corrupt body is undefined. | Phase 2 |
 | M5 | BC-20–BC-24 | **Failure classification is incomplete.** Disk-full and permission errors must not poison a URL's retry ledger. 408/429/403/410 unspecified; no request timeout, no `Retry-After`, no clock-skew handling. | Phase 2 |
 | M6 | BC-19, BC-28, BC-39 | **No in-flight dedupe.** Two simultaneously mounted components can race the same uncached URL and the same destination file. Needs a global in-flight promise map keyed by asset URL. | Phase 2 |
