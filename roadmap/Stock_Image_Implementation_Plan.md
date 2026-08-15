@@ -175,7 +175,7 @@ later by changing only `baseUrl` in the manifest — no app change.
   // same block into all 26 sidecars for a SKU. Hoisted here to avoid 78x repetition.
   "skus": {
     "round-1.5": {
-      "canvas": { "width": 1254, "height": 1254 },
+      "canvas": { "width": 720, "height": 720 },   // the DELIVERED size, not the master's 1254
       "label": {
         "shape": "rectangle",
         "centerX": 0.500, "centerY": 0.511,
@@ -270,10 +270,10 @@ draws the name at render time as a native `<Text>` node. Nothing is baked (D15).
 | `square-1.75` | 0.504 | 0.538 | 0.235 | 0.105 |
 | `rect-portrait` | 0.502 | 0.523 | **0.160** | 0.100 |
 
-All three share `canvas: 1254 × 1254`, `rotationDegrees: 0`, `maximumLines: 2`,
-`textAlign: center`, `textTransform: uppercase`.
+All three share `canvas: 720 × 720` **as delivered** (the masters are 1254 × 1254),
+`rotationDegrees: 0`, `maximumLines: 2`, `textAlign: center`, `textTransform: uppercase`.
 
-`rect-portrait`'s box is **47% narrower** than the other two and sits lower. `SpiceJarPlaceholder`
+`rect-portrait`'s box is **47% narrower** than the other two. `SpiceJarPlaceholder`
 currently hardcodes `top: '40%'` and `width: '68%'` for every SKU, which is wrong for all
 three — this is why geometry must come from the manifest (BC-33).
 
@@ -296,6 +296,19 @@ boxY = originY + (centerY − height / 2) × renderedH
 boxW = width  × renderedW
 boxH = height × renderedH
 ```
+
+**Resolution invariance.** `canvas` is consumed only for its **aspect ratio** — its absolute
+size cancels out. Same 258 × 348 container:
+
+```
+canvas 1254²:  scale = 258/1254 = 0.2057 → renderedW = 1254 × 0.2057 = 258
+canvas  720²:  scale = 258/720  = 0.3583 → renderedW =  720 × 0.3583 = 258
+```
+
+Identical. Because geometry is normalised and font size is seeded from `boxH`, the entire
+overlay is resolution-independent — which is why downscaling masters 1254 → 720 requires **no
+geometry change at all** (BC-49). The manifest nonetheless records the **delivered** 720 × 720
+rather than the master's 1254 × 1254, so the field never describes files that do not exist.
 
 **Worked example** — `round-1.5` in the recall hero card (258 × 348 pt):
 
@@ -379,6 +392,38 @@ manifest that named its URL was fetched, and BC-47 forbids evicting that manifes
 art survives. Bundled art and bundled geometry version together with the binary, so they
 cannot skew. **D13 therefore stands unchanged** — rev 2's rejection of a bundled manifest was
 about image bytes, and geometry for stock art is never needed without stock art.
+
+#### 4.7.5 Delivered assets and validation *(rev 4)*
+
+Three `1254 × 1254` RGBA PNGs, named exactly by `labelSku`. They are the **real renders,
+emptied** — same jar, same sticker, same QR, same blank name area.
+
+| SKU | Jar | Sticker | Source PNG |
+|---|---|---|---|
+| `round-1.5` | square spice jar, black screw lid | round, with a name rule | 750 KB |
+| `square-1.75` | clamp-top jar, wire bail | square, bordered | 883 KB |
+| `rect-portrait` | tall square spice jar, black lid | rectangular portrait | 526 KB |
+
+**Geometry validated against the real art.** The `round-1.5` turmeric sidecar reads
+`centerX 0.5, centerY 0.511, width 0.235, height 0.08` — identical to §4.6.1. Overlaying that
+box on both the empty jar and the turmeric master puts it in the same place to the pixel, so
+fallback → stock is continuous exactly as D22/D23 intended. The masters are themselves
+blank-labelled (`"mode": "dynamic"`), confirming §4.6's premise.
+
+**Bundle format: 720 px PNG** — 830 KB for all three (512 px would be 439 KB). WebP is ~30%
+smaller, but the fallback is the one asset that must never fail to decode and iOS WebP
+support is still unverified (§13 risk 8). Not worth the coupling.
+
+**The baked-in sample QR is retained** as decorative realism. It is identical on all 78
+masters and all 3 fallbacks, and is never presented as scannable. Removing it would require
+re-rendering the entire catalog.
+
+> **New risk — the text box overflows the round sticker.** On `round-1.5` the box is a
+> 295 px-wide rectangle, but the circular sticker narrows toward the top, so text at full
+> width spills off the label onto glass. `rect-portrait` (201 px box in a rectangular label)
+> and `square-1.75` both fit comfortably. **Round labels need an inscribed-width
+> constraint**, not the raw box width. This is concrete evidence for open findings M2/M3 and
+> must be resolved with the typography contract.
 
 ---
 
@@ -468,6 +513,7 @@ Numbered, individually testable. Test suites in §11 reference these IDs.
 | **BC-46** | `printedLabelName` is captured from the QR URL's `?n=` parameter with **no network call** on the standard scan path. |
 | **BC-47** | The manifest cache is **never evicted while any image it references remains cached**, so no reachable state has art without geometry. |
 | **BC-48** | With no manifest and no network, a label still renders its SKU-accurate bundled jar **with its name**, using bundled geometry (D22, D23). |
+| **BC-49** | The computed box is **identical for `canvas` 1254 × 1254 and 720 × 720** at the same container size. `canvas` is consumed for aspect ratio only, so a resolution change can never move the overlay. |
 
 ---
 
@@ -716,9 +762,12 @@ reachable only via the backfill above.
 1. Read the 78 sidecars from the masters repo (§8).
 2. Downscale masters 1254² → 720², encode **lossless WebP** (D12).
 3. Content-hash each file; name it `{imageKey}__{labelSku}__{quantity}.{hash}.webp`.
-4. Generate `manifest.v1.json` (§4.2) — geometry from the sidecars, `label.text` dropped.
-5. Deploy to Firebase Hosting with the headers in §4.4.
-6. Verify: `Content-Type: image/webp`, `immutable` on images, `must-revalidate` on manifest.
+4. Generate `manifest.v1.json` (§4.2) — geometry from the sidecars, `label.text` dropped, and
+   `canvas` **rewritten to the delivered 720 × 720**. Normalised geometry is copied unchanged:
+   downscaling cannot move the overlay (BC-49).
+5. Downscale the 3 fallback jars 1254 → 720 and bundle them as **PNG** in the app (§4.7.5).
+6. Deploy to Firebase Hosting with the headers in §4.4.
+7. Verify: `Content-Type: image/webp`, `immutable` on images, `must-revalidate` on manifest.
 
 The export must be **deterministic and repeatable** — same masters in, same hashes out.
 
@@ -762,7 +811,7 @@ Each maps to behaviour contracts in §5.
 | `stockImageService.startup.test.js` | BC-01, BC-41, BC-43 | index warmed in `prepare()` before `setAppReady(true)`; disk-only, zero network; prefetch warms the decoded bitmap |
 | `enrichment.writeOnce.test.js` | BC-44, BC-45, BC-46 | `null → value` only, never overwrite, enforced in `saveLabel`; deep-link label with no signature is still enriched via `computeSignature`; `?n=` captured with zero network calls |
 | `fallback.bundled.test.js` | BC-47, BC-48 | manifest never evicted while referenced art is cached; with no manifest and no network, the correct SKU jar renders **with** its name from bundled geometry |
-| `LabeledStockImage.geometry.test.js` | BC-32…BC-35, BC-40 | exact pixel boxes for all three SKUs at several container sizes, incl. a **non-square** container to catch letterboxing regressions; no hardcoded geometry; `rect-portrait` distinct from the other two; transform/align/lines applied |
+| `LabeledStockImage.geometry.test.js` | BC-32…BC-35, BC-40, BC-49 | exact pixel boxes for all three SKUs at several container sizes, incl. a **non-square** container to catch letterboxing regressions; no hardcoded geometry; `rect-portrait` distinct from the other two; transform/align/lines applied; **box identical at `canvas` 1254 and 720** |
 | `LabeledStockImage.overlayName.test.js` | BC-36…BC-39 | precedence `printedLabelName`→`displayName`→`name`; renaming leaves the overlay unchanged; `printedLabelName` never mutated by edit paths; two differently-named labels share one cached file and one download |
 
 ### 11.3 Note on asserting "latency"
