@@ -196,8 +196,8 @@ later by changing only `baseUrl` in the manifest — no app change.
         "rotationDegrees": 0
       },
       "typography": {
-        "fontId": "placewell-label-v1",
-        "fontWeight": 500,
+        "fontId": "CormorantGaramond_600SemiBold",
+        "fontWeight": 600,
         "lineHeight": 1.12,
         "letterSpacingEm": 0.14,
         "color": "#17132f",
@@ -233,9 +233,10 @@ Notes:
 - **`label.text` from the sidecar is deliberately dropped.** The user's own label name is
   drawn at runtime; ours would be wrong after any rename.
 - Geometry travels with the manifest entry, so art and overlay can never desynchronise.
-- `fontId` identifies both a bundled font file and its generated glyph advance-width table.
-  Export fails if either artifact is absent. The final font face must be selected before
-  Phase 1; the fitting algorithm and all other typography values are fixed here.
+- `fontId` is the app's existing bundled display face,
+  `CormorantGaramond_600SemiBold`, loaded by `App.js` through
+  `@expo-google-fonts/cormorant-garamond`. It identifies both the runtime face and its
+  generated glyph advance-width table. Export fails if either artifact is absent.
 - Approx. 12–15 KB for 78 entries; one request.
 
 ### 4.3 Image URLs
@@ -650,8 +651,9 @@ Geometry and text fitting are specified in full in §4.6. Summary:
   rename therefore cannot invalidate a cached image, and "re-render on rename" is not a case
   that exists (BC-36).
 
-**Prerequisite:** select and bundle the exact `fontId` face, then generate and version its
-glyph table. Export and app builds fail if either artifact is missing.
+**Selected face:** `CormorantGaramond_600SemiBold`, already bundled and loaded before the app
+renders. Phase 1 generates and versions its glyph table; export and app builds fail if the
+face or metrics artifact is missing.
 
 ### Q6 — User photo add / remove
 
@@ -990,7 +992,7 @@ for traceability; unresolved rows need a decision before the phase named in the 
 | # | Area | Finding | Decide before |
 |---|---|---|---|
 | M1 | D10–D11, BC-16/39 | The spec conflates the **semantic lookup key** with **asset identity**. If cache files are keyed by `imageKey\|labelSku\|quantity`, a new content-hash URL still resolves the old file. Needs an explicit index: lookup key → asset identity (URL or SHA-256) + geometry revision. | Phase 2 |
-| M2 | §4.6.4, BC-33 | **Narrowed in rev 5.** Manifest fields now fix weight, line height, tracking, colour, alignment, platform flags, start factor, minimum, fitting algorithm and glyph metrics. The only unresolved choice is the exact licensed `fontId` face; Phase 1 cannot export until it is selected and bundled. | Phase 1 |
+| M2 | §4.6.4, BC-33 | **Resolved.** Typography fields are fixed and the selected bundled face is `CormorantGaramond_600SemiBold`. Phase 1 generates its versioned glyph table and makes that artifact a build requirement. | done |
 | M3 | §4.6, size presets | **Resolved in rev 5 (D25, BC-54).** A legibility floor reduces line count, then ellipsizes, then suppresses the overlay if one readable glyph cannot fit. | done |
 | M4 | BC-04–BC-08, BC-17–BC-23 | **No atomicity or integrity design for cache writes.** Expo FileSystem can leave partial files on Android, and a truncated file then counts as cached forever. Need: download to temp → verify SHA-256 + byte size + content type → atomic move. Manifest needs a digest and full validation before replacing last-known-good. `304` with a missing/corrupt body is undefined. | Phase 2 |
 | M5 | BC-20–BC-24 | **Failure classification is incomplete.** Disk-full and permission errors must not poison a URL's retry ledger. 408/429/403/410 unspecified; no request timeout, no `Retry-After`, no clock-skew handling. | Phase 2 |
