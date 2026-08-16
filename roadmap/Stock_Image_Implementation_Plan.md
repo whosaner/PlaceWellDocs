@@ -38,14 +38,22 @@ and before the key contract was verified. Where the two disagree, **this documen
 > and **disables Hosting** rather than billing; and `rect-portrait` is narrower but **not**
 > lower than both other SKUs (its `centerY` sits between them).
 >
-> The same review raised twelve further MAJOR findings. Rev 5 resolves M2/M3; the others
-> remain open — see §14.
+> The same review raised twelve further MAJOR findings. Rev 5 resolves M2/M3; rev 6 resolves
+> every Phase-2 finding. M9 remains deliberately deferred to Phase 3 and M11 belongs to the
+> Phase-1 release workflow — see §14.
 
 > **Revision 5** replaces the square/lossless delivery assumption with measured,
 > content-cropped assets; replaces iOS-only `adjustsFontSizeToFit` with a deterministic
 > glyph-width contract and hard clipping; and records the bundled fallback delivered by
 > `PlaceWellApp` commits `745581d` and `78f5150`. Adds **D24–D26** and **BC-50…BC-59**. D12 and D23 are
 > revised. M2/M3 and risk 9/10 are resolved or narrowed in §13–§14.
+>
+> **Revision 6** resolves the remaining Phase-2 architecture findings: semantic lookup is
+> separated from immutable asset identity; manifest/image writes are verified and atomic;
+> retry classes, in-flight deduplication, cache retention, missing-photo fallback, and
+> repurposed-label behaviour are explicit. Downloaded art remains in `documentDirectory`
+> and is excluded from device backup with native configuration. Active objects are never
+> evicted; they change only when the server manifest publishes a new content hash.
 
 ---
 
@@ -121,6 +129,15 @@ have 404'd.**
 | D24 | **Delivery is content-cropped and contain-fitted into an 800 × 1080 physical-pixel envelope, never upscaled.** Geometry is renormalised onto the crop. | 800 × 1080 is the largest measured art surface (`HomeScreen` at 430 pt and 3×). Transparent margins were consuming resolution without improving fidelity; wide category art also proved that “1080 px tall” cannot be a universal rule. |
 | D25 | **Text fitting is deterministic and platform-independent.** Use a generated uppercase glyph advance-width table, greedy word wrapping, an inscribed `safeWidth`, a legibility floor, ellipsis, and a hard-clipped box. Never depend on `adjustsFontSizeToFit`. | React Native declares `adjustsFontSizeToFit` in `TextPropsIOS`; it silently provides no containment guarantee on Android. The round sticker's declared box is 4.3% too wide at its binding edge. |
 | D26 | **Bundled artwork is normalised into a 240 pt square and contain-fitted without stretching.** `full`/`wizard` = 240 pt, `tile` = 120 pt, `mini` = 52 pt. | The new category art is landscape (1.053 and 1.168) while jars range from 0.411 to 0.712. Keeping the old 150 × 240 footprint would make category art roughly half the jars' visual weight; `mini` must fit the actual 52 pt thumbnail rather than depend on clipping. |
+| D27 | **Semantic lookup and cached asset identity are separate.** `imageKey\|labelSku\|resolvedQuantity` selects a manifest entry; the entry's full lowercase SHA-256 is the immutable `assetId` and object filename. | A semantic key may intentionally point to new art tomorrow. Keying disk files by the semantic key would keep serving stale bytes after a manifest update. |
+| D28 | **Manifest and image writes are last-known-good, integrity-checked, and atomic.** Download to a same-directory temporary file, validate completely, then rename and update the index/pointer. | A partial Android download or malformed manifest must never become a permanent cache hit or replace a usable catalog. |
+| D29 | **Network/HTTP failures and local-storage failures have separate state machines.** URL backoff records only remote failures; disk-full, permission, cancellation, and local I/O never poison an asset URL. | A future retry cannot repair a broken permission, while freeing storage can immediately repair disk-full. Combining them would suppress valid downloads for the wrong reason. |
+| D30 | **One module-global in-flight map and a four-transfer priority semaphore own all image downloads.** The map is keyed by `assetId`; visible/wizard work precedes bulk warming. | Simultaneously mounted surfaces must share one verified write, and bulk import must not consume every transfer slot. |
+| D31 | **Active stock objects are retained, not LRU-evicted.** The cache prunes only temporary/orphan files and objects referenced by neither the active nor previous last-known-good manifest. A 64 MiB safety ceiling rejects additional warming rather than deleting active art. | The catalog is small and the product requirement is download once, then change only when the server publishes a new content hash. |
+| D35 | **The stock-art directory is excluded from iCloud and Android Auto Backup with native configuration.** This requires a development/production build; Expo Go is not the release-validation environment for this feature. | Persistent downloaded content should not consume backup quota or restore stale CDN objects onto another installation. |
+| D32 | **Only a usable user photo participates in precedence.** New photos are copied atomically into app-owned storage; startup builds a synchronous availability index; native load errors re-resolve without leaving a blank surface. | A non-null picker cache URI can point to a missing file and currently wins resolution even though it cannot render. |
+| D33 | **Repurposed labels can explicitly disable stock contents art without rewriting historical identity.** Add `artworkMode: "auto" | "fallback"` (default `auto`). `fallback` bypasses remote stock art but retains the physical `printedLabelName` on the SKU/category fallback. | `imageKey`, `labelSku`, and `printedLabelName` remain immutable facts about the issued label. A custom user photo remains the explicit way to depict repurposed contents. |
+| D34 | **Artwork layout dimensions are explicit inputs, not discovered by a first-render `onLayout`.** The shared renderer receives the documented 240/120/52 point square preset and computes contain-fit synchronously. | Measuring after commit would move the overlay and violate the no-visible-swap contract. Orientation creates a new focus/layout boundary. |
 
 > **Firestore is not a hosting option.** It is a document database; binaries do not belong in
 > documents. The real comparison was Firebase **Hosting** (a CDN for static files) — not
@@ -474,9 +491,11 @@ The deterministic build script is `PlaceWellApp\scripts\build-fallback-artwork.p
 6. writes PNGs plus `assets/fallback/geometry.json`.
 
 The current script is crop/scale-idempotent when re-run against its own output. A
-**release-reproducible byte-for-byte build is not yet proven** because the authoring inputs,
-jar configs, and Pillow/NumPy versions live outside the app repo. Phase 1 must pin those
-inputs and checksums before BC-57 becomes a release gate. The app suite now contains
+**Release-reproducible byte-for-byte output is now enforced** by `PlaceWellApp` commit
+`1da8016`. The five source PNGs and three jar configs live under `artwork-sources/`;
+`provenance.json` pins Python, Pillow, NumPy, the font package, and every input SHA-256.
+`npm run artwork:check` performs an isolated rebuild and requires every committed PNG,
+geometry record, and glyph-metrics artifact to be byte-identical. The app suite now contains
 **326 tests across 25 suites**, including focused coverage for asset identity, dimensions,
 key resolution, ellipse/QR containment, geometry positioning, glyph sanitization and
 metrics, whole-word wrapping, ellipsis, clipping, legibility suppression, and contain-fit.
@@ -515,37 +534,43 @@ Numbered, individually testable. Test suites in §11 reference these IDs.
 | ID | Contract |
 |---|---|
 | **BC-03** | The manifest is fetched on first actual need, and prefetched (unawaited) on `LabelFormScreen` and `BulkImportScreen` mount. |
-| **BC-04** | A successful fetch is written to `documentDirectory` together with its `ETag`. |
-| **BC-05** | Subsequent fetches send `If-None-Match`. A `304` reuses the cached copy and writes nothing. |
+| **BC-04** | A `200` manifest is accepted only when it is `application/json`, UTF-8 JSON no larger than 256 KiB, its deployment-generated SHA-256 digest matches, every schema/reference/URL/hash/byte/geometry field validates, and `manifestRevision` is monotonic. A lower revision, or the same revision with different bytes, is rejected. |
+| **BC-05** | Subsequent fetches send `If-None-Match`. A `304` succeeds only when the stored snapshot still validates locally. If it is missing/corrupt, perform one unconditional GET. A validated replacement is committed temp → rename → current-pointer; the previous snapshot remains last-known-good until then. |
 | **BC-06** | A cached manifest is used indefinitely while offline. Stale always beats absent. |
 | **BC-07** | An unrecognised `schemaVersion` causes the manifest to be ignored — treated as absent, never a crash. |
 | **BC-08** | Manifest fetch failure resolves to the built-in placeholder. No crash, no error dialog, no blocked UI. |
-| **BC-09** | Manifest retry is throttled to at most once per 15 minutes per session, and retried on cold start. |
+| **BC-09** | Manifest failure persists one global `retryNotBefore` for 15 minutes or a longer valid `Retry-After`. All callers and cold starts honour it; no startup request is forced. A stale validated manifest remains usable while revalidation is suppressed. |
 
 ### 5.3 Resolution
 
 | ID | Contract |
 |---|---|
-| **BC-10** | Precedence is exactly: `photoUri` → cached stock art → built-in placeholder. |
+| **BC-10** | Precedence is exactly: usable indexed `photoUri` → verified active stock object when `artworkMode = "auto"` → built-in fallback. `artworkMode = "fallback"` bypasses stock. |
 | **BC-11** | When art is cached, `LabelArtwork` selects its **final source URI synchronously during the first render** — no `await`, no loading state — and never changes `source` for that label thereafter. *(Restated in rev 4: the rev-2 wording, "correct image on the first frame", is unachievable — see D20.)* |
 | **BC-12** | Resolution is latched **within a re-resolve boundary** and re-resolved **at** one. Boundaries are screen focus and wizard step change. A visible image is never swapped in place inside a boundary. |
 | **BC-13** | `quantity: "default"` resolves via `manifest.defaultQuantity`. |
 | **BC-14** | A miss on the exact quantity falls back to `defaultQuantity`, then to the placeholder. |
 | **BC-15** | A null or unknown `imageKey` (blanks, order QRs, non-spice categories) resolves to the placeholder as a **normal branch**, not an error. |
-| **BC-16** | Identical inputs produce an identical cache key across every size preset (`full`/`wizard`/`tile`/`mini`). |
+| **BC-16** | Identical semantic inputs resolve to the same active descriptor `{assetId, geometryId, file, bytes}` across every size preset. Disk objects are keyed only by `assetId`, never by the semantic lookup key or label name. |
 
 ### 5.4 Image download and cache
 
 | ID | Contract |
 |---|---|
 | **BC-17** | The download URL is exactly `baseUrl + file` from the manifest entry. |
-| **BC-18** | Images are written to `documentDirectory`, never `cacheDirectory`. |
-| **BC-19** | A cached image triggers **zero** network calls on re-render. |
-| **BC-20** | Download failure renders the placeholder and records an entry in the failure ledger keyed by URL. |
-| **BC-21** | Transient failures (timeout, offline, 5xx) retry on the next natural render of that image, with backoff: next session → 1 h → 6 h → 24 h cap. |
-| **BC-22** | A `404` is recorded as permanent and is **not** retried on that URL. |
+| **BC-18** | Images use `stock-images/tmp/<assetId>.<nonce>.part` and `stock-images/objects/<assetId>.webp` under app-owned persistent storage, never `cacheDirectory`. A write commits only after HTTP 200, `image/webp`, exact manifest byte count, maximum 2 MiB, and SHA-256 = `assetId`; then same-directory rename precedes the object-index update. |
+| **BC-19** | A verified retained object matching the active manifest triggers **zero** network calls. Eviction or integrity invalidation permits re-download. |
+| **BC-20** | Remote failures render the fallback and update a ledger keyed by canonical asset URL. Local disk/permission/I/O failure and caller cancellation create no URL-ledger entry. |
+| **BC-21** | Remote failure classes are exact: network/DNS/TLS/15 s timeout/408/5xx are transient; 429 is transient with `Retry-After`; 403 is terminal for the current `manifestRevision`; 404/410 are permanent for that URL; content-type/byte/hash mismatch is integrity-terminal for that asset identity. Transient attempts become eligible in a different session, then after 1 h, 6 h, and 24 h for attempt 4+. Success clears the record. |
+| **BC-22** | `Retry-After` applies to 429/503. Numeric seconds are accepted; an HTTP-date is measured from the response `Date` header, not device time; valid delays clamp to 60 s–24 h. Invalid/missing values use normal backoff. |
 | **BC-23** | A changed content hash produces a new URL, which is absent from the ledger and therefore fetched normally — self-healing after a corrected deploy. |
 | **BC-24** | There is **no startup sweep** that retries all previously failed images. |
+| **BC-60** | A module-global `Map<assetId, Promise>` is populated before the first `await`; all callers share that promise. It is removed in `finally` only when still current. Consumer unmount does not cancel shared work. |
+| **BC-61** | Exactly four image transfers may run. Visible and wizard requests have priority over bulk warming; bulk cannot reserve all slots. |
+| **BC-62** | Verified objects referenced by the active or previous last-known-good manifest are never evicted. Before warming, unreferenced objects are pruned; if retained objects plus the candidate exceed 64 MiB, warming is skipped without deleting active art. A visible on-demand request may still replace the obsolete object for that same semantic key after a new hash is published. |
+| **BC-63** | Startup index warm-up removes `.part` files, orphan/malformed objects, missing-file index rows, objects referenced by neither retained manifest, and unreferenced ledger rows. A native stock decode error invalidates and removes only the corrupt object. |
+| **BC-64** | Disk-full performs one unreferenced-object cleanup pass and one write retry, then enters a 15-minute process storage cooldown. Permission failure disables writes for the process lifetime. Neither changes URL backoff, and neither evicts active art. |
+| **BC-69** | iOS marks the stock-art directory excluded from iCloud backup; Android backup rules exclude the same directory from cloud and device-transfer backup. Release validation inspects both generated native configurations. |
 
 ### 5.5 Prefetch
 
@@ -554,8 +579,8 @@ Numbered, individually testable. Test suites in §11 reference these IDs.
 | **BC-25** | `LabelFormScreen` mount triggers a manifest prefetch; it is not awaited and does not block render. |
 | **BC-26** | Advancing from the Name step resolves the key and starts the image prefetch. While that prefetch is in flight the Photo step renders **reserved empty space**, not the fallback. The fallback appears only on prefetch failure or after a **2 s** timeout, and then latches until the next boundary. |
 | **BC-27** | `BulkImportScreen` mount warms the whole `orderLabels` set. |
-| **BC-28** | The batch dedupes by cache key (N labels → M unique files) and skips entries already on disk or with a null key. |
-| **BC-29** | Batch downloads are capped at 4–6 concurrent. |
+| **BC-28** | The batch dedupes by `assetId` (N labels → M unique objects) and skips verified retained objects or null keys. |
+| **BC-29** | Batch work uses the shared exact four-transfer semaphore and lower priority than visible/wizard requests. |
 | **BC-30** | Batch partial failure is tolerated: successes are cached, failures are ledgered, no error UI, no retry storm. |
 | **BC-31** | Stock art is warmed **even when the user sets their own photo**, so a later removal reveals it instantly with no fetch. |
 
@@ -566,12 +591,12 @@ Numbered, individually testable. Test suites in §11 reference these IDs.
 | **BC-32** | The label box is computed from the **rendered image rectangle** (after contain-fit letterboxing), never from the raw container. Asserted with a deliberately non-square container. |
 | **BC-33** | Geometry and typography come from the manifest/bundled geometry record. No position, size, font metric, or fitting threshold is hardcoded in a screen component. |
 | **BC-34** | For a given SKU, the overlay's position relative to the image is identical across all size presets (`full`/`wizard`/`tile`/`mini`) when normalised. |
-| **BC-35** | All three SKUs produce distinct, correct boxes from the same code path. Assert the delivered-crop golden coordinates in §4.6.1; do not infer qualitative physical size from normalised values whose crop denominators differ. |
-| **BC-36** | Editing a label's `name` does **not** change the rendered overlay. |
+| **BC-35** | All three SKUs produce distinct, correct boxes from the same code path. For a 258 × 348 pt container, independent literal goldens are: round `(85.22041, 162.70218, 87.86916, 31.17036)`, square `(92.72426, 173.94084, 98.22955, 43.88976)`, portrait `(92.85829, 166.06734, 74.51690, 46.57284)`, tolerance ±0.01 pt. Tests must not derive expectations with the runtime/export helper. |
+| **BC-36** | Editing `name` does not alter the overlay while `printedLabelName` exists. When it is absent, `name` is the documented final fallback and may change the overlay. |
 | **BC-37** | Overlay name precedence is exactly `printedLabelName` → manifest `displayName` → `name`. |
 | **BC-38** | `printedLabelName` is written once at creation (from `lookupLabel` or `lookupOrder`) and is never mutated by any app-side edit path. |
 | **BC-39** | The cache key excludes the name. Two labels with different names but the same `imageKey\|labelSku\|quantity` share **one** cached file and issue **one** download. |
-| **BC-40** | `textTransform`, `textAlign`, `maximumLines` and `rotationDegrees` from the manifest are all applied. |
+| **BC-40** | Jest asserts `textTransform`, `textAlign`, `maximumLines` and `rotationDegrees` wiring. Android and iOS release-smoke screenshots independently prove native clipping/alignment using forced two-line and nonzero-rotation fixtures; platform baselines allow at most 0.5% changed pixels in the artwork region. |
 | **BC-50** | Exporting a content crop renormalises `centerX`, `centerY`, `width`, `height`, `safeWidth`, and any mask bounds onto the delivered canvas. Golden values are asserted independently from runtime fixtures. |
 | **BC-51** | `round-1.5` uses `safeWidth = 0.36851` on the delivered crop. Its raw width (`0.38421`) is proven to cross the ellipse; the safe box is proven to remain inside at both horizontal edges. |
 | **BC-52** | Android and iOS use the same glyph advance-width table and greedy wrapping algorithm. `adjustsFontSizeToFit` is absent from the implementation. |
@@ -596,6 +621,10 @@ Numbered, individually testable. Test suites in §11 reference these IDs.
 | **BC-57** | Every bundled file is PNG, lies within 800 × 1080, and is never stretched or upscaled by the build. The release pipeline pins source checksums, jar configs, Python, Pillow and NumPy versions; only that pinned pipeline must reproduce byte-identical files and geometry. |
 | **BC-58** | Full/wizard fallback art contain-fits 240 pt, tile 120 pt, and mini 52 pt. Wide category art fits by width, tall jar art by height; no wrapper clips an oversized fallback. |
 | **BC-59** | Category geometry includes explicit `qrBounds`. The label rectangle and QR exclusion rectangle have an empty intersection for both category assets. |
+| **BC-65** | A saved photo URI is persisted only after an atomic copy into app-owned photo storage. Startup builds a synchronous availability index; missing/unreadable paths are treated as null before precedence selection. |
+| **BC-66** | `onError` before a photo's first `onLoad` marks it unusable for the session and resolves stock/fallback from reserved space. An error after `onLoad` keeps the current boundary latched and invalidates the photo for the next boundary. |
+| **BC-67** | `artworkMode` defaults to `auto`. `fallback` bypasses remote stock art without clearing or rewriting `imageKey`, `labelSku`, or `printedLabelName`; saving this setting is a re-resolve boundary. |
+| **BC-68** | Artwork box size is synchronously known from the preset. Runtime `onLayout` is not used to establish initial overlay geometry. Rotation/orientation begins a new layout boundary. |
 
 ---
 
@@ -634,8 +663,10 @@ have art either way.
 ### Q4 — Download once
 
 Guaranteed by content-hashed filenames, `immutable` cache headers, and an app-owned cache in
-`documentDirectory` that the OS cannot purge (D14, BC-18, BC-19). One download per URL per
-device, ever. Only the manifest revalidates, usually as a cheap `304`.
+`documentDirectory` that the OS does not purge (D14, BC-18, BC-19). Active objects are not
+LRU-evicted. They are downloaded once and replaced only when the active manifest publishes a
+new content hash for that semantic key, or when integrity/decode validation proves the local
+copy corrupt. The manifest alone revalidates, usually as a cheap `304`.
 
 ### Q5 — Label name and local storage
 
@@ -894,7 +925,11 @@ The export must be **deterministic and repeatable** — same masters in, same ha
 ### 11.1 Implementation
 
 - `stockImageService` (§4.5) — manifest cache + ETag, image cache in `documentDirectory`,
-  in-memory index, failure ledger with backoff, prefetch API (incl. bitmap warm, BC-43).
+  in-memory descriptor/object index, atomic verified writes, separate remote/storage failure
+  state machines, global in-flight dedupe, four-transfer priority semaphore, retained-object
+  pruning, and prefetch API (incl. bitmap warm, BC-43).
+- Add native iOS/Android configuration that excludes only the stock-art directory from
+  backup (D35/BC-69); release validation uses generated native projects, not Expo Go.
 - Warm the cache index in `App.js` `prepare()` before `setAppReady(true)` (BC-41).
 - Persist `imageKey` **and `printedLabelName`** through `storage.js`, `qrService.js`, and
   `bulkCreateLabels`, with write-once immutability enforced **inside `saveLabel`** (BC-44).
@@ -909,7 +944,10 @@ The export must be **deterministic and repeatable** — same masters in, same ha
   (BC-42), delegating all overlay rendering to `LabelTextOverlay`.
 - Reuse the implemented five-asset fallback registry and generated geometry from
   `PlaceWellApp` commits `745581d` and `78f5150` (D22, D23, D26, §4.7).
-- Fix `photoUri` persistence (§13 risk 1).
+- Fix `photoUri` persistence and build the synchronous availability/error fallback path
+  (D32, BC-65/66).
+- Persist `artworkMode` with default `auto`; expose the explicit `fallback` opt-out without
+  mutating issued identity fields (D33, BC-67).
 
 ### 11.2 Test suites
 
@@ -917,24 +955,28 @@ Each maps to behaviour contracts in §5.
 
 | Suite | Covers | Key assertions |
 |---|---|---|
-| `stockImageService.manifest.test.js` | BC-03…BC-07 | cold fetch writes cache + ETag; `If-None-Match` sent; `304` writes nothing; unknown `schemaVersion` ignored; stale served offline |
-| `stockImageService.manifestFailure.test.js` | BC-08, BC-09 | failure → placeholder, no throw; retry throttled to 1 per 15 min; retried on cold start |
-| `stockImageService.resolve.test.js` | BC-10…BC-16 | precedence order; `default` → `defaultQuantity`; quantity miss falls back; null key is a normal branch; identical cache key across presets |
-| `stockImageService.imageFetch.test.js` | BC-17…BC-19 | URL = `baseUrl + file`; written to `documentDirectory` **not** `cacheDirectory`; second render issues **0** requests |
-| `stockImageService.imageFailure.test.js` | BC-20, BC-22 | failure → placeholder + ledger entry; `404` marked permanent |
-| `stockImageService.imageRetry.test.js` | BC-21, BC-23, BC-24 | backoff 1 h/6 h/24 h via fake timers; `404` never retried; new hash fetched normally; no startup sweep |
+| `stockImageService.manifest.test.js` | BC-03…BC-07 | full validation and digest; monotonic revision; last-known-good atomic pointer; valid `304`; corrupt/missing `304` body forces one unconditional GET; stale served offline |
+| `stockImageService.manifestFailure.test.js` | BC-08, BC-09 | failure → fallback, no throw; persisted 15-minute suppression applies across cold starts; stale remains usable |
+| `stockImageService.resolve.test.js` | BC-10…BC-16, BC-67 | usable-photo precedence; `artworkMode`; `default` resolution; null key normal; semantic descriptor stable across presets; changed hash selects new `assetId` |
+| `stockImageService.imageFetch.test.js` | BC-17…BC-19 | URL exact; temp download; MIME/bytes/SHA verified before rename/index; retained hit issues zero requests |
+| `stockImageService.imageFailure.test.js` | BC-20…BC-22, BC-64 | exact HTTP/integrity/local classes; `Retry-After` clock handling; local storage never poisons URL ledger |
+| `stockImageService.imageRetry.test.js` | BC-21…BC-24 | session/1 h/6 h/24 h state machine; terminal URL classes; new hash eligible; no startup sweep |
+| `stockImageService.concurrency.test.js` | BC-60, BC-61 | simultaneous callers share one promise/write; exactly four transfers; visible work overtakes queued bulk; unmount does not cancel shared work |
+| `stockImageService.retention.test.js` | BC-62, BC-63 | active/previous-manifest objects retained; stale/orphan/partial cleanup; 64 MiB skips warming rather than evicting active art; decode corruption removes one object |
 | `stockImageService.coldStart.test.js` | BC-01, BC-02 | `initializeStorage()` resolves with no art request; no timers or `AppState` listeners registered |
-| `BulkImportScreen.artPrefetch.test.js` | BC-27…BC-30 | 30 labels → M unique requests (dedupe); concurrency cap never exceeded; partial failure renders no error UI |
+| `BulkImportScreen.artPrefetch.test.js` | BC-27…BC-30 | 30 labels → M unique `assetId` requests; shared four-transfer priority cap; partial failure renders no error UI |
 | `LabelFormScreen.artPrefetch.test.js` | BC-25, BC-26, BC-31 | manifest prefetch on mount, unawaited; image prefetch on Next; art warmed even when a user photo is set |
 | `LabeledStockImage.noFlicker.test.js` | BC-11, BC-12, BC-42 | final source URI chosen synchronously on the first render; `source` never changes within a boundary; reserved empty space (not the fallback) during decode |
-| `LabelArtwork.precedence.test.js` | BC-10, BC-42 | one component owns photo → stock → fallback; all 5 migrated call sites resolve identically from the same inputs; no call site retains a local ternary |
+| `LabelArtwork.precedence.test.js` | BC-10, BC-42, BC-65…BC-68 | one component owns usable photo → stock → fallback; missing/native-error photo paths; explicit stock opt-out; synchronous preset dimensions; no call site retains a local ternary |
 | `stockImageService.startup.test.js` | BC-01, BC-41, BC-43 | index warmed in `prepare()` before `setAppReady(true)`; disk-only, zero network; prefetch warms the decoded bitmap |
 | `enrichment.writeOnce.test.js` | BC-44, BC-45, BC-46 | `null → value` only, never overwrite, enforced in `saveLabel`; deep-link label with no signature is still enriched via `computeSignature`; `?n=` captured with zero network calls |
 | `fallback.bundled.test.js` | BC-47, BC-48, BC-56, BC-58 | exactly 5 keys; SKU/category resolution; PNG dimensions; 240/120/52 pt contain-fit; wide fits by width/tall by height |
 | Release-pipeline fallback integration | BC-57, BC-59 | pinned inputs reproduce byte-identical PNG/geometry artifacts; explicit `qrBounds`; category text and QR rectangles do not intersect |
 | `LabeledStockImage.geometry.test.js` | BC-32…BC-35, BC-40, BC-49…BC-51 | exact golden pixel boxes for all three delivered crops at several container sizes; non-square letterboxing; proportional-resolution invariance; independent crop-transform golden values; round ellipse containment |
 | `LabelTextOverlay.textFit.test.js` | BC-52…BC-55 | run the same cases against manifest and bundled geometry: Android/iOS share glyph metrics and line breaks; no `adjustsFontSizeToFit`; longest catalog name, two words, one long token, empty, emoji and RTL; legibility suppression; ellipsis; hard clip |
-| `LabeledStockImage.overlayName.test.js` | BC-36…BC-39 | precedence `printedLabelName`→`displayName`→`name`; renaming leaves the overlay unchanged; `printedLabelName` never mutated by edit paths; two differently-named labels share one cached file and one download |
+| `LabeledStockImage.overlayName.test.js` | BC-36…BC-39 | precedence `printedLabelName`→`displayName`→`name`; rename scope for blank vs printed labels; immutable printed name; two names share one `assetId` object |
+| Native backup configuration check | BC-69 | generated iOS resource values exclude stock art from iCloud; Android backup/data-extraction rules exclude the same directory from cloud and device transfer |
+| Platform artwork screenshot smoke | BC-40, BC-68 | iOS/Android release builds render two-line and rotated fixtures within 0.5% artwork-region pixel tolerance; portrait/landscape boundaries remain aligned |
 
 ### 11.3 Note on asserting "latency"
 
@@ -962,7 +1004,7 @@ fall back to `defaultQuantity` (BC-14).
 
 ## 13. Risks
 
-1. **`photoUri` is not persisted safely.** It stores the raw `expo-image-picker` URI, which
+1. **`photoUri` is not yet persisted safely.** It stores the raw `expo-image-picker` URI, which
    points into the OS cache directory. iOS and Android may purge it under storage pressure,
    so a **user photo can silently vanish** and fall back to stock art — which will look like
    a bug in *this* feature. Copy user photos into `documentDirectory` on save. **Fix in
@@ -973,7 +1015,9 @@ fall back to `defaultQuantity` (BC-14).
 5. **Bundled font required** for deterministic overlay metrics.
 6. **Analytics needed:** fallback rate, missing-key events, manifest fetch failures —
    otherwise a key mismatch is invisible in production.
-7. **Cache growth cap** so the image cache cannot grow unbounded.
+7. **Resolved by design in rev 6:** active/previous-manifest objects are retained, stale
+   objects are pruned, and a 64 MiB ceiling skips speculative warming rather than evicting
+   active art. Native backup exclusion remains an implementation/release gate (D31/D35).
 8. **WebP decode support must be verified on iOS** for React Native's `<Image>` at
    SDK 54 / RN 0.81. Native `UIImage` WebP support exists from iOS 14; Expo SDK 54 targets
    iOS 15.1+, so this is expected to work, but it is **unverified** and blocks Phase 2.
@@ -991,21 +1035,21 @@ for traceability; unresolved rows need a decision before the phase named in the 
 
 | # | Area | Finding | Decide before |
 |---|---|---|---|
-| M1 | D10–D11, BC-16/39 | The spec conflates the **semantic lookup key** with **asset identity**. If cache files are keyed by `imageKey\|labelSku\|quantity`, a new content-hash URL still resolves the old file. Needs an explicit index: lookup key → asset identity (URL or SHA-256) + geometry revision. | Phase 2 |
+| M1 | D10–D11, BC-16/39 | **Resolved in rev 6 (D27, BC-16).** Semantic inputs select an active descriptor; full SHA-256 `assetId` names the cached object and geometry has a separate revision. | done |
 | M2 | §4.6.4, BC-33 | **Resolved.** Typography fields are fixed and the selected bundled face is `CormorantGaramond_600SemiBold`. Phase 1 generates its versioned glyph table and makes that artifact a build requirement. | done |
 | M3 | §4.6, size presets | **Resolved in rev 5 (D25, BC-54).** A legibility floor reduces line count, then ellipsizes, then suppresses the overlay if one readable glyph cannot fit. | done |
-| M4 | BC-04–BC-08, BC-17–BC-23 | **No atomicity or integrity design for cache writes.** Expo FileSystem can leave partial files on Android, and a truncated file then counts as cached forever. Need: download to temp → verify SHA-256 + byte size + content type → atomic move. Manifest needs a digest and full validation before replacing last-known-good. `304` with a missing/corrupt body is undefined. | Phase 2 |
-| M5 | BC-20–BC-24 | **Failure classification is incomplete.** Disk-full and permission errors must not poison a URL's retry ledger. 408/429/403/410 unspecified; no request timeout, no `Retry-After`, no clock-skew handling. | Phase 2 |
-| M6 | BC-19, BC-28, BC-39 | **No in-flight dedupe.** Two simultaneously mounted components can race the same uncached URL and the same destination file. Needs a global in-flight promise map keyed by asset URL. | Phase 2 |
-| M7 | §13 risk 7 | **Cache cap contradicts "one download per device, ever"** and no eviction policy exists. Need LRU/retention rules, partial-file cleanup, and an explicit statement that eviction permits redownload. Also exclude the art cache from device backups. | Phase 2 |
-| M8 | BC-10, Q6, §13 risk 1 | The claim that a purged `photoUri` falls back to stock is **false** — a non-null URI wins resolution, then native `<Image>` errors and usually draws nothing. Needs synchronous existence verification and an `onError` fallback path. | Phase 2 |
+| M4 | BC-04–BC-08, BC-17–BC-23 | **Resolved in rev 6 (D28, BC-04/05/18).** Manifest and object replacements are fully validated last-known-good temp → rename commits; corrupt `304` state forces one unconditional fetch. | done |
+| M5 | BC-20–BC-24 | **Resolved in rev 6 (D29, BC-20…BC-24/64).** Remote classes, timeouts, `Retry-After`, clock source, and local-storage cooldowns are explicit and separate. | done |
+| M6 | BC-19, BC-28, BC-39 | **Resolved in rev 6 (D30, BC-60/61).** One global promise map keyed by `assetId` and an exact four-transfer priority semaphore own downloads. | done |
+| M7 | §13 risk 7 | **Resolved in rev 6 (D31/D35, BC-62/63/69).** Active objects are never evicted, stale/orphan objects are pruned, the safety ceiling skips warming, and native configuration excludes the directory from backups. | done |
+| M8 | BC-10, Q6, §13 risk 1 | **Resolved in rev 6 (D32, BC-65/66).** Only indexed usable photos enter precedence; both pre-load and post-load native failures have deterministic boundaries. | done |
 | M9 | §12 | **Phase 3 has no quantity data model**: no label field, source of truth, editing flow, or update contract. A server-controlled global `defaultQuantity` could silently change every legacy label. | Phase 3 |
-| M10 | D16, BC-36 | **Repurposed jars are unhandled.** A "Cumin" label later filled with coriander still shows cumin art and `CUMIN`. Also, BC-36 contradicts the precedence rule for blank labels, where `name` *is* rung ③ and editing it *must* change the overlay. Needs an override/opt-out and a scoped BC-36. | Phase 2 |
+| M10 | D16, BC-36 | **Resolved in rev 6 (D33, BC-36/67).** `artworkMode = "fallback"` explicitly opts out of contents-specific remote art while retaining immutable physical-label identity; blank-label name fallback is correctly scoped. | done |
 | M11 | §9 item 8 | The "permanent CI guard" is ineffective: `tests\test_spice_catalog_keys.py` **skips** when sibling repos are absent, which is the normal CI condition. Needs a release workflow checking out catalog + masters + renderer at pinned revisions, validating against the deployed manifest. | Phase 1 |
-| M12 | §11 test plan | Several contracts are vague or circular: BC-09 conflicts with "1 request across 5 launches"; BC-21 lacks a state machine; BC-29 gives a range not a limit; BC-35 is circular if expected values come from the same fixture; BC-40 proves props were passed, not native rendering. | Phase 2 |
+| M12 | §11 test plan | **Resolved in rev 6.** BC-09/21 define persistent state machines, BC-29 is exactly four, BC-35 uses literal independently calculated goldens, and BC-40 adds platform release-smoke screenshots. | done |
 
-Two further MINOR items: `containerW/containerH` has no defined source (`onLayout` would
-introduce a post-commit overlay shift), and rotation/orientation changes are untested.
+The two MINOR items are resolved by D34/BC-68: dimensions come synchronously from the
+documented preset, and orientation begins a new tested layout boundary.
 
 ---
 
