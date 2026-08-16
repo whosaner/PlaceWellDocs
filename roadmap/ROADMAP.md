@@ -94,7 +94,7 @@ Everything open, in one table (todos + roadmap, de-duplicated). ⭐ = deeper wri
 | 39 | New Home-Owner Kit (boxed gifting sets) | Business | Future | move-in gifting / builder partnerships |
 | 40 | Strip unused `SYSTEM_ALERT_WINDOW` permission (Android) | Ops | Low | React Native pulls "display over other apps" into the release manifest; PlaceWell doesn't use overlays. Remove via `android.blockedPermissions` (same mechanism as the foreground-service fix). Verify in the AAB after rebuild. |
 | 41 | Firestore backups + disaster recovery | Ops | High | Real label IDs are random (`secrets.choice`) and live ONLY in Firestore — deleting `qr_codes` with no backup permanently orphans every not-yet-activated physical label (camera scans return "not a PlaceWell code"). Enable PITR + daily/weekly scheduled backups + `--delete-protection` on `placewell-prod-60ef3` `(default)`; retain allocation data/PDFs as an independent second copy. Runbook: `Docs/deployment/Firestore_Backup_And_DR_Runbook.md` |
-| 42 | Per-label remote stock images ⭐ | App/Ops | High | Serve the existing 78 product renders through a static, content-hashed manifest on **Firebase Hosting**, keyed by server-owned `image_key` + `labelSku` + quantity and cached in app-owned storage. Five PNG fallbacks (3 SKU + 2 category) with generated geometry have landed; remote export/hosting, key rename/backfill, enrichment, cache service, and shared `LabelArtwork` migration remain. Authoritative plan: `Docs/roadmap/Stock_Image_Implementation_Plan.md` |
+| 42 | Per-label remote stock images ⭐ | App/Ops | High | Serve the existing 78 product renders through a static, content-hashed manifest on **Firebase Hosting**, keyed by server-owned `image_key` + `labelSku` + quantity and cached in app-owned storage. Five PNG fallbacks and reproducible masters are versioned; remote export/hosting, key rename, enrichment, cache service, and shared `LabelArtwork` migration remain. No Firestore backfill is required because there are no customer labels; missing keys use the bundled fallback. Authoritative plan: `Docs/roadmap/Stock_Image_Implementation_Plan.md` |
 
 ---
 
@@ -141,7 +141,9 @@ app-store release.**
 - **Current status:** the five-asset fallback foundation landed in `745581d`; deterministic
   fitting and final surface sizes landed in `78f5150`; reproducible pinned fallback builds
   landed in `1da8016`. Rev 6 closes the Phase-2 cache/failure/photo architecture decisions.
-  Remote export/hosting, server rename/backfill, service implementation, enrichment, and the
+  The 78 PNG masters are versioned in private Git LFS repo
+  `whosaner/PlaceWell-StockImageMasters` at `5ffef7a`. Remote export/hosting, server rename,
+  service implementation, enrichment, and the
   full `LabelArtwork` migration remain.
 - **Authoritative implementation spec: `Docs/roadmap/Stock_Image_Implementation_Plan.md`** (answers lookup/offline/caching/fallback/versioning/consistency; Phase 0 is a blocking server-side key reconciliation).
 - **Original research (scale math, URL/manifest schema, perf/memory, citations):** `Docs/roadmap/Jar_Image_Strategy_Research.md`.

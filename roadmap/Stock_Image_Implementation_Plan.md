@@ -29,7 +29,7 @@ and before the key contract was verified. Where the two disagree, **this documen
 > | # | Flaw in rev 3 | Resolution |
 > |---|---|---|
 > | 1 | `CategoryPlaceholder`'s API cannot carry `imageKey`/`photoUri`/`printedLabelName`/`quantity`, and the photo ternary is duplicated at 5 call sites, so BC-10 is unenforceable | D18 — new `LabelArtwork` |
-> | 2 | `imageKey`/`printedLabelName` never reach deep-link, transient-failure, or legacy labels; a Firestore backfill cannot touch AsyncStorage | D19 + §9.1 — write-once demand-driven enrichment |
+> | 2 | `imageKey`/`printedLabelName` can be missed by deep-link and transient-failure creation paths; Firestore cannot repair already-local AsyncStorage records | D19 + §9.1 — write-once demand-driven enrichment |
 > | 3 | "Correct pixels on the first committed frame" is unachievable (async native decode) and untestable in Jest | D20 + BC-11 restated, BC-41–BC-43 |
 > | 4 | BC-12 contradicted itself and raced BC-26; a screen-lifetime latch spans the whole wizard | D21 — explicit re-resolve boundaries |
 > | 5 | D13 (no bundled manifest) broke Q3's offline "placeholder + name" promise | D22/D23 + §4.7 — geometry travels with the artwork |
@@ -121,7 +121,7 @@ have 404'd.**
 | D16 | **The overlay shows the name printed on the physical label — not the user's editable name** *(revised — rev 2 said the opposite)*. | The image exists to help the user recognise a physical object. The printed text cannot change, so rendering an edited name would depict a jar that does not exist. |
 | D17 | **`printedLabelName` is persisted on the label at creation and never written by an app-side edit.** | The server's `label_name` is visible exactly once — during the first lookup. Every later scan resolves locally by `label_id` and never contacts the server. |
 | D18 | **A new `LabelArtwork` component owns the whole precedence chain** (photo → stock → fallback) and takes explicit fields, not a label record. `CategoryPlaceholder` is unchanged and becomes the bottom rung. | The `photoUri ? <Image> : <CategoryPlaceholder>` ternary is currently duplicated at 5 call sites, so precedence is decided *before* `CategoryPlaceholder` is reached and BC-10 is unenforceable. Explicit fields because `LabelFormScreen` has no saved label object — it assembles from route params, `originalLabel`, and live wizard state. |
-| D19 | **Metadata enrichment is write-once and demand-driven.** `imageKey`, `printedLabelName`, and `labelSku` are nullable; a repair pass fills `null → value` only and never overwrites. | Capture is currently opportunistic and never repaired. See §9.1 — three separate paths leave labels permanently keyless, one of which affects *new* labels today. |
+| D19 | **Metadata enrichment is write-once and demand-driven.** `imageKey`, `printedLabelName`, and `labelSku` are nullable; a repair pass fills `null → value` only and never overwrites. | Capture is currently opportunistic and never repaired. See §9.1 — deep-link and transient-failure paths can leave even new labels permanently keyless. |
 | D20 | **No visible swap, ever — including the decode window.** Reserved empty space is shown until pixels are ready. | RN `<Image>` decodes even `file://` sources asynchronously, so "correct pixels on the first committed frame" is unachievable by any implementation. Blank → art is not a swap; placeholder → art is. |
 | D21 | **Resolution is latched *within* a re-resolve boundary and re-resolved *at* one.** Boundaries are screen focus and wizard step change. | A screen-lifetime latch is wrong on two counts: React Navigation keeps screens mounted for a whole session, and the wizard's steps are slides inside one screen. |
 | D22 | **Geometry travels with the artwork it describes.** Downloaded art uses manifest geometry; bundled art uses a bundled constant. | Removes the last dependency between the offline fallback and the network. Preserves D13 exactly, because geometry for *stock* art is never needed without stock art. |
@@ -775,17 +775,16 @@ Answered in §1, fixed by D1/D2, and permanently enforced by the CI guard in §9
 
 ## 7. Naming migration (`spice_key` → `image_key`)
 
-Phase 0 shipped the field as `spice_key`. D8 renames it. Scope at time of writing:
-**~101 occurrences across 14 files in 4 repos**, and critically:
+Phase 0 initially used the field name `spice_key`. D8 renames it. Critically:
 
 - **Zero occurrences in `PlaceWellApp`** — the app never consumed it.
-- **The Firestore backfill has never been run**, so no documents carry the field.
+- There are no customer labels requiring migration.
 
 Therefore the rename is a pure code/doc change with **no data migration and no impact on
-printed labels**. It must happen before the backfill runs; afterwards it becomes expensive.
+printed labels. New allocations persist `image_key`; lookup/order return it. Existing
+development documents with the field absent remain valid and resolve the bundled fallback.
 
-Files renamed: `backfill_spice_keys.py` → `backfill_image_keys.py`,
-`test_spice_catalog_keys.py` → `test_image_catalog_keys.py`.
+Test renamed: `test_spice_catalog_keys.py` → `test_image_catalog_keys.py`.
 Functions renamed: `build_spice_key_index()` → `build_image_key_index()`,
 `resolve_spice_key()` → `resolve_image_key()`.
 
@@ -793,14 +792,15 @@ Functions renamed: `build_spice_key_index()` → `build_image_key_index()`,
 
 ## 8. Asset masters repository
 
-The rendered output (78 × {PNG, lossless WebP, JSON sidecar} ≈ 300–400 MB) currently sits in
-`C:\PlaceWell\Images`, untracked. Proposed:
+Implemented as private repository
+`https://github.com/whosaner/PlaceWell-StockImageMasters`, initial commit `5ffef7a`:
 
-- A dedicated repo (e.g. `PlaceWell-StockImageMasters`), **not** inside the renderer repo.
-- **Git LFS** for `*.png` and `*.webp`, so re-renders do not bloat every clone forever.
-- Keep the existing `<labelSku>/<imageKey>/<quantity>/` layout — it matches the renderer's
-  own output and the per-SKU `batch-manifest.json` paths remain valid.
-- `PROVENANCE.md` recording renderer version, generation date, and source commit.
+- 78 transparent 1254² PNG masters tracked through Git LFS.
+- 78 renderer JSON sidecars plus the three original batch manifests.
+- Existing `<labelSku>/<imageKey>/<quantity>/` layout retained.
+- Generated WebP files excluded; they are release outputs, not canonical inputs.
+- `release-inputs.json` pins byte size and SHA-256 for every PNG/sidecar.
+- `scripts/verify_release_inputs.py` rejects a missing, changed, or incomplete 78 × 2 set.
 
 This repo is the **input** to the Phase 1 export. It is never deployed.
 
@@ -816,9 +816,9 @@ This repo is the **input** to the Phase 1 export. It is never deployed.
 | 4 | ~~Add the key to the operator grid~~ | `form.html` | **rejected** — see note |
 | 5 | Key on `AllocationItem` + Firestore write | `PlaceWellQRService\app\allocate.py` | done (rename pending) |
 | 6 | Return the key top-level on lookup + order | `lookup.py`, `order.py` | done (rename pending) |
-| 7 | One-time Firestore backfill by `label_name` | `scripts\backfill_image_keys.py` | written, **never run** |
+| 7 | Missing-field backward compatibility | lookup/order + app resolver | approved: null/absent → bundled fallback |
 | 8 | CI guard: CSV keys ≡ art config IDs | QR service tests | done (rename pending) |
-| 9 | Docs update | `System_Overview.md`, `ROADMAP.md` | done (rename pending) |
+| 9 | Docs update | `System_Overview.md`, `ROADMAP.md` | in progress |
 
 > **Item 4 was deliberately rejected.** `form.html` rebuilds table rows as JSON on submit, so
 > a hand-typed key would be lost, and an editable field invites typos. The key is resolved
@@ -826,19 +826,12 @@ This repo is the **input** to the Phase 1 export. It is never deployed.
 > `resolve_spice_key()` instead.
 
 The key is returned as a **top-level** lookup field, not inside `label_metadata`, so
-non-spice categories can reuse it.
-
-### Backfill notes
-
-Labels already allocated carry neither field. The migration maps `label_name → image_key` and
-also persists `printedLabelName`, including the three superseded names (`Cayenne`,
-`Fennel Seeds`, `Mustard Seeds`) — for those, `printedLabelName` must be the **old** printed
-text, not the new catalog name, since that is what is physically on the jar. Labels for the 4
-removed spices resolve to the built-in placeholder, which is working as designed.
+non-spice categories can reuse it. No backfill is required: there are no customer documents,
+and null/missing `image_key` is a normal backward-compatible fallback branch.
 
 ### 9.1 Why capture-at-creation is not enough *(new in rev 4)*
 
-Three separate paths leave a label permanently without `imageKey` / `printedLabelName`, and
+Two creation paths can leave a label permanently without `imageKey` / `printedLabelName`, and
 they share one root cause: **metadata is captured once, opportunistically, and never
 repaired.**
 
@@ -846,7 +839,6 @@ repaired.**
 |---|---|---|
 | 1 | **Deep link** `placewell://scan/ID` | `parseQRCode` returns `signature: null`; `lookupLabel` returns `null` *without fetching*. The label is created with `category`, `labelSku`, and name **all null**. This affects **new** labels today, not just legacy ones. |
 | 2 | **Transient failure at first scan** | `lookupLabel` returns `null`, the label is created anyway, and `getLabelById` succeeds forever after — so the server is never asked again. Permanent. |
-| 3 | **Legacy labels** | Created before this ships. A Firestore backfill **cannot reach AsyncStorage**. |
 
 Two facts make the repair far cheaper than a new endpoint:
 
@@ -884,9 +876,8 @@ So both creation paths must capture it:
 | Single label | `lookupLabel()` → label creation |
 | Bulk / order | `lookupOrder()` → `orderLabels` → `bulkCreateLabels()` |
 
-Missing it at creation means the value is unrecoverable without a network round-trip per
-label — exactly what this flow is designed to avoid. Labels created before this ships are
-reachable only via the backfill above.
+Missing it at creation requires a later demand-driven lookup. Existing development labels
+may instead remain on the bundled fallback or be recreated; there is no production migration.
 
 ---
 
@@ -1009,9 +1000,11 @@ fall back to `defaultQuantity` (BC-14).
    so a **user photo can silently vanish** and fall back to stock art — which will look like
    a bug in *this* feature. Copy user photos into `documentDirectory` on save. **Fix in
    Phase 2.**
-2. **Backfill is mandatory before launch**, or previously allocated labels never get art.
-3. **Physical labels already shipped are immutable** — backfill is the only way to reach them.
-4. **The rename must land before the backfill runs** (§7).
+2. **No production backfill is required.** There are no customer labels. Missing/null
+   `image_key` remains a supported fallback branch; development labels may be recreated.
+3. **Future customer labels depend on allocation persisting `image_key`.** Keep allocation,
+   lookup, order response, and app storage contract tests together.
+4. **The rename must land before new labels are allocated** (§7).
 5. **Bundled font required** for deterministic overlay metrics.
 6. **Analytics needed:** fallback rate, missing-key events, manifest fetch failures —
    otherwise a key mismatch is invisible in production.
