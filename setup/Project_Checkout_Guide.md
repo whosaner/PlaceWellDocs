@@ -29,6 +29,7 @@ git clone https://github.com/whosaner/PlaceWellQRService.git PlaceWellQRService
 git clone https://github.com/whosaner/PlaceWellPdfGenerator.git PlaceWellPdfGenerator
 git clone https://github.com/whosaner/PlaceWellDocs.git Docs
 git clone https://github.com/whosaner/PlaceWellUI.git PlaceWellUI
+git clone https://github.com/whosaner/PlaceWell-StockImageMasters.git PlaceWell-StockImageMasters
 ```
 
 Verified repo state:
@@ -40,6 +41,15 @@ Verified repo state:
 | `C:\PlaceWell\PlaceWellPdfGenerator` | `https://github.com/whosaner/PlaceWellPdfGenerator.git` | `master` |
 | `C:\PlaceWell\Docs` | `https://github.com/whosaner/PlaceWellDocs.git` | `master` |
 | `C:\PlaceWell\PlaceWellUI` | `https://github.com/whosaner/PlaceWellUI.git` | `master` |
+| `C:\PlaceWell\PlaceWell-StockImageMasters` | `https://github.com/whosaner/PlaceWell-StockImageMasters.git` | `main` |
+
+The stock-image masters repository is private and stores its 78 PNG sources through Git
+LFS. Install Git LFS before cloning, then verify the release inputs:
+
+```powershell
+git lfs install
+python C:\PlaceWell\PlaceWell-StockImageMasters\scripts\verify_release_inputs.py
+```
 
 ## 3. Per-project setup
 
