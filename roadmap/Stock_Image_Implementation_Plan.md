@@ -215,15 +215,14 @@ later by changing only `baseUrl` in the manifest — no app change.
       "typography": {
         "fontId": "CormorantGaramond_600SemiBold",
         "fontWeight": 600,
-        "lineHeight": 1.12,
+        "lineHeight": 1.22,
         "letterSpacingEm": 0.14,
-        "color": "#17132f",
+        "color": "#4A6070",
         "verticalAlign": "center",
         "includeFontPadding": false,
         "allowFontScaling": false,
-        "startSizeFactor": 0.27,
-        "minimumFontPixels": 6,
-        "maximumLines": 2,
+        "minimumFontSize": 6,
+        "maxLines": 2,
         "textAlign": "center",
         "textTransform": "uppercase"
       }
@@ -391,9 +390,9 @@ The export emits an uppercase glyph advance-width table for `fontId` (roughly 70
 2. Use `safeWidth`, not raw `label.width`. For an ellipse, export computes the narrowest
    available chord at the text box's top/bottom edge. For `round-1.5`, transformed
    `safeWidth` is `0.36851` vs raw width `0.38421`.
-3. Seed size from `boxH × startSizeFactor`, then greedily wrap at spaces using glyph advances,
+3. Seed size from `boxH / lineHeight`, then greedily wrap at spaces using glyph advances,
    fixed tracking, and `lineHeight`. Never split a word.
-4. Decrease size in deterministic increments until width, height, and `maximumLines` fit.
+4. Decrease size in deterministic 0.1 pt increments until width, height, and `maxLines` fit.
 5. If the legibility floor is reached, use fewer lines where that helps; then ellipsize.
    At a size where no readable glyph can fit, suppress the overlay.
 6. Render inside a hard-clipped (`overflow: hidden`) box. This is the final containment
