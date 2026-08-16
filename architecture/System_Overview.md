@@ -50,7 +50,8 @@ Phone camera or in-app scanner
   |
   +--> Installed app path:
   |      PlaceWellApp opens via deep link / universal link / app link
-  |      -> validates HMAC offline
+  |      -> full HTTPS links validate HMAC offline
+  |      -> custom-scheme fallback links were already resolved by the server
   |      -> optionally calls QRService lookup for metadata enrichment
   |      -> opens setup for new labels or recall/detail for existing labels
   |
@@ -60,6 +61,14 @@ Phone camera or in-app scanner
          -> if app is not installed, web landing/fallback can send user to store download flow
 ```
 
+For component boundaries and sequence diagrams covering the major runtime and
+production paths, see
+[`Visual_Call_Flows.md`](Visual_Call_Flows.md).
+
+For the current Linode/Firebase service inventory and the Firestore-versus-SQL
+decision, see
+[`Firebase_Linode_SQL_Decision.md`](Firebase_Linode_SQL_Decision.md).
+
 ## Project-to-project relationships
 
 ### 1. PlaceWellApp -> PlaceWellQRService -> Firestore
@@ -67,6 +76,8 @@ Phone camera or in-app scanner
 - It performs **offline HMAC verification first** so counterfeit or malformed labels can be rejected immediately.
 - When online, it can call the QR service to fetch label metadata such as label name, category, and physical SKU.
 - The QR service reads and writes allocation data in Firestore; the app itself remains local-first for user-managed inventory data in v1.
+- The app does **not** connect directly to Firestore. User-entered contents,
+  notes, rooms, zones, freshness data, and photos remain on the device.
 
 ### 2. PlaceWellUI -> PlaceWellPdfGenerator
 - PlaceWellUI is the operator-facing order builder.
@@ -107,9 +118,16 @@ https://placewell.app/s/{LABELID}-{SIGNATURE}?n={name}
 ### Deep-link strategy
 - **Primary scan route:** all printed labels use the same `/s/` URL format.
 - **Installed app:** iOS Universal Links and Android App Links route PlaceWell URLs into the mobile app when available.
-- **Offline trust check:** the app verifies the HMAC-derived signature locally before it trusts the scan.
+- **Offline trust check:** when the app receives the original signed HTTPS URL,
+  it verifies the HMAC-derived signature locally before it trusts the scan.
 - **Online enrichment:** after local validation, the app can call the QR service to fetch metadata and order information.
-- **Fallback behavior:** if the app is not installed, the web endpoint can send the user to a download/landing experience and eventually back into the app through deferred deep linking.
+- **Server fallback:** if Universal/App Link association does not open the app,
+  the public `/s/` endpoint resolves the label in Firestore and may open
+  `placewell://scan/{LABELID}`. This custom-scheme URL no longer contains the
+  signature, so the app treats it as server-resolved rather than repeating
+  local HMAC verification.
+- **App-absent behavior:** the web endpoint presents a landing/download
+  experience when the app is not installed.
 
 ## Firestore schema
 
@@ -178,7 +196,10 @@ Both use Firestore's atomic `fs.Increment(1)` — safe under concurrent scans. W
 
 ### Firebase Analytics (PlaceWellApp — `src/utils/analytics.js`)
 
-The app uses a Firebase Analytics wrapper that is a **silent no-op in Expo Go** and activates automatically in production EAS builds where Firebase is configured.
+The app has a Firebase Analytics wrapper that is currently a **silent no-op**.
+Production activation is deferred because the React Native Firebase integration
+conflicts with the current Expo SDK 54/New Architecture setup. Re-evaluate it
+with the planned Expo SDK upgrade; the event call sites can remain in place.
 
 | Event | Trigger |
 |---|---|
@@ -193,13 +214,15 @@ The app uses a Firebase Analytics wrapper that is a **silent no-op in Expo Go** 
 | `bulk_import_started` | Order QR scan triggers bulk import flow |
 | `bulk_import_completed` | All labels created — params: `created_count`, `skipped_count` |
 
-### Production activation (EAS build)
+### Future production activation
 
-Firebase Analytics is installed but not active until a production build is created:
+After upgrading to a compatible Expo SDK/integration:
 
-1. Add `google-services.json` (Android) to the project root
-2. Add `GoogleService-Info.plist` (iOS) to the project root
-3. Add `@react-native-firebase/app` to `app.json` plugins
-4. Run `eas build` — all 10 events will flow into Firebase Analytics automatically
+1. Install and configure the supported Firebase Analytics package.
+2. Add `google-services.json` (Android) and
+   `GoogleService-Info.plist` (iOS).
+3. Add the required app plugins/native configuration.
+4. Build and validate production binaries on both platforms.
 
-No app code changes are needed for activation.
+The existing event wrapper and call sites are intended to avoid feature-level
+rewrites when activation becomes safe.
