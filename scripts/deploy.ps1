@@ -5,7 +5,22 @@
 # Deploys UI + PDF Generator + QR Service to the Linode server and restarts services.
 # Note: does NOT deploy the mobile app (that goes through EAS build/submit).
 
+$ErrorActionPreference = "Stop"
 $SERVER = "root@45.56.71.137"
+
+function Invoke-Native {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Description,
+        [Parameter(Mandatory)]
+        [scriptblock]$Command
+    )
+
+    & $Command
+    if ($LASTEXITCODE -ne 0) {
+        throw "$Description failed with exit code $LASTEXITCODE."
+    }
+}
 
 Write-Host "=== PlaceWell Deploy ===" -ForegroundColor Cyan
 
@@ -44,12 +59,18 @@ Write-Host "QR packed $(((Get-Item $qrTar).Length / 1KB).ToString('0'))KB" -Fore
 
 # ── Upload both ───────────────────────────────────────────────────────────────
 Write-Host "Uploading..." -ForegroundColor Yellow
-scp $uiTar "${SERVER}:/tmp/placewell-ui.tar.gz"
-scp $qrTar "${SERVER}:/tmp/placewell-qr.tar.gz"
+Invoke-Native "UI upload" {
+    scp $uiTar "${SERVER}:/tmp/placewell-ui.tar.gz"
+}
+Invoke-Native "QR Service upload" {
+    scp $qrTar "${SERVER}:/tmp/placewell-qr.tar.gz"
+}
 
 # ── Extract and restart ──────────────────────────────────────────────────────
 Write-Host "Extracting and restarting services..." -ForegroundColor Yellow
-ssh $SERVER "tar -xzf /tmp/placewell-ui.tar.gz -C /opt/placewell-ui && tar -xzf /tmp/placewell-qr.tar.gz -C /opt/placewell-service && rm -f /tmp/placewell-ui.tar.gz /tmp/placewell-qr.tar.gz && systemctl restart placewell-ui placewell.service && echo '--- placewell-ui ---' && systemctl status placewell-ui --no-pager && echo '--- placewell.service ---' && systemctl status placewell.service --no-pager"
+Invoke-Native "Server extraction and restart" {
+    ssh $SERVER "tar -xzf /tmp/placewell-ui.tar.gz -C /opt/placewell-ui && tar -xzf /tmp/placewell-qr.tar.gz -C /opt/placewell-service && rm -f /tmp/placewell-ui.tar.gz /tmp/placewell-qr.tar.gz && systemctl restart placewell-ui placewell.service && sleep 2 && systemctl is-active --quiet placewell-ui placewell.service && curl -fsS http://127.0.0.1:8080/health && echo && curl -fsS http://127.0.0.1:8000/health && echo"
+}
 
 # ── Cleanup ───────────────────────────────────────────────────────────────────
 Remove-Item $uiTar -ErrorAction SilentlyContinue
