@@ -46,6 +46,8 @@ flowchart LR
     QR <-->|"Firebase Admin SDK"| FS
 ```
 
+PNG fallback: [open hosting boundary diagram](diagrams/hosting-boundary.png)
+
 ### Linode production responsibilities
 
 | Component | Current responsibility |
@@ -86,6 +88,8 @@ sequenceDiagram
     API-->>App: Purpose-built JSON response
 ```
 
+PNG fallback: [open Firestore API boundary diagram](diagrams/firestore-api-boundary.png)
+
 The current Firestore workload is simple:
 
 - point lookup by six-character label document ID;
@@ -108,6 +112,8 @@ flowchart LR
     REPO --> FIRESTORE[("Firestore today")]
     REPO -.-> SQL[("SQL database option")]
 ```
+
+PNG fallback: [open database abstraction diagram](diagrams/database-abstraction.png)
 
 A relational model could look like:
 

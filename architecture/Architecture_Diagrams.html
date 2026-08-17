@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PlaceWell Architecture Diagrams</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #2c2c2c;
+      --muted: #68685f;
+      --paper: #f5f0eb;
+      --card: #ffffff;
+      --line: #ded7cd;
+      --accent: #c4714a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.5;
+    }
+    header, main {
+      width: min(1500px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+    header {
+      padding: 42px 0 22px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(32px, 5vw, 54px);
+      font-weight: 500;
+    }
+    header p {
+      max-width: 850px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 24px 0 0;
+    }
+    nav a {
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--card);
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 14px;
+    }
+    section {
+      margin: 18px 0 30px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--card);
+    }
+    h2 {
+      margin: 0 0 6px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 28px;
+      font-weight: 500;
+    }
+    section p {
+      margin: 0 0 18px;
+      color: var(--muted);
+    }
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid #eee9e2;
+      border-radius: 10px;
+      background: #fff;
+    }
+    footer {
+      padding: 10px 0 40px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>PlaceWell Architecture</h1>
+    <p>
+      Static diagrams for the implemented mobile, Linode, Firebase, QR,
+      order-production and database flows. These images require no Mermaid
+      extension or internet connection.
+    </p>
+    <nav>
+      <a href="#system">System map</a>
+      <a href="#production">Order production</a>
+      <a href="#scans">Scanning</a>
+      <a href="#storage">Storage</a>
+      <a href="#infrastructure">Infrastructure</a>
+    </nav>
+  </header>
+  <main>
+    <section id="system">
+      <h2>System boundary map</h2>
+      <p>Customer device, Linode services, Firestore, operator tools and app stores.</p>
+      <img src="diagrams/system-boundary.png" alt="PlaceWell system boundary map">
+    </section>
+
+    <section id="production">
+      <h2>Physical label order production</h2>
+      <p>Operator submission through allocation, Firestore and PDF generation.</p>
+      <img src="diagrams/order-production.png" alt="Physical label order production flow">
+    </section>
+
+    <section id="scans">
+      <h2>In-app label scan</h2>
+      <p>Local HMAC verification, local-label lookup and online metadata enrichment.</p>
+      <img src="diagrams/in-app-label-scan.png" alt="In-app label scan sequence">
+    </section>
+
+    <section>
+      <h2>Native-camera scan</h2>
+      <p>Universal/App Link interception, server fallback and store-download behavior.</p>
+      <img src="diagrams/native-camera-scan.png" alt="Native-camera scan flow">
+    </section>
+
+    <section id="storage">
+      <h2>Label save, recall and edit</h2>
+      <p>Personal inventory and photos remain on the customer's device.</p>
+      <img src="diagrams/label-save-recall.png" alt="Label save and recall sequence">
+    </section>
+
+    <section>
+      <h2>Order QR bulk import</h2>
+      <p>Order-label resolution through Firestore followed by local creation.</p>
+      <img src="diagrams/order-qr-bulk-import.png" alt="Order QR bulk import sequence">
+    </section>
+
+    <section>
+      <h2>Configuration and deployment</h2>
+      <p>How source configuration reaches app builds and deployed Linode services.</p>
+      <img src="diagrams/configuration-deployment.png" alt="Configuration and deployment flow">
+    </section>
+
+    <section id="infrastructure">
+      <h2>Linode versus Firebase hosting boundary</h2>
+      <p>Current runtime ownership, including deferred and planned Firebase services.</p>
+      <img src="diagrams/hosting-boundary.png" alt="Linode and Firebase hosting boundary">
+    </section>
+
+    <section>
+      <h2>Firestore API boundary</h2>
+      <p>The mobile app uses the QR Service API rather than connecting directly to Firestore.</p>
+      <img src="diagrams/firestore-api-boundary.png" alt="Firestore API boundary">
+    </section>
+
+    <section>
+      <h2>Database abstraction and migration</h2>
+      <p>A future database change stays behind the QR Service persistence layer.</p>
+      <img src="diagrams/database-abstraction.png" alt="Database abstraction and migration flow">
+    </section>
+
+    <footer>
+      Source documents: Visual_Call_Flows.md and Firebase_Linode_SQL_Decision.md
+    </footer>
+  </main>
+</body>
+</html>

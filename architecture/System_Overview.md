@@ -64,6 +64,9 @@ Phone camera or in-app scanner
 For component boundaries and sequence diagrams covering the major runtime and
 production paths, see
 [`Visual_Call_Flows.md`](Visual_Call_Flows.md).
+If your Markdown viewer does not render Mermaid, open
+[`Architecture_Diagrams.html`](Architecture_Diagrams.html) for static PNG
+versions of every diagram.
 
 For the current Linode/Firebase service inventory and the Firestore-versus-SQL
 decision, see

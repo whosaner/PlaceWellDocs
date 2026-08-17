@@ -52,6 +52,8 @@ flowchart LR
     QR -->|"download fallback links"| PLAY
 ```
 
+PNG fallback: [open system boundary diagram](diagrams/system-boundary.png)
+
 ### What is and is not in Firestore
 
 | Data | Current location | Sent to Firestore? |
@@ -94,6 +96,8 @@ sequenceDiagram
     PDF->>Disk: Render label-sheet PDF + manifest PDF
     UI-->>Operator: Password-protected download links
 ```
+
+PNG fallback: [open order production diagram](diagrams/order-production.png)
 
 **Important behavior**
 
@@ -140,6 +144,8 @@ sequenceDiagram
     end
 ```
 
+PNG fallback: [open in-app label scan diagram](diagrams/in-app-label-scan.png)
+
 **Failure behavior:** the initial authenticity check works offline. If the later metadata lookup fails, the app can continue with the name encoded in the QR URL or with empty/default setup fields. Firestore never receives the user's personal label contents.
 
 ## 4. Scan with the phone's native camera
@@ -166,6 +172,8 @@ flowchart TD
     PAGE -->|"app installed but association missed"| SCHEME --> ROUTE --> PROCESS
     PAGE -->|"app not installed"| DOWNLOAD
 ```
+
+PNG fallback: [open native-camera scan diagram](diagrams/native-camera-scan.png)
 
 ### Trust distinction
 
@@ -196,6 +204,8 @@ sequenceDiagram
     Screen-->>User: Detail/Recall/Home reflects update
     Note over Screen,FS: No personal label contents or photo<br/>are written to Firestore in v1
 ```
+
+PNG fallback: [open label save and recall diagram](diagrams/label-save-recall.png)
 
 An existing label is routed locally:
 
@@ -236,6 +246,8 @@ sequenceDiagram
     Bulk-->>User: Success -> Home
 ```
 
+PNG fallback: [open Order QR bulk-import diagram](diagrams/order-qr-bulk-import.png)
+
 Firestore is read to reconstruct what was physically issued in the order. The imported, user-configured copies are then stored locally on that device.
 
 ## 7. Configuration and deployment flow
@@ -253,6 +265,8 @@ flowchart LR
     CONFIG --> APPBUILD --> USER
     CONFIG --> DEPLOY --> LINODE
 ```
+
+PNG fallback: [open configuration and deployment diagram](diagrams/configuration-deployment.png)
 
 This is a build/deployment flow, not a runtime API flow. A configuration change reaches customers only after the affected app is rebuilt or the affected Linode service is deployed.
 
