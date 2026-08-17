@@ -115,6 +115,7 @@ SHA1:      29:BE:03:5A:97:EB:D9:CD:16:CA:17:15:39:5D:77:96:63:BF:B7:53
 | iOS submitted to TestFlight | ✅ |
 | Android uploaded to Play internal testing | ✅ |
 | Stock-image Firebase Hosting catalog | ✅ Revision 1 live; 78 entries; manifest SHA-256 `15d924088ca75a955e532da6092f49dc0a2d26312b9ceda0bc83dd868a174a00` |
+| Stock-image UI / QR Service contract | ✅ Production allocation and lookup return optional `image_key` |
 | Stock-image physical-device validation | ⏳ Pending on iPhone and Android |
 | App icon | ⏳ Placeholder — replace before App Store submission |
 | Splash screen | ⏳ Placeholder |

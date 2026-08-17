@@ -143,8 +143,8 @@ app-store release.**
   The QR service persists optional `image_key`; the app includes issued-metadata enrichment,
   verified persistent caching, durable user-photo ownership, native backup exclusion,
   unified `LabelArtwork` rendering across every surface, and bounded Bulk Import warming.
-  Firebase Hosting revision 1 is deployed and verified. Physical-device release
-  validation remains.
+  Firebase Hosting revision 1 and the production UI / QR Service `image_key` contract are
+  deployed and verified. Physical-device release validation remains.
 - **Authoritative implementation spec: `Docs/roadmap/Stock_Image_Implementation_Plan.md`** (answers lookup/offline/caching/fallback/versioning/consistency; Phase 0 is a blocking server-side key reconciliation).
 - **Original research (scale math, URL/manifest schema, perf/memory, citations):** `Docs/roadmap/Jar_Image_Strategy_Research.md`.
 

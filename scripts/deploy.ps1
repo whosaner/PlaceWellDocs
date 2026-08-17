@@ -69,7 +69,7 @@ Invoke-Native "QR Service upload" {
 # ── Extract and restart ──────────────────────────────────────────────────────
 Write-Host "Extracting and restarting services..." -ForegroundColor Yellow
 Invoke-Native "Server extraction and restart" {
-    ssh $SERVER "tar -xzf /tmp/placewell-ui.tar.gz -C /opt/placewell-ui && tar -xzf /tmp/placewell-qr.tar.gz -C /opt/placewell-service && rm -f /tmp/placewell-ui.tar.gz /tmp/placewell-qr.tar.gz && systemctl restart placewell-ui placewell.service && sleep 2 && systemctl is-active --quiet placewell-ui placewell.service && curl -fsS http://127.0.0.1:8080/health && echo && curl -fsS http://127.0.0.1:8000/health && echo"
+    ssh $SERVER "tar -xzf /tmp/placewell-ui.tar.gz -C /opt/placewell-ui && tar -xzf /tmp/placewell-qr.tar.gz -C /opt/placewell-service && rm -f /tmp/placewell-ui.tar.gz /tmp/placewell-qr.tar.gz && systemctl restart placewell-ui placewell.service && for attempt in {1..20}; do if systemctl is-active --quiet placewell-ui placewell.service && curl -fsS http://127.0.0.1:8080/health >/tmp/placewell-ui-health.json && curl -fsS http://127.0.0.1:8000/health >/tmp/placewell-qr-health.json; then cat /tmp/placewell-ui-health.json && echo && cat /tmp/placewell-qr-health.json && echo && rm -f /tmp/placewell-ui-health.json /tmp/placewell-qr-health.json && exit 0; fi; sleep 1; done; systemctl status placewell-ui placewell.service --no-pager -l; exit 1"
 }
 
 # ── Cleanup ───────────────────────────────────────────────────────────────────
