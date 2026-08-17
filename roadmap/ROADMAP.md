@@ -94,7 +94,7 @@ Everything open, in one table (todos + roadmap, de-duplicated). ⭐ = deeper wri
 | 39 | New Home-Owner Kit (boxed gifting sets) | Business | Future | move-in gifting / builder partnerships |
 | 40 | Strip unused `SYSTEM_ALERT_WINDOW` permission (Android) | Ops | Low | React Native pulls "display over other apps" into the release manifest; PlaceWell doesn't use overlays. Remove via `android.blockedPermissions` (same mechanism as the foreground-service fix). Verify in the AAB after rebuild. |
 | 41 | Firestore backups + disaster recovery | Ops | High | Real label IDs are random (`secrets.choice`) and live ONLY in Firestore — deleting `qr_codes` with no backup permanently orphans every not-yet-activated physical label (camera scans return "not a PlaceWell code"). Enable PITR + daily/weekly scheduled backups + `--delete-protection` on `placewell-prod-60ef3` `(default)`; retain allocation data/PDFs as an independent second copy. Runbook: `Docs/deployment/Firestore_Backup_And_DR_Runbook.md` |
-| 42 | Per-label remote stock images ⭐ | App/Ops | Release validation | The 78-image export pipeline, immutable Firebase package, optional server-owned `image_key`, enrichment, persistent verified cache, durable user photos, five bundled fallbacks, shared `LabelArtwork`, and bulk warming are implemented and pushed. Remaining operator work: deploy Firebase Hosting and complete iPhone/Android physical-device validation. No Firestore backfill is required; missing keys use bundled fallback. Authoritative plan: `Docs/roadmap/Stock_Image_Implementation_Plan.md` |
+| 42 | Per-label remote stock images ⭐ | App/Ops | Device validation | The revision 1 Firebase Hosting catalog is live with all 78 entries and verified immutable caching. Export, optional server-owned `image_key`, enrichment, persistent cache, durable user photos, five bundled fallbacks, shared `LabelArtwork`, and bulk warming are implemented. Remaining work: iPhone/Android physical-device validation. No Firestore backfill is required; missing keys use bundled fallback. Authoritative plan: `Docs/roadmap/Stock_Image_Implementation_Plan.md` |
 
 ---
 
@@ -143,7 +143,8 @@ app-store release.**
   The QR service persists optional `image_key`; the app includes issued-metadata enrichment,
   verified persistent caching, durable user-photo ownership, native backup exclusion,
   unified `LabelArtwork` rendering across every surface, and bounded Bulk Import warming.
-  Firebase deployment and physical-device release validation remain operator steps.
+  Firebase Hosting revision 1 is deployed and verified. Physical-device release
+  validation remains.
 - **Authoritative implementation spec: `Docs/roadmap/Stock_Image_Implementation_Plan.md`** (answers lookup/offline/caching/fallback/versioning/consistency; Phase 0 is a blocking server-side key reconciliation).
 - **Original research (scale math, URL/manifest schema, perf/memory, citations):** `Docs/roadmap/Jar_Image_Strategy_Research.md`.
 
