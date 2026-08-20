@@ -20,6 +20,11 @@ Run the dedicated script from any directory:
 C:\PlaceWell\Docs\scripts\deploy_stock_images.ps1
 ```
 
+Remote Bash scripts are streamed over SSH stdin with LF-normalized, BOM-less
+UTF-8 content. This keeps deployment behavior consistent in Windows PowerShell
+5.1 and PowerShell 7 without passing multiline commands through Windows native
+argument quoting.
+
 Validate and rebuild locally without contacting either target:
 
 ```powershell

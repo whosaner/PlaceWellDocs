@@ -375,8 +375,16 @@ function Invoke-Remote {
         [string]$Command
     )
 
+    $script = ($Command -replace "`r`n", "`n") -replace "`r", "`n"
+
     Invoke-Native $Description {
-        & ssh $Server $Command
+        $previousOutputEncoding = $OutputEncoding
+        $OutputEncoding = New-Object System.Text.UTF8Encoding($false)
+        try {
+            $script | & ssh -T $Server 'bash -s'
+        } finally {
+            $OutputEncoding = $previousOutputEncoding
+        }
     }
 }
 
