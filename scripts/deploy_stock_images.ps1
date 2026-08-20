@@ -375,7 +375,8 @@ function Invoke-Remote {
         [string]$Command
     )
 
-    $script = ($Command -replace "`r`n", "`n") -replace "`r", "`n"
+    $script = (($Command -replace "`r`n", "`n") -replace "`r", "`n") +
+        "`n# PowerShell pipeline newline terminator"
 
     Invoke-Native $Description {
         $previousOutputEncoding = $OutputEncoding
