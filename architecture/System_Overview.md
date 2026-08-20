@@ -85,6 +85,10 @@ decision, see
 ### 2. PlaceWellUI -> PlaceWellPdfGenerator
 - PlaceWellUI is the operator-facing order builder.
 - It gathers category presets, per-label names, template selection, style options, footer options, and any blanks needed to fill a sheet.
+- The spice preset defaults to 26 named labels for the 30-position round SKU
+  and the first 16 CSV rows for each 20-position rectangle/square SKU. Each
+  default adds one Order QR and three blanks; operator row edits remain allowed
+  and sheet composition is recalculated from the edited count.
 - It requests QR allocation from PlaceWellQRService, then builds a complete order dictionary.
 - That order dictionary is passed directly into PlaceWellPdfGenerator, which outputs two PDFs per order: a printable label sheet and a manifest.
 
