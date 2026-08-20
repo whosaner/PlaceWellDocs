@@ -1,0 +1,124 @@
+========================================================================
+ APP REVIEW REPLY — Guideline 2.1 (Information Needed / New App Submission)
+ Build 25, rejected on first-ever review (no history yet — Apple asks this
+ of every brand-new app). Paste the numbered answers below into:
+ App Store Connect -> App Review Information -> Notes field.
+ Then re-submit build 25 (or the latest build) for review.
+========================================================================
+
+Thank you for the detailed guidance. Please find the requested information
+below.
+
+------------------------------------------------------------------------
+1. SCREEN RECORDING
+------------------------------------------------------------------------
+A screen recording is available at the following reviewer-accessible link:
+
+[PASTE SCREEN RECORDING LINK HERE]
+
+The recording shows: app launch -> Home screen ->
+tapping the Scan button -> the camera permission "Continue" screen -> the
+iOS system camera permission prompt -> Allow -> scanning a label QR code ->
+landing on the Label Setup screen -> adding a photo (camera + library) ->
+saving the label -> returning to Home to see the saved label.
+
+PlaceWell has NO account registration, login, or account deletion. Personal
+inventory data is stored locally on-device - see #4. It has NO paid content, in-app
+purchases, or subscriptions. It has NO user-generated content shared with
+other users (all content is private to the user's own device). The only
+sensitive-data prompt in the app is the CAMERA permission (used to scan QR
+codes on physical labels and to attach photos to items), which is shown in
+the recording uploaded here:
+
+https://drive.google.com/file/d/1GXW_KgyueB1IMqUz0GIvTfk90_fgUgh1/view?usp=sharing
+
+------------------------------------------------------------------------
+2. DEVICES / OS TESTED
+------------------------------------------------------------------------
+Tested via TestFlight on:
+- iPhone 16 running iOS version 26.6
+
+Also tested in Expo Go during development on the same device/OS versions.
+
+------------------------------------------------------------------------
+3. APP FUNCTION & TARGET AUDIENCE
+------------------------------------------------------------------------
+PlaceWell is a companion app for a physical product line: premium, designed
+QR-coded labels for home organization (pantry/spice jars, storage bins,
+moving boxes, etc.). Customers buy printed labels (currently via Etsy),
+each with a unique QR code. Scanning a label's QR code with the PlaceWell
+app opens a digital entry for that specific label where the user records
+what is stored there - item name, room/zone, an optional photo, and notes.
+
+Problem it solves: physical labels alone go stale or vague ("Spices" tells
+you nothing about what's actually in the jar today). PlaceWell lets users
+keep a living digital record tied to each physical label, so a quick scan
+instantly shows what's inside/behind that label, even if the physical
+label text is generic or reused.
+
+Target audience: home organizers, pantry/spice label buyers, moving/storage
+customers, and (in a B2B channel) homebuilders/realtors offering PlaceWell
+label kits as move-in gifts. It is a consumer utility app tied 1:1 to
+purchased physical labels - it has no value as a standalone app without the
+labels, similar to how a smart-home app is paired with hardware.
+
+------------------------------------------------------------------------
+4. SETUP / ACCESS INSTRUCTIONS
+------------------------------------------------------------------------
+No login, account, or credentials are required - PlaceWell has no
+authentication system. Personal inventory data entered by the user,
+including contents, notes, rooms, zones, freshness information, and photos,
+is stored locally on the user's device. The app uses the PlaceWell QR
+Service only to validate issued physical labels and retrieve non-personal
+label/order metadata. To fully review the app:
+
+1. Launch the app -> you land on the Home screen (empty state on first
+   launch, with a prompt to scan a label or add one manually).
+2. Tap the Scan (camera) button -> grant camera permission when prompted.
+3. Scan any QR code on the attached REVIEW-SHEET-all-qr.png (no physical
+   label is needed; display the attachment on a second screen or print it)
+   -> the app opens the correct screen for that label type
+   (Setup for a new label, Detail/Recall for an existing one).
+4. Alternatively, tap "Add Label Manually" from the Home screen drawer to
+   create a label without scanning anything.
+5. Fill in a name, room/zone, optional photo -> Save -> label appears on
+   Home.
+
+We have attached REVIEW-SHEET-all-qr.png, which contains six valid demo QR
+codes covering Setup, Recall, Detail, and Order QR bulk import.
+
+------------------------------------------------------------------------
+5. EXTERNAL SERVICES / TOOLS
+------------------------------------------------------------------------
+PlaceWell uses the following external services/platforms:
+
+- PlaceWell QR Service, hosted on a Linode server at placewell.app. It
+  validates issued QR labels, retrieves label/order metadata, supports
+  Order QR bulk import, and provides app deep-link/download fallback pages.
+- Google Cloud Firestore stores non-personal issued-label metadata such as
+  label ID, printed label name, category, SKU, order association, status,
+  and aggregate scan counters. It does NOT store user-entered inventory
+  contents, notes, room/zone assignments, freshness data, or photos.
+- Apple App Store/TestFlight and Google Play distribute the mobile app.
+- Standard Expo/React Native device modules provide camera access, Apple's
+  photo picker/photo library access, haptic feedback, and local audio.
+
+PlaceWell does not use account/authentication services, payment processors,
+subscriptions, advertising SDKs, AI services, or cross-app tracking.
+
+------------------------------------------------------------------------
+6. REGIONAL DIFFERENCES
+------------------------------------------------------------------------
+The app functions identically in all regions and locales. There are no
+region-locked features, content, or pricing. Language, currency, and
+region do not change app functionality.
+
+------------------------------------------------------------------------
+7. REGULATED INDUSTRY / PROTECTED THIRD-PARTY MATERIAL
+------------------------------------------------------------------------
+Not applicable. PlaceWell is a home-organization utility app. It does not
+operate in a regulated industry (no health, financial, legal, or similar
+regulated data/services) and does not include any licensed or protected
+third-party material.
+
+========================================================================

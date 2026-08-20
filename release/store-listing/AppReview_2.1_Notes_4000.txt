@@ -1,0 +1,57 @@
+Thank you. Please find the requested information below.
+
+1. SCREEN RECORDING
+
+Physical-device recording:
+https://drive.google.com/file/d/1GXW_KgyueB1IMqUz0GIvTfk90_fgUgh1/view?usp=sharing
+
+The recording begins on the iPhone Home Screen and shows launching PlaceWell, opening Scan, the "Scan your labels" explanation, tapping Continue, the native iOS camera permission prompt, tapping Allow, scanning a physical PlaceWell QR label, completing Label Setup, taking and attaching a photo, selecting a room/zone, adding freshness information, saving, viewing the saved label, searching, and editing.
+
+PlaceWell has no registration, login, account deletion, paid content, purchases, subscriptions, or shared user-generated content. Personal inventory data remains private on the user's device.
+
+2. TEST DEVICES
+
+Build 25 was tested through TestFlight on an iPhone 16 running iOS 26.6. The app was also tested during development using Expo Go on the same device/OS.
+
+3. FUNCTION AND TARGET AUDIENCE
+
+PlaceWell is the companion app for physical QR-coded home-organization labels used on spice jars, pantry containers, storage bins, drawers, and moving boxes. Scanning a label opens its digital record, where the user can add a name, photo, contents/notes, room, zone, and freshness information.
+
+It helps home organizers and label customers maintain an accurate digital record of what is stored behind each physical label and quickly recall it later.
+
+4. SETUP AND REVIEW ACCESS
+
+No credentials or account are required.
+
+We attached REVIEW-SHEET-all-qr.png containing six verified demo QR codes for Setup, Recall, Detail, and Order QR bulk import.
+
+Review steps:
+1. Launch PlaceWell and tap the round Scan button.
+2. Tap Continue and grant camera permission.
+3. Display the attached QR sheet on another screen and scan a code.
+4. Complete Label Setup by adding a name, optional photo, room/zone, and notes, then Save.
+5. Open the saved label from Home to view, search, edit, or update it.
+6. Scan "Order QR - Bulk Import" to test importing a complete label kit.
+
+Verified fallback links:
+Setup: https://placewell.app/s/PWMSP2-84A3
+Recall: https://placewell.app/s/PWMXS5-EB24
+Detail: https://placewell.app/s/PWMXT6-4682
+Bulk import: https://placewell.app/s/PWMQR7-8C64
+
+5. EXTERNAL SERVICES
+
+- PlaceWell QR Service on Linode validates issued QR labels, returns non-personal label/order metadata, supports bulk import, and provides deep-link/download fallback pages.
+- Google Cloud Firestore stores issued-label metadata such as label ID, printed name, category, SKU, order association, status, and aggregate scan counters.
+- Apple App Store/TestFlight and Google Play distribute the app.
+- Expo/React Native device modules provide camera, photo picker, haptics, local audio, and local storage.
+
+User-entered contents, notes, room/zone assignments, freshness information, and photos are stored locally on-device and are not stored in Firestore. PlaceWell uses no authentication provider, payment processor, advertising SDK, AI service, or cross-app tracking.
+
+6. REGIONAL DIFFERENCES
+
+PlaceWell functions consistently across all regions. There are no region-locked features, content, pricing, or account types.
+
+7. REGULATED INDUSTRY / THIRD-PARTY MATERIAL
+
+Not applicable. PlaceWell is a home-organization utility, does not operate in a regulated industry, and does not contain licensed or protected third-party material.
