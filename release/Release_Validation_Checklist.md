@@ -116,6 +116,7 @@ SHA1:      29:BE:03:5A:97:EB:D9:CD:16:CA:17:15:39:5D:77:96:63:BF:B7:53
 | Android uploaded to Play internal testing | ✅ |
 | Stock-image paired production release | ✅ Firebase Hosting and Linode `current` verified on revision 1; 78 entries; manifest SHA-256 `15d924088ca75a955e532da6092f49dc0a2d26312b9ceda0bc83dd868a174a00` |
 | Stock-image UI / QR Service contract | ✅ Production allocation and lookup return optional `image_key` |
+| Operator UI SKU sheet defaults | ✅ Deployed 2026-08-20; round loads 26 names, rectangle/square load 16, with operator edits still allowed |
 | Stock-image physical-device validation | ⏳ Pending on iPhone and Android |
 | App icon | ⏳ Placeholder — replace before App Store submission |
 | Splash screen | ⏳ Placeholder |
