@@ -101,6 +101,11 @@ decision, see
 - The key flows: `spice.csv` -> `order_builder` -> `qr_client` -> `allocate` -> Firestore `qr_codes.image_key` -> `lookup` / `order` responses -> app.
 - Blanks and Order QRs never carry a key.
 - Missing/null `image_key` is backward-compatible and resolves the bundled fallback. No production backfill is required because there are no customer labels; development labels may be recreated.
+- One deterministic stock release is published byte-identically to Firebase
+  Hosting and `/opt/placewell-stock/releases/<manifest-sha256>`. The app follows
+  the manifest's Firebase `baseUrl`; UI/QR server consumers ignore `baseUrl`,
+  resolve `file` under `/opt/placewell-stock/current/img/`, and never expose the
+  filesystem root as a public Apache alias.
 - Full spec: `Docs/roadmap/Stock_Image_Implementation_Plan.md`.
 
 ## QR URL format and deep-link strategy

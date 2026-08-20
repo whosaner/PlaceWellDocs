@@ -6,6 +6,7 @@
 *Revised 2026-08-14 (rev 4): resolves 5 blocking flaws from an adversarial design review.*
 *Revised 2026-08-15 (rev 5): measured delivery sizes, deterministic text containment,
 and the implemented five-asset bundled fallback.*
+*Revised 2026-08-20 (rev 7): paired Firebase/Linode publication for server-side consumers.*
 
 *Supersedes `Jar_Image_Strategy_Research.md`, which was written before the art was produced
 and before the key contract was verified. Where the two disagree, **this document wins**.*
@@ -54,6 +55,11 @@ and before the key contract was verified. Where the two disagree, **this documen
 > repurposed-label behaviour are explicit. Downloaded art remains in `documentDirectory`
 > and is excluded from device backup with native configuration. Active objects are never
 > evicted; they change only when the server manifest publishes a new content hash.
+>
+> **Revision 7** keeps Firebase Hosting as the mobile delivery CDN and adds an exact-byte
+> Linode mirror for the UI and QR Service. One release transaction publishes the same
+> Firebase-oriented manifest and immutable WebPs to both targets; Linode consumers ignore
+> `baseUrl`, resolve `file` locally, and follow an atomic `current` pointer.
 
 ---
 
@@ -107,7 +113,7 @@ have 404'd.**
 | D2 | **The catalog is exactly the 26 entries that have art.** | Guarantees 1:1 coverage; no orphans on either side. |
 | D3 | **The server owns the key. The app never derives it.** | Renames, typos, translations and re-branding stay safe. |
 | D4 | **Static manifest + immutable content-hashed URLs.** No per-image lookup API. | Cacheable, offline-tolerant, zero server load. |
-| D5 | **Host on Firebase Hosting** *(revised — was Linode)*. | A replicated CDN with an SLA and edge latency beats a single Linode VM. Egress, not storage, is the binding quota; Blaze and alerts are launch requirements. |
+| D5 | **Publish one exact-byte release to Firebase Hosting and Linode.** The mobile app uses Firebase; UI/QR server consumers use `/opt/placewell-stock/current`. | Firebase remains the replicated delivery CDN. The Linode mirror avoids server-side CDN dependence and provides a shared immutable local root without creating a second manifest. |
 | D6 | **The label name is overlaid at runtime, never baked into the image.** | One bare image serves every physical label with the same art identity; the immutable printed name is composed from label metadata without multiplying cached files. |
 | D7 | **Stock art is derived state, never stored on the label.** | Photo add/remove needs no revert logic. |
 | D8 | **Field is `image_key` / `imageKey`** *(revised — was `spice_key`)*. | The mechanism was never spice-specific; `load_items_from_csv` is already category-parameterised. |
@@ -176,8 +182,9 @@ have 404'd.**
 
 ### 4.1 Hosting
 
-Firebase Hosting, static files only. **No Firebase SDK is used to fetch them** — they are
-public CDN assets retrieved with an ordinary HTTPS GET. No auth, no tokens, no rules.
+The mobile app uses Firebase Hosting static files. **No Firebase SDK is used to fetch
+them** — they are public CDN assets retrieved with an ordinary HTTPS GET. No auth, tokens,
+or rules are required.
 
 ```
 https://<project-id>.web.app/stock-images/manifest.v1.json
@@ -186,6 +193,19 @@ https://<project-id>.web.app/stock-images/img/<file>.webp
 
 The plain `web.app` URL is used for now; a custom domain (`img.placewell.app`) can be added
 later by changing only `baseUrl` in the manifest — no app change.
+
+The same manifest bytes and every immutable WebP are also published to:
+
+```text
+/opt/placewell-stock/releases/<lowercase-manifest-sha256>/
+/opt/placewell-stock/current -> releases/<lowercase-manifest-sha256>
+```
+
+UI and QR Service consumers ignore the Firebase `baseUrl` and resolve each manifest
+entry's `file` under `current/img/`. Publication is paired: stage and verify Linode,
+deploy and fully verify a Firebase preview channel, re-verify Linode, activate
+`current` with rollback armed, then promote the verified preview to Firebase live.
+No environment-specific manifest is generated.
 
 ### 4.2 Manifest
 
@@ -739,8 +759,10 @@ all use `resizeMode="contain"` through the shared renderer.
 | Behaviour at quota | Spark **disables Hosting** — it does not auto-bill | Degrades under load |
 | Cost beyond free | $0.15/GB, requires **Blaze** | Zero marginal |
 
-**Decision: Firebase Hosting (D5).** Revision 1 chose Linode to avoid new infrastructure;
-availability is the better objective.
+**Decision: paired Firebase Hosting + Linode publication (D5).** Firebase is the mobile
+delivery CDN; Linode is the shared local source for UI/QR consumers. They are not competing
+manifests: one deterministic package is verified on both targets before Linode `current`
+changes.
 
 > **Corrected in rev 4 and re-estimated in rev 5.** Revision 2 claimed the payload was
 > "0.16% of quota" and cost "≈ $11 at 10k users/mo". Both were wrong. Storage is not the
@@ -760,7 +782,8 @@ availability is the better objective.
 ### Q9 — Publishing new art for an existing entry
 
 1. Re-render. 2. New bytes → new hash → **new URL**. 3. Regenerate manifest, bump
-`manifestRevision`. 4. Deploy, **keeping old files for at least one release cycle**.
+`manifestRevision`. 4. Deploy the paired release, retaining all prior immutable Linode
+releases and Firebase objects. This initial implementation performs no automatic pruning.
 
 Devices on a cached manifest show old art until revalidation — correct, not broken. **No
 stale-image bug class is possible**, because a URL's bytes never change. Changed geometry
@@ -902,9 +925,17 @@ may instead remain on the bundled fallback or be recreated; there is no producti
 10. The five bundled PNGs and `geometry.json` are already implemented by
    `PlaceWellApp\scripts\build-fallback-artwork.py` (§4.7.5); verify the app's generated
    artifacts match the release input.
-11. Deploy to Firebase Hosting with the headers in §4.4.
-12. Verify `Content-Type: image/webp`, `immutable` on images, `must-revalidate` on manifest,
-    and publish the exact complete-catalog byte total for the egress model.
+11. Deploy through `Docs\scripts\deploy_stock_images.ps1`: stage and verify the immutable
+    Linode release, deploy and verify a Firebase preview channel from the masters
+    package, atomically switch Linode `current` with rollback armed, then promote the
+    verified preview to Firebase live. Restore Linode if promotion definitively fails;
+    preserve recovery state if the live outcome cannot be determined or the new live
+    release does not pass complete object and header verification.
+12. Preserve the Firebase-oriented manifest bytes exactly on Linode; local consumers ignore
+    `baseUrl` and resolve `file` under `current/img/`.
+13. Publish the exact complete-catalog byte total for the egress model. Retain prior Linode
+    releases and Firebase immutable objects; do not prune automatically in the initial
+    implementation.
 
 The export must be **deterministic and repeatable** — same masters in, same hashes out.
 

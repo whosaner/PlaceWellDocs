@@ -30,23 +30,29 @@ flowchart LR
         UI["Operator UI<br/>FastAPI"]
         PDF["PDF Generator"]
         OUT[("Generated PDFs")]
+        STOCK[("Immutable stock-art releases<br/>first paired activation pending")]
         APACHE --> QR
         APACHE --> UI
         UI --> QR
         UI --> PDF --> OUT
+        UI -.-> STOCK
+        QR -.-> STOCK
     end
 
     subgraph FIREBASE["Firebase / Google Cloud"]
         FS[("Firestore<br/>qr_codes + orders")]
         ANALYTICS["Firebase Analytics<br/>deferred / not active"]
-        HOSTING["Firebase Hosting for stock art<br/>planned, not deployed"]
+        HOSTING["Firebase Hosting<br/>stock art revision 1 live"]
     end
 
     APP -->|"HTTPS lookup/order calls"| APACHE
+    APP -->|"HTTPS stock manifest + WebPs"| HOSTING
     QR <-->|"Firebase Admin SDK"| FS
 ```
 
-PNG fallback: [open hosting boundary diagram](diagrams/hosting-boundary.png)
+PNG fallback: [open hosting boundary diagram](diagrams/hosting-boundary.png).
+The PNG predates the paired stock mirror; the Mermaid diagram above is
+authoritative until the static diagram set is regenerated.
 
 ### Linode production responsibilities
 
@@ -56,7 +62,7 @@ PNG fallback: [open hosting boundary diagram](diagrams/hosting-boundary.png)
 | PlaceWellQRService | QR allocation, label/order lookup, scan landing pages, deep-link fallback, scan counters |
 | PlaceWellUI | Password-protected order form and orchestration |
 | PlaceWellPdfGenerator | Called by the UI process to generate label and manifest PDFs |
-| Linode filesystem | Deployed code, environment files, Firebase service-account key, generated PDFs and logs |
+| Linode filesystem | Deployed code, environment files, Firebase service-account key, generated PDFs/logs, and the prepared `/opt/placewell-stock/releases` + atomic `current` stock-art root (first activation pending) |
 | systemd/firewalld/Certbot | Process supervision, firewall and certificate renewal |
 
 ### Firebase / Google Cloud responsibilities
@@ -66,10 +72,17 @@ PNG fallback: [open hosting boundary diagram](diagrams/hosting-boundary.png)
 | Cloud Firestore | **Active** | `qr_codes` and `orders` collections |
 | Firebase Admin SDK | **Active on Linode** | Authenticates the QR Service to Firestore |
 | Firebase Analytics | **Deferred** | Wrapper exists, but production package/config activation is deferred until an Expo SDK upgrade |
-| Firebase Hosting | **Planned only** | Selected in the stock-image implementation plan for future static image delivery; not part of today's runtime |
+| Firebase Hosting | **Active** | Serves stock-art revision 1 manifest and immutable WebPs to the mobile app |
 | Firebase Authentication | **Not used** | No PlaceWell user accounts exist today |
 
 External but separate services include Namecheap DNS, Let's Encrypt certificates, Expo/EAS builds, Apple App Store and Google Play.
+
+Stock publication is a paired operation. The exact Firebase-oriented manifest
+and immutable WebPs are also staged under
+`/opt/placewell-stock/releases/<manifest-sha256>` for UI/QR local reads; Linode
+consumers ignore `baseUrl`. The dedicated deployer verifies both targets before
+atomically switching `/opt/placewell-stock/current`. The tooling is implemented,
+but this documentation change does not perform the first Linode activation.
 
 ## 3. How Firestore is used today
 

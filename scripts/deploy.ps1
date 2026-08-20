@@ -1,9 +1,17 @@
 # PlaceWell Deploy Script
 # Location: C:\PlaceWell\Docs\scripts\deploy.ps1 (version-controlled in PlaceWellDocs)
 # Usage:    C:\PlaceWell\Docs\scripts\deploy.ps1
+#           C:\PlaceWell\Docs\scripts\deploy.ps1 -DeployStockImages
 #           (uses absolute C:\PlaceWell\... paths, so it runs from any working directory)
 # Deploys UI + PDF Generator + QR Service to the Linode server and restarts services.
+# Pass -DeployStockImages to run the paired Firebase/Linode stock-artwork deployment
+# after the normal server deployment. The default behavior is unchanged.
 # Note: does NOT deploy the mobile app (that goes through EAS build/submit).
+
+[CmdletBinding()]
+param(
+    [switch]$DeployStockImages
+)
 
 $ErrorActionPreference = "Stop"
 $SERVER = "root@45.56.71.137"
@@ -77,5 +85,13 @@ Remove-Item $uiTar -ErrorAction SilentlyContinue
 Remove-Item $qrTar -ErrorAction SilentlyContinue
 Remove-Item $uiStaging -Recurse -ErrorAction SilentlyContinue
 Remove-Item $qrStaging -Recurse -ErrorAction SilentlyContinue
+
+if ($DeployStockImages) {
+    Write-Host "Deploying stock artwork..." -ForegroundColor Yellow
+    & "$PSScriptRoot\deploy_stock_images.ps1" -Server $SERVER
+    if (-not $?) {
+        throw "Stock artwork deployment failed."
+    }
+}
 
 Write-Host "=== Deploy Complete ===" -ForegroundColor Green

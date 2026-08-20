@@ -59,6 +59,21 @@
 | `/etc/systemd/system/placewell-ui.service` | UI systemd service definition |
 | `/etc/httpd/.htpasswd_placewell_ui` | Apache Basic Auth file for `/ui` |
 
+### Stock artwork
+
+| Path | Purpose |
+|---|---|
+| `/opt/placewell-stock/releases/<manifest-sha256>/` | Read-only immutable manifest, metadata, and WebPs; created by the paired deployer |
+| `/opt/placewell-stock/current` | Atomic symlink to the paired Firebase/Linode release; established by the first successful paired deployment |
+| `/opt/placewell-stock/.deploy.lock` | Short-lived concurrency lock owned by the stock deployer |
+
+UI and QR Service code reads
+`/opt/placewell-stock/current/manifest.v1.json` and resolves each manifest
+entry's `file` under `current/img/`. The manifest's Firebase `baseUrl` is
+intentionally ignored by Linode consumers. Releases are locally readable but
+are not exposed through an Apache filesystem alias; previews remain behind the
+authenticated UI.
+
 ### Apache / SSL
 
 | Path | Purpose |
@@ -106,6 +121,20 @@ systemctl status certbot-renew.timer
 firewall-cmd --list-services
 ```
 
+### Stock artwork
+
+```bash
+readlink /opt/placewell-stock/current
+sha256sum /opt/placewell-stock/current/manifest.v1.json
+find /opt/placewell-stock/releases -mindepth 1 -maxdepth 1 -type d -printf '%f\n'
+```
+
+Release directories/files are `0555`/`0444`; the root and `releases` are
+`0755`, while staging and lock paths are deployment-user-only. The deployment
+script runs `restorecon -RF /opt/placewell-stock`. Future non-root systemd
+service users must retain read/traverse access to this path; do not hide
+`/opt/placewell-stock` with systemd filesystem sandboxing.
+
 ## Deployment update quick reference
 
 ### Update QR Service code
@@ -139,6 +168,19 @@ scp C:\PlaceWellUI\data\spice.csv root@45.56.71.137:/opt/placewell-ui/data/
 ```
 
 No service restart is required for CSV-only changes if the UI reads the file on each submission.
+
+### Deploy stock artwork
+
+```powershell
+# Dedicated paired Firebase + Linode deployment
+C:\PlaceWell\Docs\scripts\deploy_stock_images.ps1
+
+# Or explicitly append it to the normal server deployment
+C:\PlaceWell\Docs\scripts\deploy.ps1 -DeployStockImages
+```
+
+See `Stock_Image_Deployment.md` for validation-only usage, exact ordering,
+rollback, stale-lock recovery, and the no-automatic-pruning policy.
 
 ## Environment variables
 

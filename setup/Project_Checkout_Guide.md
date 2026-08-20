@@ -177,8 +177,24 @@ C:\PlaceWell\Docs\scripts\deploy.ps1
 
 `deploy.ps1` packages `PlaceWellUI`, `PlaceWellPdfGenerator`, and `PlaceWellQRService`, uploads archives to `root@45.56.71.137` with `scp`, extracts under `/opt/placewell-ui` and `/opt/placewell-service`, and restarts `placewell-ui` plus `placewell.service`. It does NOT deploy the mobile app (that goes through EAS build/submit).
 
+Stock artwork is deliberately opt-in:
+
+```powershell
+# Standalone paired Firebase + Linode stock deployment
+C:\PlaceWell\Docs\scripts\deploy_stock_images.ps1
+
+# Or append it to the normal server deployment
+C:\PlaceWell\Docs\scripts\deploy.ps1 -DeployStockImages
+```
+
+Use `deploy_stock_images.ps1 -ValidateOnly` for a local rebuild and fact check
+with no target changes. See
+`Docs\deployment\Stock_Image_Deployment.md` for prerequisites, verification,
+permissions, rollback, and retention.
+
 First-time Linode setup still needs Python installs, service account files, `.env` files, systemd services, Apache, SSL, and firewall/DNS configuration. See:
 
 - `Docs\deployment\Linode_Deployment.md`
 - `Docs\deployment\UI_Deployment.md`
 - `Docs\deployment\Server_Reference.md`
+- `Docs\deployment\Stock_Image_Deployment.md`
