@@ -1,7 +1,7 @@
 {
   "orderId": "placewell_stock_test_20260821_203817",
   "releaseId": "15d924088ca75a955e532da6092f49dc0a2d26312b9ceda0bc83dd868a174a00",
-  "orderQrUrl": "https://placewell.app/s/RFDARR-4FFA",
+  "orderQrUrl": "https://placewell.app/o/placewell_stock_test_20260821_203817",
   "recordCount": 31,
   "importableLabelCount": 30,
   "spiceSkuCounts": {
@@ -320,7 +320,7 @@
       "labelSku": null,
       "imageKey": null,
       "isOrderQr": true,
-      "qrUrl": "https://placewell.app/s/RFDARR-4FFA"
+      "qrUrl": "https://placewell.app/o/placewell_stock_test_20260821_203817"
     }
   ]
 }
