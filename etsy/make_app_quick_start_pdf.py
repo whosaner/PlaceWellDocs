@@ -14,7 +14,7 @@ from reportlab.pdfgen import canvas
 
 WORKSPACE_ROOT = Path(__file__).resolve().parents[2]
 FONT_DIR = WORKSPACE_ROOT / "PlaceWellPdfGenerator" / "placewell_generator" / "fonts"
-APP_ICON = WORKSPACE_ROOT / "PlaceWellApp" / "assets" / "adaptive-icon.png"
+APP_USAGE_IMAGE = Path(__file__).resolve().parent / "assets" / "PlaceWell_App_Usage.png"
 OUTPUT = Path(__file__).resolve().parent / "PlaceWell_App_Quick_Start.pdf"
 
 # Temporary until the iOS App Store listing is live. Replace with the final
@@ -118,35 +118,42 @@ def build_pdf():
     pdf.setFillColor(PALE_BLUE)
     pdf.roundRect(28, height - 180, width - 56, 152, 20, fill=1, stroke=0)
 
-    icon_size = 62
-    pdf.drawImage(
-        str(APP_ICON),
-        52,
-        height - 140,
-        icon_size,
-        icon_size,
-        preserveAspectRatio=True,
-        mask="auto",
-    )
-
     pdf.setFont("CormorantSemi", 35)
     pdf.setFillColor(INK)
-    pdf.drawString(130, height - 84, "Place")
+    pdf.drawString(56, height - 76, "Place")
     place_width = pdf.stringWidth("Place", "CormorantSemi", 35)
     pdf.setFillColor(AMBER)
-    pdf.drawString(130 + place_width, height - 84, "Well")
+    pdf.drawString(56 + place_width, height - 76, "Well")
 
     pdf.setFont("JostMedium", 13)
     pdf.setFillColor(INK)
-    pdf.drawString(132, height - 108, "Smart labels. Simple setup.")
+    pdf.drawString(58, height - 101, "Smart labels. Simple setup.")
 
-    pdf.setFont("Jost", 9.5)
+    pdf.setFont("Jost", 9.2)
     pdf.setFillColor(STONE)
-    pdf.drawString(132, height - 127, "Download the app, load your label set, and start organizing.")
+    pdf.drawString(58, height - 121, "Download the app, load your label set,")
+    pdf.drawString(58, height - 135, "and start organizing.")
 
     pdf.setFillColor(AMBER)
-    pdf.roundRect(width - 167, height - 158, 112, 30, 15, fill=1, stroke=0)
-    centered_text(pdf, "QUICK START", width - 167, height - 147, 112, "DMMono", 9, WHITE)
+    pdf.roundRect(56, height - 164, 104, 25, 12.5, fill=1, stroke=0)
+    centered_text(pdf, "QUICK START", 56, height - 155, 104, "DMMono", 8.3, WHITE)
+
+    image_size = 128
+    image_x = width - 56 - image_size
+    image_y = height - 168
+    pdf.setFillColor(WHITE)
+    pdf.setStrokeColor(LINE)
+    pdf.setLineWidth(0.7)
+    pdf.roundRect(image_x - 5, image_y - 5, image_size + 10, image_size + 10, 14, fill=1, stroke=1)
+    pdf.drawImage(
+        str(APP_USAGE_IMAGE),
+        image_x,
+        image_y,
+        image_size,
+        image_size,
+        preserveAspectRatio=True,
+        mask="auto",
+    )
 
     centered_text(pdf, "Download the PlaceWell app", 0, height - 211, width, "CormorantSemi", 22, INK)
     centered_text(
