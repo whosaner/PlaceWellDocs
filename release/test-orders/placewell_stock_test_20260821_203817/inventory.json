@@ -1,0 +1,326 @@
+{
+  "orderId": "placewell_stock_test_20260821_203817",
+  "releaseId": "15d924088ca75a955e532da6092f49dc0a2d26312b9ceda0bc83dd868a174a00",
+  "orderQrUrl": "https://placewell.app/s/RFDARR-4FFA",
+  "recordCount": 31,
+  "importableLabelCount": 30,
+  "spiceSkuCounts": {
+    "round-1.5": 10,
+    "rect-portrait": 8,
+    "square-1.75": 8
+  },
+  "genericLabelCount": 2,
+  "storageLabelCount": 2,
+  "labels": [
+    {
+      "labelId": "47WWDE",
+      "itemId": "spice_basil_round-1.5",
+      "labelName": "Basil",
+      "category": "spice",
+      "labelSku": "round-1.5",
+      "imageKey": "basil",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/47WWDE-7267"
+    },
+    {
+      "labelId": "ERZX3S",
+      "itemId": "spice_bay-leaves_round-1.5",
+      "labelName": "Bay Leaves",
+      "category": "spice",
+      "labelSku": "round-1.5",
+      "imageKey": "bay-leaves",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/ERZX3S-D874"
+    },
+    {
+      "labelId": "ASUEJ4",
+      "itemId": "spice_black-pepper_round-1.5",
+      "labelName": "Black Pepper",
+      "category": "spice",
+      "labelSku": "round-1.5",
+      "imageKey": "black-pepper",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/ASUEJ4-959F"
+    },
+    {
+      "labelId": "B5QEJM",
+      "itemId": "spice_cayenne-pepper_round-1.5",
+      "labelName": "Cayenne Pepper",
+      "category": "spice",
+      "labelSku": "round-1.5",
+      "imageKey": "cayenne-pepper",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/B5QEJM-130E"
+    },
+    {
+      "labelId": "Q7A7GS",
+      "itemId": "spice_chili-flakes_round-1.5",
+      "labelName": "Chili Flakes",
+      "category": "spice",
+      "labelSku": "round-1.5",
+      "imageKey": "chili-flakes",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/Q7A7GS-36E0"
+    },
+    {
+      "labelId": "GBDV7Q",
+      "itemId": "spice_chili-powder_round-1.5",
+      "labelName": "Chili Powder",
+      "category": "spice",
+      "labelSku": "round-1.5",
+      "imageKey": "chili-powder",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/GBDV7Q-458F"
+    },
+    {
+      "labelId": "8JGC8R",
+      "itemId": "spice_cinnamon_round-1.5",
+      "labelName": "Cinnamon",
+      "category": "spice",
+      "labelSku": "round-1.5",
+      "imageKey": "cinnamon",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/8JGC8R-2111"
+    },
+    {
+      "labelId": "XHY9W4",
+      "itemId": "spice_cloves_round-1.5",
+      "labelName": "Cloves",
+      "category": "spice",
+      "labelSku": "round-1.5",
+      "imageKey": "cloves",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/XHY9W4-8435"
+    },
+    {
+      "labelId": "WX7DAT",
+      "itemId": "spice_coriander_round-1.5",
+      "labelName": "Coriander",
+      "category": "spice",
+      "labelSku": "round-1.5",
+      "imageKey": "coriander",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/WX7DAT-9F45"
+    },
+    {
+      "labelId": "647KG9",
+      "itemId": "spice_cumin_round-1.5",
+      "labelName": "Cumin",
+      "category": "spice",
+      "labelSku": "round-1.5",
+      "imageKey": "cumin",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/647KG9-2FFA"
+    },
+    {
+      "labelId": "FNDNAP",
+      "itemId": "spice_curry-powder_rect-portrait",
+      "labelName": "Curry Powder",
+      "category": "spice",
+      "labelSku": "rect-portrait",
+      "imageKey": "curry-powder",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/FNDNAP-2F2D"
+    },
+    {
+      "labelId": "UHQQNC",
+      "itemId": "spice_dill_rect-portrait",
+      "labelName": "Dill",
+      "category": "spice",
+      "labelSku": "rect-portrait",
+      "imageKey": "dill",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/UHQQNC-57E6"
+    },
+    {
+      "labelId": "8F2D6A",
+      "itemId": "spice_fennel_rect-portrait",
+      "labelName": "Fennel",
+      "category": "spice",
+      "labelSku": "rect-portrait",
+      "imageKey": "fennel",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/8F2D6A-C5B4"
+    },
+    {
+      "labelId": "43AAH7",
+      "itemId": "spice_garlic-powder_rect-portrait",
+      "labelName": "Garlic Powder",
+      "category": "spice",
+      "labelSku": "rect-portrait",
+      "imageKey": "garlic-powder",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/43AAH7-2987"
+    },
+    {
+      "labelId": "8HMSVU",
+      "itemId": "spice_ginger_rect-portrait",
+      "labelName": "Ginger",
+      "category": "spice",
+      "labelSku": "rect-portrait",
+      "imageKey": "ginger",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/8HMSVU-CA0F"
+    },
+    {
+      "labelId": "MS8RQE",
+      "itemId": "spice_italian-seasoning_rect-portrait",
+      "labelName": "Italian Seasoning",
+      "category": "spice",
+      "labelSku": "rect-portrait",
+      "imageKey": "italian-seasoning",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/MS8RQE-85F1"
+    },
+    {
+      "labelId": "EB7GCT",
+      "itemId": "spice_mustard-seed_rect-portrait",
+      "labelName": "Mustard Seed",
+      "category": "spice",
+      "labelSku": "rect-portrait",
+      "imageKey": "mustard-seed",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/EB7GCT-E4CE"
+    },
+    {
+      "labelId": "2W4NN9",
+      "itemId": "spice_nutmeg_rect-portrait",
+      "labelName": "Nutmeg",
+      "category": "spice",
+      "labelSku": "rect-portrait",
+      "imageKey": "nutmeg",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/2W4NN9-3148"
+    },
+    {
+      "labelId": "VK2QWD",
+      "itemId": "spice_onion-powder_square-1.75",
+      "labelName": "Onion Powder",
+      "category": "spice",
+      "labelSku": "square-1.75",
+      "imageKey": "onion-powder",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/VK2QWD-7474"
+    },
+    {
+      "labelId": "YK566V",
+      "itemId": "spice_oregano_square-1.75",
+      "labelName": "Oregano",
+      "category": "spice",
+      "labelSku": "square-1.75",
+      "imageKey": "oregano",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/YK566V-A543"
+    },
+    {
+      "labelId": "K6QYWG",
+      "itemId": "spice_paprika_square-1.75",
+      "labelName": "Paprika",
+      "category": "spice",
+      "labelSku": "square-1.75",
+      "imageKey": "paprika",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/K6QYWG-2A66"
+    },
+    {
+      "labelId": "V7VDK3",
+      "itemId": "spice_rosemary_square-1.75",
+      "labelName": "Rosemary",
+      "category": "spice",
+      "labelSku": "square-1.75",
+      "imageKey": "rosemary",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/V7VDK3-1C23"
+    },
+    {
+      "labelId": "G6STNH",
+      "itemId": "spice_sage_square-1.75",
+      "labelName": "Sage",
+      "category": "spice",
+      "labelSku": "square-1.75",
+      "imageKey": "sage",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/G6STNH-C241"
+    },
+    {
+      "labelId": "HJDGNU",
+      "itemId": "spice_salt_square-1.75",
+      "labelName": "Salt",
+      "category": "spice",
+      "labelSku": "square-1.75",
+      "imageKey": "salt",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/HJDGNU-39F8"
+    },
+    {
+      "labelId": "8NBV8W",
+      "itemId": "spice_thyme_square-1.75",
+      "labelName": "Thyme",
+      "category": "spice",
+      "labelSku": "square-1.75",
+      "imageKey": "thyme",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/8NBV8W-EE93"
+    },
+    {
+      "labelId": "B4K3KB",
+      "itemId": "spice_turmeric_square-1.75",
+      "labelName": "Turmeric",
+      "category": "spice",
+      "labelSku": "square-1.75",
+      "imageKey": "turmeric",
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/B4K3KB-8E9E"
+    },
+    {
+      "labelId": "GHUPEW",
+      "itemId": "generic_garage_bin_round",
+      "labelName": "Garage Bin",
+      "category": null,
+      "labelSku": "round-1.5",
+      "imageKey": null,
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/GHUPEW-DD70"
+    },
+    {
+      "labelId": "GQ2C8J",
+      "itemId": "generic_miscellaneous_square",
+      "labelName": "Miscellaneous",
+      "category": null,
+      "labelSku": "square-1.75",
+      "imageKey": null,
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/GQ2C8J-F858"
+    },
+    {
+      "labelId": "C2X8YE",
+      "itemId": "storage_winter_blankets_rect",
+      "labelName": "Winter Blankets",
+      "category": "storage",
+      "labelSku": "rect-portrait",
+      "imageKey": null,
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/C2X8YE-707E"
+    },
+    {
+      "labelId": "W99CB4",
+      "itemId": "storage_holiday_decor_square",
+      "labelName": "Holiday Decor",
+      "category": "storage",
+      "labelSku": "square-1.75",
+      "imageKey": null,
+      "isOrderQr": false,
+      "qrUrl": "https://placewell.app/s/W99CB4-35C8"
+    },
+    {
+      "labelId": "RFDARR",
+      "itemId": "order_qr",
+      "labelName": "All SKU Test Order",
+      "category": null,
+      "labelSku": null,
+      "imageKey": null,
+      "isOrderQr": true,
+      "qrUrl": "https://placewell.app/s/RFDARR-4FFA"
+    }
+  ]
+}
