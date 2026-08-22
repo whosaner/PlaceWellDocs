@@ -155,7 +155,7 @@ def build_pdf():
         mask="auto",
     )
 
-    centered_text(pdf, "Download the PlaceWell app", 0, height - 211, width, "CormorantSemi", 22, INK)
+    centered_text(pdf, "Download the free PlaceWell app", 0, height - 211, width, "CormorantSemi", 22, INK)
     centered_text(
         pdf,
         "Scan the QR for your phone.",
@@ -214,7 +214,7 @@ def build_pdf():
         pdf,
         1,
         "Download PlaceWell",
-        ["Scan the QR above for your phone,", "then install and open the app."],
+        ["Scan the QR above for your phone,", "then install and open the free app."],
         margin,
         row_one_y,
         step_width,
