@@ -558,7 +558,7 @@ Numbered, individually testable. Test suites in §11 reference these IDs.
 | **BC-06** | A cached manifest is used indefinitely while offline. Stale always beats absent. |
 | **BC-07** | An unrecognised `schemaVersion` causes the manifest to be ignored — treated as absent, never a crash. |
 | **BC-08** | Manifest fetch failure resolves to the built-in placeholder. No crash, no error dialog, no blocked UI. |
-| **BC-09** | Manifest failure persists one global `retryNotBefore` for 15 minutes or a longer valid `Retry-After`. All callers and cold starts honour it; no startup request is forced. A stale validated manifest remains usable while revalidation is suppressed. |
+| **BC-09** | Manifest failure persists one global `retryNotBefore` for 15 minutes or a longer valid `Retry-After`. Background callers and cold starts honour it; no startup request is forced. When no last-known-good manifest exists, one explicit visible preparation request may retry the suppressed cold-start failure. A stale validated manifest remains usable while revalidation is suppressed. |
 
 ### 5.3 Resolution
 
@@ -597,10 +597,10 @@ Numbered, individually testable. Test suites in §11 reference these IDs.
 |---|---|
 | **BC-25** | `LabelFormScreen` mount triggers a manifest prefetch; it is not awaited and does not block render. |
 | **BC-26** | Advancing from the Name step resolves the key and starts the image prefetch. While that prefetch is in flight the Photo step renders **reserved empty space**, not the fallback. The fallback appears only on prefetch failure or after a **2 s** timeout, and then latches until the next boundary. |
-| **BC-27** | `BulkImportScreen` mount warms the whole `orderLabels` set. Pressing Create promotes the same deduplicated requests and waits until they settle or **5 s**, whichever comes first, while displaying “Preparing your labels…”. Creation then proceeds automatically and unfinished requests continue without cancellation. |
+| **BC-27** | `BulkImportScreen` mount warms the whole `orderLabels` set. Pressing Create promotes the same deduplicated requests and waits for successful or terminal outcomes, or **5 s**, whichever comes first, while displaying “Preparing your labels…”. A fast transient failure does not end preparation early. Creation then proceeds automatically and unfinished requests continue without cancellation. |
 | **BC-28** | The batch dedupes by `assetId` (N labels → M unique objects) and skips verified retained objects or null keys. |
 | **BC-29** | Batch work uses the shared exact four-transfer semaphore and lower priority than visible/wizard requests. |
-| **BC-30** | Batch partial failure is tolerated: successes are cached, failures are ledgered, no error UI, no retry storm. While a known stock asset is pending, the correct fallback shape is dimmed under a loading indicator; failure restores the normal fallback. Offscreen native bitmap warming times out inconclusively after **2 s**, retaining the verified WebP so the visible image remains the final decode authority. |
+| **BC-30** | Batch partial failure is tolerated: successes are cached, failures are ledgered, no error UI, no retry storm. Visible preparation may retry the first transient image failure once in the same session; later attempts continue to honour the ledger backoff. While a known stock asset is pending, the correct fallback shape is dimmed under a loading indicator. Mounted artwork subscribes to verified cache commits and performs bounded transient retries, then restores the normal fallback if recovery does not occur. Offscreen native bitmap warming times out inconclusively after **2 s**, retaining the verified WebP so the visible image remains the final decode authority. |
 | **BC-31** | Stock art is warmed **even when the user sets their own photo**, so a later removal reveals it instantly with no fetch. |
 
 ### 5.6 Label name overlay
