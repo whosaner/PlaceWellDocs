@@ -597,10 +597,10 @@ Numbered, individually testable. Test suites in §11 reference these IDs.
 |---|---|
 | **BC-25** | `LabelFormScreen` mount triggers a manifest prefetch; it is not awaited and does not block render. |
 | **BC-26** | Advancing from the Name step resolves the key and starts the image prefetch. While that prefetch is in flight the Photo step renders **reserved empty space**, not the fallback. The fallback appears only on prefetch failure or after a **2 s** timeout, and then latches until the next boundary. |
-| **BC-27** | `BulkImportScreen` mount warms the whole `orderLabels` set. |
+| **BC-27** | `BulkImportScreen` mount warms the whole `orderLabels` set. Pressing Create promotes the same deduplicated requests and waits until they settle or **5 s**, whichever comes first, while displaying “Preparing your labels…”. Creation then proceeds automatically and unfinished requests continue without cancellation. |
 | **BC-28** | The batch dedupes by `assetId` (N labels → M unique objects) and skips verified retained objects or null keys. |
 | **BC-29** | Batch work uses the shared exact four-transfer semaphore and lower priority than visible/wizard requests. |
-| **BC-30** | Batch partial failure is tolerated: successes are cached, failures are ledgered, no error UI, no retry storm. |
+| **BC-30** | Batch partial failure is tolerated: successes are cached, failures are ledgered, no error UI, no retry storm. While a known stock asset is pending, the correct fallback shape is dimmed under a loading indicator; failure restores the normal fallback. Offscreen native bitmap warming times out inconclusively after **2 s**, retaining the verified WebP so the visible image remains the final decode authority. |
 | **BC-31** | Stock art is warmed **even when the user sets their own photo**, so a later removal reveals it instantly with no fetch. |
 
 ### 5.6 Label name overlay
