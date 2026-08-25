@@ -136,10 +136,10 @@ have 404'd.**
 | D25 | **Text fitting is deterministic and platform-independent.** Use a generated uppercase glyph advance-width table, greedy word wrapping, an inscribed `safeWidth`, a legibility floor, ellipsis, and a hard-clipped box. Never depend on `adjustsFontSizeToFit`. | React Native declares `adjustsFontSizeToFit` in `TextPropsIOS`; it silently provides no containment guarantee on Android. The round sticker's declared box is 4.3% too wide at its binding edge. |
 | D26 | **Bundled artwork is normalised into a 240 pt square and contain-fitted without stretching.** `full`/`wizard` = 240 pt, `tile` = 120 pt, `mini` = 52 pt. | The new category art is landscape (1.053 and 1.168) while jars range from 0.411 to 0.712. Keeping the old 150 × 240 footprint would make category art roughly half the jars' visual weight; `mini` must fit the actual 52 pt thumbnail rather than depend on clipping. |
 | D27 | **Semantic lookup and cached asset identity are separate.** `imageKey\|labelSku\|resolvedQuantity` selects a manifest entry; the entry's full lowercase SHA-256 is the immutable `assetId` and object filename. | A semantic key may intentionally point to new art tomorrow. Keying disk files by the semantic key would keep serving stale bytes after a manifest update. |
-| D28 | **Manifest and image writes are last-known-good, integrity-checked, and atomic.** Download to a same-directory temporary file, validate completely, then rename and update the index/pointer. | A partial Android download or malformed manifest must never become a permanent cache hit or replace a usable catalog. |
-| D29 | **Network/HTTP failures and local-storage failures have separate state machines.** URL backoff records only remote failures; disk-full, permission, cancellation, and local I/O never poison an asset URL. | A future retry cannot repair a broken permission, while freeing storage can immediately repair disk-full. Combining them would suppress valid downloads for the wrong reason. |
+| D28 | **Manifest and image writes are last-known-good and atomic.** Parse essential manifest fields; verify downloaded image SHA-256; write to a same-directory temporary file; then rename and update the index/pointer. | Transport headers and duplicate disk verification are not content authorities. A partial write must never replace a usable catalog object. |
+| D29 | **Failures affect only the active request.** Network, HTTP, disk, permission, cancellation, and local I/O create no persistent suppression state. | Bounded in-memory retries avoid storms, while a later visit or restart can recover immediately after conditions improve. |
 | D30 | **One module-global in-flight map and a four-transfer priority semaphore own all image downloads.** The map is keyed by `assetId`; visible/wizard work precedes bulk warming. | Simultaneously mounted surfaces must share one verified write, and bulk import must not consume every transfer slot. |
-| D31 | **Active stock objects are retained, not LRU-evicted.** The cache prunes only temporary/orphan files and objects referenced by neither the active nor previous last-known-good manifest. A 64 MiB safety ceiling rejects additional warming rather than deleting active art. | The catalog is small and the product requirement is download once, then change only when the server publishes a new content hash. |
+| D31 | **Active stock objects are retained, not LRU-evicted.** The cache prunes only temporary/orphan files and objects referenced by neither the active nor previous last-known-good manifest. Requested art is not skipped by an arbitrary cache ceiling. | The catalog is small and the product requirement is download once, then change only when the server publishes a new content hash. |
 | D35 | **The stock-art directory is excluded from iCloud and Android Auto Backup with native configuration.** This requires a development/production build; Expo Go is not the release-validation environment for this feature. | Persistent downloaded content should not consume backup quota or restore stale CDN objects onto another installation. |
 | D32 | **Only a usable user photo participates in precedence.** New photos are copied atomically into app-owned storage; startup builds a synchronous availability index; native load errors re-resolve without leaving a blank surface. | A non-null picker cache URI can point to a missing file and currently wins resolution even though it cannot render. |
 | D33 | **Repurposed labels can explicitly disable stock contents art without rewriting historical identity.** Add `artworkMode: "auto" | "fallback"` (default `auto`). `fallback` bypasses remote stock art but retains the physical `printedLabelName` on the SKU/category fallback. | `imageKey`, `labelSku`, and `printedLabelName` remain immutable facts about the issued label. A custom user photo remains the explicit way to depict repurposed contents. |
@@ -320,7 +320,7 @@ auth would break caching for no security benefit.
 
 | Module | Responsibility |
 |---|---|
-| `stockImageService` | The **only** code that fetches, caches, and resolves. Owns the manifest cache, the image cache, the in-memory index, and the failure ledger. |
+| `stockImageService` | The **only** code that fetches, caches, and resolves. Owns the manifest cache, image cache, in-memory index, SHA-256 verification, atomic writes, bounded transfer timeout, deduplication, and concurrency. |
 | `LabelArtwork` | The only screen-facing artwork component. Owns photo → stock → bundled fallback and the re-resolve latch. |
 | `LabeledStockImage` | Renders image + label-name overlay using manifest geometry. |
 | `LabelTextOverlay` | Shared geometry + glyph-table fitter used by both downloaded stock art and bundled fallback art. This is the only implementation of BC-50…BC-55. |
@@ -553,12 +553,12 @@ Numbered, individually testable. Test suites in §11 reference these IDs.
 | ID | Contract |
 |---|---|
 | **BC-03** | The manifest is fetched on first actual need, and prefetched (unawaited) on `LabelFormScreen` and `BulkImportScreen` mount. |
-| **BC-04** | A `200` manifest is accepted only when it is `application/json`, UTF-8 JSON no larger than 256 KiB, its deployment-generated SHA-256 digest matches, every schema/reference/URL/hash/byte/geometry field validates, and `manifestRevision` is monotonic. A lower revision, or the same revision with different bytes, is rejected. |
-| **BC-05** | Subsequent fetches send `If-None-Match`. A `304` succeeds only when the stored snapshot still validates locally. If it is missing/corrupt, perform one unconditional GET. A validated replacement is committed temp → rename → current-pointer; the previous snapshot remains last-known-good until then. |
+| **BC-04** | A `200` manifest is accepted when it is valid JSON with a supported schema, a clean HTTPS `baseUrl`, and at least one usable entry. Each entry needs safe semantic keys, a safe WebP filename, SHA-256 identity, canvas dimensions, and label geometry. Invalid individual entries are ignored and use fallback art; they do not reject otherwise usable entries. |
+| **BC-05** | Subsequent fetches send `If-None-Match`. A `304` keeps the parsed active manifest. A replacement is committed temp → rename → current-pointer; the previous snapshot remains last-known-good. Lower revisions and corrected same-revision manifests are accepted. |
 | **BC-06** | A cached manifest is used indefinitely while offline. Stale always beats absent. |
 | **BC-07** | An unrecognised `schemaVersion` causes the manifest to be ignored — treated as absent, never a crash. |
 | **BC-08** | Manifest fetch failure resolves to the built-in placeholder. No crash, no error dialog, no blocked UI. |
-| **BC-09** | Manifest failure persists one global `retryNotBefore` for 15 minutes or a longer valid `Retry-After`. Background callers and cold starts honour it; no startup request is forced. When no last-known-good manifest exists, one explicit visible preparation request may retry the suppressed cold-start failure. A stale validated manifest remains usable while revalidation is suppressed. |
+| **BC-09** | Manifest failures are not persisted or globally suppressed. Concurrent callers share one request; a later screen visit or app restart may try again normally. A stale parsed manifest remains usable while offline. |
 
 ### 5.3 Resolution
 
@@ -577,18 +577,18 @@ Numbered, individually testable. Test suites in §11 reference these IDs.
 | ID | Contract |
 |---|---|
 | **BC-17** | The download URL is exactly `baseUrl + file` from the manifest entry. |
-| **BC-18** | Images use `stock-images/tmp/<assetId>.<nonce>.part` and `stock-images/objects/<assetId>.webp` under app-owned persistent storage, never `cacheDirectory`. A write commits only after HTTP 200, `image/webp`, exact manifest byte count, maximum 2 MiB, and SHA-256 = `assetId`; then same-directory rename precedes the object-index update. |
+| **BC-18** | Images use `stock-images/objects/<assetId>.<nonce>.part` and `stock-images/objects/<assetId>.webp` under app-owned persistent storage, never `cacheDirectory`. A write commits only after HTTP 200, `image/webp`, and SHA-256 = `assetId`; transport `Content-Length` and decompressed byte count are not separate integrity authorities. Same-directory rename precedes the object-index update. |
 | **BC-19** | A verified retained object matching the active manifest triggers **zero** network calls. Eviction or integrity invalidation permits re-download. |
-| **BC-20** | Remote failures render the fallback and update a ledger keyed by canonical asset URL. Local disk/permission/I/O failure and caller cancellation create no URL-ledger entry. |
-| **BC-21** | Remote failure classes are exact: network/DNS/TLS/15 s timeout/408/5xx are transient; 429 is transient with `Retry-After`; 403 is terminal for the current `manifestRevision`; 404/410 are permanent for that URL; content-type/byte/hash mismatch is integrity-terminal for that asset identity. Transient attempts become eligible in a different session, then after 1 h, 6 h, and 24 h for attempt 4+. Success clears the record. |
-| **BC-22** | `Retry-After` applies to 429/503. Numeric seconds are accepted; an HTTP-date is measured from the response `Date` header, not device time; valid delays clamp to 60 s–24 h. Invalid/missing values use normal backoff. |
-| **BC-23** | A changed content hash produces a new URL, which is absent from the ledger and therefore fetched normally — self-healing after a corrected deploy. |
-| **BC-24** | There is **no startup sweep** that retries all previously failed images. |
+| **BC-20** | Remote or local failure renders the fallback and creates no persistent failure ledger. A later screen visit or app restart may retry the missing object. |
+| **BC-21** | Network/DNS/TLS/full-body 15 s timeout/408/429/5xx are transient for bounded in-memory retries. Other HTTP failures, wrong MIME, and SHA-256 mismatch stop the current request. No result blocks a future visit or app session. |
+| **BC-22** | Retry timing is owned by the active UI flow: at most two short Bulk Import retries within the five-second preparation window and at most three short visible-art retries. There is no hour/day URL backoff. |
+| **BC-23** | A changed content hash produces a new `assetId` and filename and is fetched normally. |
+| **BC-24** | There is no background interval or startup sweep. Missing art retries on demand, screen revisit, or app restart. |
 | **BC-60** | A module-global `Map<assetId, Promise>` is populated before the first `await`; all callers share that promise. It is removed in `finally` only when still current. Consumer unmount does not cancel shared work. |
 | **BC-61** | Exactly four image transfers may run. Visible and wizard requests have priority over bulk warming; bulk cannot reserve all slots. |
-| **BC-62** | Verified objects referenced by the active or previous last-known-good manifest are never evicted. Before warming, unreferenced objects are pruned; if retained objects plus the candidate exceed 64 MiB, warming is skipped without deleting active art. A visible on-demand request may still replace the obsolete object for that same semantic key after a new hash is published. |
-| **BC-63** | Startup index warm-up removes `.part` files, orphan/malformed objects, missing-file index rows, objects referenced by neither retained manifest, and unreferenced ledger rows. A native stock decode error invalidates and removes only the corrupt object. |
-| **BC-64** | Disk-full performs one unreferenced-object cleanup pass and one write retry, then enters a 15-minute process storage cooldown. Permission failure disables writes for the process lifetime. Neither changes URL backoff, and neither evicts active art. |
+| **BC-62** | Objects referenced by the active or previous last-known-good manifest are retained. Unreferenced objects are pruned; there is no arbitrary 64 MiB warming ceiling that silently skips requested art. |
+| **BC-63** | Startup index warm-up removes `.part` files, malformed/orphan objects, and files referenced by neither retained manifest. It checks file presence without re-reading or re-hashing every cached WebP. A visible native decode error invalidates only that object. |
+| **BC-64** | Disk-full performs one unreferenced-object cleanup pass and one write retry. Permission and I/O failures fail only the current request; no process-wide cooldown or write-disable state is retained. |
 | **BC-69** | iOS marks the stock-art directory excluded from iCloud backup; Android backup rules exclude the same directory from cloud and device-transfer backup. Release validation inspects both generated native configurations. |
 
 ### 5.5 Prefetch
@@ -600,7 +600,7 @@ Numbered, individually testable. Test suites in §11 reference these IDs.
 | **BC-27** | `BulkImportScreen` mount warms the whole `orderLabels` set. Pressing Create promotes the same deduplicated requests and waits for successful or terminal outcomes, or **5 s**, whichever comes first, while displaying “Preparing your labels…”. A fast transient failure does not end preparation early. Creation then proceeds automatically and unfinished requests continue without cancellation. |
 | **BC-28** | The batch dedupes by `assetId` (N labels → M unique objects) and skips verified retained objects or null keys. |
 | **BC-29** | Batch work uses the shared exact four-transfer semaphore and lower priority than visible/wizard requests. |
-| **BC-30** | Batch partial failure is tolerated: successes are cached, failures are ledgered, no error UI, no retry storm. Visible preparation may retry the first transient image failure once in the same session; later attempts continue to honour the ledger backoff. While a known stock asset is pending, the correct fallback shape is dimmed under a loading indicator. Mounted artwork subscribes to verified cache commits and performs bounded transient retries, then restores the normal fallback if recovery does not occur. Offscreen native bitmap warming times out inconclusively after **2 s**, retaining the verified WebP so the visible image remains the final decode authority. |
+| **BC-30** | Batch partial failure is tolerated: successes are cached, no error UI is shown, and retries are bounded. While a transfer is pending, the correct fallback shape is dimmed under a loading indicator. Mounted artwork subscribes to verified cache commits and restores the normal fallback when retries end. There is no hidden bitmap warmer; the visible React Native image is the decode authority and invalidates its object on `onError`. |
 | **BC-31** | Stock art is warmed **even when the user sets their own photo**, so a later removal reveals it instantly with no fetch. |
 
 ### 5.6 Label name overlay
@@ -946,9 +946,9 @@ The export must be **deterministic and repeatable** — same masters in, same ha
 ### 11.1 Implementation
 
 - `stockImageService` (§4.5) — manifest cache + ETag, image cache in `documentDirectory`,
-  in-memory descriptor/object index, atomic verified writes, separate remote/storage failure
-  state machines, global in-flight dedupe, four-transfer priority semaphore, retained-object
-  pruning, and prefetch API (incl. bitmap warm, BC-43).
+  in-memory descriptor/object index, SHA-256 verification, atomic writes, global in-flight
+  dedupe, four-transfer priority semaphore, retained-object pruning, bounded caller retries,
+  and a full-body request timeout.
 - Add native iOS/Android configuration that excludes only the stock-art directory from
   backup (D35/BC-69); release validation uses generated native projects, not Expo Go.
 - Warm the cache index in `App.js` `prepare()` before `setAppReady(true)` (BC-41).
@@ -976,20 +976,15 @@ Each maps to behaviour contracts in §5.
 
 | Suite | Covers | Key assertions |
 |---|---|---|
-| `stockImageService.manifest.test.js` | BC-03…BC-07 | full validation and digest; monotonic revision; last-known-good atomic pointer; valid `304`; corrupt/missing `304` body forces one unconditional GET; stale served offline |
-| `stockImageService.manifestFailure.test.js` | BC-08, BC-09 | failure → fallback, no throw; persisted 15-minute suppression applies across cold starts; stale remains usable |
+| `stockImageService.test.js` manifest lifecycle | BC-03…BC-09 | essential-field validation; invalid-entry isolation; ETag/304; lower and corrected same-revision acceptance; cached offline use; later retry after failure |
 | `stockImageService.resolve.test.js` | BC-10…BC-16, BC-67 | usable-photo precedence; `artworkMode`; `default` resolution; null key normal; semantic descriptor stable across presets; changed hash selects new `assetId` |
-| `stockImageService.imageFetch.test.js` | BC-17…BC-19 | URL exact; temp download; MIME/bytes/SHA verified before rename/index; retained hit issues zero requests |
-| `stockImageService.imageFailure.test.js` | BC-20…BC-22, BC-64 | exact HTTP/integrity/local classes; `Retry-After` clock handling; local storage never poisons URL ledger |
-| `stockImageService.imageRetry.test.js` | BC-21…BC-24 | session/1 h/6 h/24 h state machine; terminal URL classes; new hash eligible; no startup sweep |
-| `stockImageService.concurrency.test.js` | BC-60, BC-61 | simultaneous callers share one promise/write; exactly four transfers; visible work overtakes queued bulk; unmount does not cancel shared work |
-| `stockImageService.retention.test.js` | BC-62, BC-63 | active/previous-manifest objects retained; stale/orphan/partial cleanup; 64 MiB skips warming rather than evicting active art; decode corruption removes one object |
+| `stockImageService.test.js` image pipeline | BC-17…BC-24, BC-60…BC-64 | gzip transfer-length mismatch accepted; HTTP/MIME/SHA checks; full-body timeout; later retry after remote/local failure; atomic write without re-read; dedupe; concurrency; lightweight startup index; visible decode invalidation |
 | `stockImageService.coldStart.test.js` | BC-01, BC-02 | `initializeStorage()` resolves with no art request; no timers or `AppState` listeners registered |
 | `BulkImportScreen.artPrefetch.test.js` | BC-27…BC-30 | 30 labels → M unique `assetId` requests; shared four-transfer priority cap; partial failure renders no error UI |
 | `LabelFormScreen.artPrefetch.test.js` | BC-25, BC-26, BC-31 | manifest prefetch on mount, unawaited; image prefetch on Next; art warmed even when a user photo is set |
 | `LabeledStockImage.noFlicker.test.js` | BC-11, BC-12, BC-42 | final source URI chosen synchronously on the first render; `source` never changes within a boundary; reserved empty space (not the fallback) during decode |
 | `LabelArtwork.precedence.test.js` | BC-10, BC-42, BC-65…BC-68 | one component owns usable photo → stock → fallback; missing/native-error photo paths; explicit stock opt-out; synchronous preset dimensions; no call site retains a local ternary |
-| `stockImageService.startup.test.js` | BC-01, BC-41, BC-43 | index warmed in `prepare()` before `setAppReady(true)`; disk-only, zero network; prefetch warms the decoded bitmap |
+| `stockImageService.startup.test.js` | BC-01, BC-41, BC-43 | index loaded in `prepare()` before `setAppReady(true)`; disk-only and zero network |
 | `enrichment.writeOnce.test.js` | BC-44, BC-45, BC-46 | `null → value` only, never overwrite, enforced in `saveLabel`; deep-link label with no signature is still enriched via `computeSignature`; `?n=` captured with zero network calls |
 | `fallback.bundled.test.js` | BC-47, BC-48, BC-56, BC-58 | exactly 5 keys; SKU/category resolution; PNG dimensions; 240/120/52 pt contain-fit; wide fits by width/tall by height |
 | Release-pipeline fallback integration | BC-57, BC-59 | pinned inputs reproduce byte-identical PNG/geometry artifacts; explicit `qrBounds`; category text and QR rectangles do not intersect |
@@ -1038,9 +1033,9 @@ fall back to `defaultQuantity` (BC-14).
 5. **Bundled font required** for deterministic overlay metrics.
 6. **Analytics needed:** fallback rate, missing-key events, manifest fetch failures —
    otherwise a key mismatch is invisible in production.
-7. **Resolved by design in rev 6:** active/previous-manifest objects are retained, stale
-   objects are pruned, and a 64 MiB ceiling skips speculative warming rather than evicting
-   active art. Native backup exclusion remains an implementation/release gate (D31/D35).
+7. **Resolved by design:** active/previous-manifest objects are retained and stale objects
+   are pruned without an arbitrary warming ceiling. Native backup exclusion remains an
+   implementation/release gate (D31/D35).
 8. **WebP decode support must be verified on iOS** for React Native's `<Image>` at
    SDK 54 / RN 0.81. Native `UIImage` WebP support exists from iOS 14; Expo SDK 54 targets
    iOS 15.1+, so this is expected to work, but it is **unverified** and blocks Phase 2.
@@ -1061,10 +1056,10 @@ for traceability; unresolved rows need a decision before the phase named in the 
 | M1 | D10–D11, BC-16/39 | **Resolved in rev 6 (D27, BC-16).** Semantic inputs select an active descriptor; full SHA-256 `assetId` names the cached object and geometry has a separate revision. | done |
 | M2 | §4.6.4, BC-33 | **Resolved.** Typography fields are fixed and the selected bundled face is `CormorantGaramond_600SemiBold`. Phase 1 generates its versioned glyph table and makes that artifact a build requirement. | done |
 | M3 | §4.6, size presets | **Resolved in rev 5 (D25, BC-54).** A legibility floor reduces line count, then ellipsizes, then suppresses the overlay if one readable glyph cannot fit. | done |
-| M4 | BC-04–BC-08, BC-17–BC-23 | **Resolved in rev 6 (D28, BC-04/05/18).** Manifest and object replacements are fully validated last-known-good temp → rename commits; corrupt `304` state forces one unconditional fetch. | done |
-| M5 | BC-20–BC-24 | **Resolved in rev 6 (D29, BC-20…BC-24/64).** Remote classes, timeouts, `Retry-After`, clock source, and local-storage cooldowns are explicit and separate. | done |
+| M4 | BC-04–BC-08, BC-17–BC-23 | **Resolved (D28, BC-04/05/18).** Manifests validate essential fields; image integrity has one SHA-256 authority; replacements use last-known-good temp → rename commits. | done |
+| M5 | BC-20–BC-24 | **Resolved (D29, BC-20…BC-24/64).** Full-body timeout and bounded caller retries replace persistent URL, manifest, and storage suppression state. | done |
 | M6 | BC-19, BC-28, BC-39 | **Resolved in rev 6 (D30, BC-60/61).** One global promise map keyed by `assetId` and an exact four-transfer priority semaphore own downloads. | done |
-| M7 | §13 risk 7 | **Resolved in rev 6 (D31/D35, BC-62/63/69).** Active objects are never evicted, stale/orphan objects are pruned, the safety ceiling skips warming, and native configuration excludes the directory from backups. | done |
+| M7 | §13 risk 7 | **Resolved (D31/D35, BC-62/63/69).** Active objects are retained, stale/orphan objects are pruned without a warming ceiling, and native configuration excludes the directory from backups. | done |
 | M8 | BC-10, Q6, §13 risk 1 | **Resolved in rev 6 (D32, BC-65/66).** Only indexed usable photos enter precedence; both pre-load and post-load native failures have deterministic boundaries. | done |
 | M9 | §12 | **Phase 3 has no quantity data model**: no label field, source of truth, editing flow, or update contract. A server-controlled global `defaultQuantity` could silently change every legacy label. | Phase 3 |
 | M10 | D16, BC-36 | **Resolved in rev 6 (D33, BC-36/67).** `artworkMode = "fallback"` explicitly opts out of contents-specific remote art while retaining immutable physical-label identity; blank-label name fallback is correctly scoped. | done |
