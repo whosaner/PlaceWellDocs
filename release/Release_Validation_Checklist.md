@@ -21,7 +21,7 @@ Last updated: 2026-08-30
 - [x] Required icon, splash, and adaptive-icon files exist
 - [ ] Confirm the production EAS environment contains `HMAC_SECRET` and `LOOKUP_SECRET`
 - [x] Confirm Expo/EAS authentication with `npx eas-cli whoami`
-- [ ] Confirm Android submission credentials are available to EAS
+- [x] Confirm Android submission credentials are available to EAS
 - [x] Run `npx expo config --type public`
 - [x] Run `npx jest --no-coverage --maxWorkers=2` - 31 suites, 423 tests passed
 - [ ] Commit and push the release-preparation changes
@@ -44,7 +44,7 @@ Last updated: 2026-08-30
 
 - [x] Submit the iOS build to App Store Connect/TestFlight
 - [ ] Install the TestFlight build on a physical iPhone
-- [ ] Submit the Android build to a Google Play internal or closed track
+- [x] Submit the Android build to the Google Play internal track
 - [ ] Install the Play-distributed build on a physical Android device
 - [ ] Verify launch, storage initialization, fonts, and navigation
 - [ ] Verify camera permission denial, Open Settings recovery, and QR scanning
@@ -63,7 +63,7 @@ Last updated: 2026-08-30
 | Store | Submission status | Review status | Live status |
 |---|---|---|---|
 | Apple App Store | Build 27 uploaded to TestFlight; Apple processing | Not started | Version 1.0.0 currently live |
-| Google Play | Not submitted | Not started | Version 1.0.0 previously uploaded to internal testing |
+| Google Play | Version code 18 uploaded to internal testing | Not started | Not publicly released |
 
 ## Existing production configuration
 

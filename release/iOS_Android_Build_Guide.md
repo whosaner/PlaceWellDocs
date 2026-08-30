@@ -85,10 +85,9 @@ Submit the completed Android App Bundle:
 npx eas-cli submit --platform android --profile production --latest
 ```
 
-The repository does not currently declare an Android service-account key in
-`eas.json`. EAS may use previously configured submit credentials or prompt
-for Google Play credentials. Resolve that credential step without committing
-the service-account JSON file.
+The production submit profile pins Android submissions to the `internal`
+track. The Google Play service-account key is stored on EAS and must not be
+committed to the repository.
 
 Upload first to an internal or closed test track. Install the Play-distributed
 build and complete the physical-device checks before promoting it to
