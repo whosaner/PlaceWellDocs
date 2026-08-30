@@ -1,294 +1,122 @@
-# PlaceWell — iOS & Android Production Build Guide
+# PlaceWell - iOS & Android Production Build Guide
 
-Last updated: 2026-07-07
+Last updated: 2026-08-30
 
----
-
-## Overview
-
-Builds run **in the cloud** on Expo's servers (EAS Build). Your laptop just sends the code up — you do not need a Mac to build iOS. The compiled IPA/APK is then submitted directly to the App Store / Play Store from the cloud.
-
----
-
-## One-Time Setup (do once per machine)
-
-### 1. Install EAS CLI
-```
-npm install -g eas-cli
-```
-
-### 2. Create an Expo account
-- Go to **expo.dev**
-- Sign up with `niralu.53@gmail.com`
-- Verify email
-
-### 3. Log in to EAS
-```
-cd C:\PlaceWell\PlaceWellApp
-eas login
-```
-A browser window opens — log in with your Expo account. Session is saved permanently.
-
----
-
-## Firebase Setup (one-time per platform)
-
-Firebase config files are **gitignored** (contain sensitive keys). They must be uploaded to EAS as secrets AND placed locally for builds.
-
-### iOS
-
-1. Go to **console.firebase.google.com** → project `placewell-prod`
-2. Project Settings → Your Apps → **iOS+**
-3. Bundle ID: `com.placewell.app` → Register app
-4. Download `GoogleService-Info.plist`
-5. Place at: `C:\PlaceWell\PlaceWellApp\GoogleService-Info.plist`
-6. Upload to EAS (one-time):
-```
-cd C:\PlaceWell\PlaceWellApp
-eas secret:create --scope project --name GOOGLE_SERVICES_INFOPLIST --type file --value ./GoogleService-Info.plist
-```
-
-### Android
-
-1. Go to **console.firebase.google.com** → project `placewell-prod`
-2. Project Settings → Your Apps → **Android**
-3. Package name: `com.placewell.app` → Register app
-4. Download `google-services.json`
-5. Place at: `C:\PlaceWell\PlaceWellApp\google-services.json`
-6. Upload to EAS (one-time):
-```
-cd C:\PlaceWell\PlaceWellApp
-eas secret:create --scope project --name GOOGLE_SERVICES_JSON --type file --value ./google-services.json
-```
-
----
-
-## App Store Connect Setup (done once)
+## Current release configuration
 
 | Item | Value |
 |---|---|
-| Bundle ID | `com.placewell.app` |
-| App Name | PlaceWell |
-| App ID (ascAppId) | `6788545365` |
-| Apple ID | `niralu.53@gmail.com` |
-| Apple Team ID | `CM5N45M892` |
+| Marketing version | `1.1.0` |
+| EAS project | `e346f522-16a7-4760-b90d-6596a4f5b66e` |
+| iOS bundle identifier | `com.placewell.app` |
+| Android package | `com.placewell.app` |
+| App Store Connect ID | `6788545365` |
+| Apple team ID | `CM5N45M892` |
+| EAS profile | `production` |
+| Version source | Remote |
+| Build-number handling | `autoIncrement: true` |
 
-These are already configured in `eas.json`.
+EAS Build compiles both store binaries in Expo's cloud. A Mac is not
+required to start the iOS build.
 
----
+## Before every production build
 
-## Before Every Build — Checklist
+Run from `C:\PlaceWell\PlaceWellApp`.
 
-- [ ] All code changes committed and pushed to GitHub
-- [ ] `npx jest --no-coverage` — all tests passing
-- [ ] Assets in place:
-  - `assets/icon.png` — 1024×1024 PNG
-  - `assets/splash.png` — 1242×2688 PNG
-  - `assets/adaptive-icon.png` — 1024×1024 PNG (transparent)
+1. Confirm the intended branch is clean, committed, and pushed:
+   ```
+   git status --short --branch
+   ```
+2. Confirm the Expo account:
+   ```
+   npx eas-cli whoami
+   ```
+3. Confirm the public Expo configuration resolves:
+   ```
+   npx expo config --type public
+   ```
+4. Run the complete test suite:
+   ```
+   npx jest --no-coverage --maxWorkers=2
+   ```
+5. Confirm the production EAS environment provides both variables required
+   by `app.config.js`:
+   - `HMAC_SECRET`
+   - `LOOKUP_SECRET`
+6. Confirm `assets/icon.png`, `assets/splash.png`, and
+   `assets/adaptive-icon.png` are present.
 
----
+Do not start a production build from an uncommitted or unpushed release
+state.
 
-## iOS Build
+## Build both platforms
 
-### Run the build
 ```
-cd C:\PlaceWell\PlaceWellApp
-eas build --platform ios --profile production
-```
-
-- Build runs in the cloud (~20–40 minutes)
-- Your laptop can sleep/close during the build
-- EAS emails you when done
-- You receive a download link for the `.ipa` file
-
-### Submit to App Store / TestFlight
-```
-eas submit --platform ios
-```
-
-- EAS uploads the IPA directly to App Store Connect
-- Goes to **TestFlight** first for internal testing
-- After testing, go to App Store Connect → submit for App Store review
-
----
-
-## Android Build
-
-### First — add Firebase Android secret to EAS (one-time)
-See Firebase Setup → Android section above.
-
-### Run the build
-```
-cd C:\PlaceWell\PlaceWellApp
-eas build --platform android --profile production
+npx eas-cli build --platform all --profile production
 ```
 
-### Submit to Google Play
-```
-eas submit --platform android
-```
+EAS assigns the next iOS build number and Android version code remotely.
+Do not manually increment them in `app.json`.
 
----
+After the command starts, copy both build URLs and assigned build numbers
+into `Release_Validation_Checklist.md`.
 
-## Build Both Platforms at Once
+## iOS submission and validation
+
+Submit the completed iOS build to App Store Connect:
+
 ```
-eas build --platform all --profile production
-```
-
----
-
-## Future Builds (routine updates)
-
-For every new version after the first:
-```
-cd C:\PlaceWell\PlaceWellApp
-eas build --platform ios --profile production
-eas submit --platform ios
+npx eas-cli submit --platform ios --profile production --latest
 ```
 
-`autoIncrement: true` in `eas.json` automatically bumps the build number each time — you don't need to manually update `app.json`.
+The iOS submit profile already contains the Apple ID, App Store Connect app
+ID, and team ID. Submission uploads the build to App Store Connect; it does
+not automatically release it to customers.
 
----
+Install the build through TestFlight and complete the physical-device checks
+in `Release_Validation_Checklist.md` before submitting version 1.1.0 for App
+Store review.
 
-## EAS Build Prompts — What to Answer
+## Android submission and validation
 
-| Prompt | Answer |
-|---|---|
-| Expo Go warning | Ignore — press Enter |
-| App version source | Select "remote" (recommended) |
-| Create EAS project for @beniralu/placewell? | Y |
-| iOS app uses standard/exempt encryption? | Y |
-| Log in to Apple account? | Y |
-| Generate Apple Distribution Certificate? | Y |
-| Generate Apple Provisioning Profile? | Y |
+Submit the completed Android App Bundle:
 
----
+```
+npx eas-cli submit --platform android --profile production --latest
+```
 
-## Pending Before App Store Submission
+The repository does not currently declare an Android service-account key in
+`eas.json`. EAS may use previously configured submit credentials or prompt
+for Google Play credentials. Resolve that credential step without committing
+the service-account JSON file.
 
-| Item | Status |
-|---|---|
-| Final app icon (replace placeholder) | ⏳ Pending |
-| Final splash screen (replace placeholder) | ⏳ Pending |
-| Firebase iOS secret uploaded to EAS | ✅ Done |
-| Firebase Android secret uploaded to EAS | ⏳ Pending |
-| Move hmacSecret + qrServiceToken to EAS secrets | ⏳ Pending |
-| Privacy Policy URL | ⏳ Pending |
-| App Store screenshots | ⏳ Pending |
+Upload first to an internal or closed test track. Install the Play-distributed
+build and complete the physical-device checks before promoting it to
+production.
 
-See full checklist: `C:\PlaceWell\Docs\release\Release_Validation_Checklist.md`
+## Rollout sequence
 
----
+1. Build both production binaries from the approved `main` commit.
+2. Submit iOS to TestFlight and Android to an internal/closed Play track.
+3. Validate the distributed binaries on physical devices.
+4. Submit iOS for App Store review.
+5. Promote Android through the chosen production rollout.
+6. Update `Release_Validation_Checklist.md` after every status change.
 
-## Key Files
+## Important files
 
 | File | Purpose |
 |---|---|
-| `C:\PlaceWell\PlaceWellApp\eas.json` | EAS build and submit configuration |
-| `C:\PlaceWell\PlaceWellApp\app.json` | App metadata, bundle ID, permissions |
-| `C:\PlaceWell\PlaceWellApp\assets\icon.png` | App icon |
-| `C:\PlaceWell\PlaceWellApp\assets\splash.png` | Splash screen |
-| `C:\PlaceWell\PlaceWellApp\assets\adaptive-icon.png` | Android adaptive icon |
-| `C:\PlaceWell\PlaceWellApp\GoogleService-Info.plist` | Firebase iOS config (gitignored) |
-| `C:\PlaceWell\PlaceWellApp\google-services.json` | Firebase Android config (gitignored) |
-| `C:\PlaceWell\Docs\release\Release_Validation_Checklist.md` | Full pre-release checklist |
+| `C:\PlaceWell\PlaceWellApp\app.json` | Marketing version, identifiers, permissions, assets |
+| `C:\PlaceWell\PlaceWellApp\app.config.js` | Dynamic build configuration and required production variables |
+| `C:\PlaceWell\PlaceWellApp\eas.json` | Build, versioning, and submission profiles |
+| `C:\PlaceWell\Docs\release\Release_Validation_Checklist.md` | Release status and validation record |
 
+## Notes
 
----
-
-## Before Every Build — Checklist
-
-- [ ] All code changes committed and pushed to GitHub
-- [ ] `npx jest --no-coverage` — all tests passing
-- [ ] Assets in place:
-  - `assets/icon.png` — 1024×1024 PNG
-  - `assets/splash.png` — 1242×2688 PNG
-  - `assets/adaptive-icon.png` — 1024×1024 PNG (transparent)
-
----
-
-## iOS Build
-
-### Run the build
-```
-cd C:\PlaceWell\PlaceWellApp
-eas build --platform ios --profile production
-```
-
-- Build runs in the cloud (~20–40 minutes)
-- Your laptop can sleep/close during the build
-- EAS emails you when done
-- You receive a download link for the `.ipa` file
-
-### Submit to App Store / TestFlight
-```
-eas submit --platform ios
-```
-
-- EAS uploads the IPA directly to App Store Connect
-- Goes to **TestFlight** first for internal testing
-- After testing, go to App Store Connect → submit for App Store review
-
----
-
-## Android Build
-
-### Run the build
-```
-cd C:\PlaceWell\PlaceWellApp
-eas build --platform android --profile production
-```
-
-### Submit to Google Play
-```
-eas submit --platform android
-```
-
----
-
-## Build Both Platforms at Once
-```
-eas build --platform all --profile production
-```
-
----
-
-## Future Builds (routine updates)
-
-For every new version after the first:
-```
-cd C:\PlaceWell\PlaceWellApp
-eas build --platform ios --profile production
-eas submit --platform ios
-```
-
-`autoIncrement: true` in `eas.json` automatically bumps the build number each time — you don't need to manually update `app.json`.
-
----
-
-## Pending Before App Store Submission
-
-| Item | Status |
-|---|---|
-| Final app icon (replace placeholder) | ⏳ Pending |
-| Final splash screen (replace placeholder) | ⏳ Pending |
-| Firebase `GoogleService-Info.plist` (iOS) | ⏳ Pending |
-| Firebase `google-services.json` (Android) | ⏳ Pending |
-| Move secrets to EAS (hmacSecret, qrServiceToken) | ⏳ Pending |
-| Privacy Policy URL | ⏳ Pending |
-| App Store screenshots | ⏳ Pending |
-
-See full checklist: `C:\PlaceWell\Docs\release\Release_Validation_Checklist.md`
-
----
-
-## Key Files
-
-| File | Purpose |
-|---|---|
-| `C:\PlaceWell\PlaceWellApp\eas.json` | EAS build and submit configuration |
-| `C:\PlaceWell\PlaceWellApp\app.json` | App metadata, bundle ID, permissions |
-| `C:\PlaceWell\PlaceWellApp\assets\icon.png` | App icon |
-| `C:\PlaceWell\PlaceWellApp\assets\splash.png` | Splash screen |
-| `C:\PlaceWell\PlaceWellApp\assets\adaptive-icon.png` | Android adaptive icon |
-| `C:\PlaceWell\Docs\release\Release_Validation_Checklist.md` | Full pre-release checklist |
+- Expo Go testing is useful but does not replace TestFlight and Google Play
+  distributed-build testing.
+- Firebase Analytics native setup is deferred and is not required for the
+  1.1.0 build.
+- Never commit production credentials, `.env` files, Apple keys, or Google
+  service-account JSON files.
