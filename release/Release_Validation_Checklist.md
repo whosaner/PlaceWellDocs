@@ -42,7 +42,7 @@ Last updated: 2026-08-30
 
 ## 3. Store-track validation
 
-- [ ] Submit the iOS build to App Store Connect/TestFlight
+- [x] Submit the iOS build to App Store Connect/TestFlight
 - [ ] Install the TestFlight build on a physical iPhone
 - [ ] Submit the Android build to a Google Play internal or closed track
 - [ ] Install the Play-distributed build on a physical Android device
@@ -62,7 +62,7 @@ Last updated: 2026-08-30
 
 | Store | Submission status | Review status | Live status |
 |---|---|---|---|
-| Apple App Store | Not submitted | Not started | Version 1.0.0 currently live |
+| Apple App Store | Build 27 uploaded to TestFlight; Apple processing | Not started | Version 1.0.0 currently live |
 | Google Play | Not submitted | Not started | Version 1.0.0 previously uploaded to internal testing |
 
 ## Existing production configuration
