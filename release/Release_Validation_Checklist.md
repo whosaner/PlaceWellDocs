@@ -29,16 +29,16 @@ Last updated: 2026-08-30
 
 ## 2. Production builds
 
-- [ ] Build iOS and Android with:
+- [x] Build iOS and Android with:
   ```
   npx eas-cli build --platform all --profile production
   ```
-- [ ] Record the EAS build URLs and assigned build numbers below
+- [x] Record the EAS build URLs and assigned build numbers below
 
 | Platform | Version | Build number | EAS build URL | Status |
 |---|---:|---:|---|---|
-| iOS | 1.1.0 | Pending | Pending | Not started |
-| Android | 1.1.0 | Pending | Pending | Not started |
+| iOS | 1.1.0 | 27 | [EAS build](https://expo.dev/accounts/beniralu/projects/placewell/builds/7622fb31-541b-40dd-916f-d5b6d5824f5b) | Finished |
+| Android | 1.1.0 | 18 | [EAS build](https://expo.dev/accounts/beniralu/projects/placewell/builds/408594e3-924a-4318-a233-fe71ec2e4d0e) | Finished |
 
 ## 3. Store-track validation
 
