@@ -1,6 +1,6 @@
 # Release Validation Checklist - App Store & Play Store
 
-Last updated: 2026-08-30
+Last updated: 2026-08-31
 
 ## Release target
 
@@ -19,13 +19,13 @@ Last updated: 2026-08-30
 - [x] iOS and Android identifiers remain `com.placewell.app`
 - [x] Production builds use EAS remote versioning and `autoIncrement`
 - [x] Required icon, splash, and adaptive-icon files exist
-- [ ] Confirm the production EAS environment contains `HMAC_SECRET` and `LOOKUP_SECRET`
+- [x] Confirm the production EAS environment contains `HMAC_SECRET` and `LOOKUP_SECRET`
 - [x] Confirm Expo/EAS authentication with `npx eas-cli whoami`
 - [x] Confirm Android submission credentials are available to EAS
 - [x] Run `npx expo config --type public`
 - [x] Run `npx jest --no-coverage --maxWorkers=2` - 31 suites, 423 tests passed
-- [ ] Commit and push the release-preparation changes
-- [ ] Merge the approved feature branch into `main`
+- [x] Commit and push the release-preparation changes
+- [x] Merge the approved feature branch into `main`
 
 ## 2. Production builds
 
@@ -46,6 +46,8 @@ Last updated: 2026-08-30
 - [ ] Install the TestFlight build on a physical iPhone
 - [x] Submit the Android build to the Google Play internal track
 - [ ] Install the Play-distributed build on a physical Android device
+- [x] Seed deterministic `mixed_stock_test_kit` with 15 importable labels plus one Order QR
+- [x] Generate reusable QR pack at `C:\PlaceWell\StockImageMixedTestPack-v2`
 - [ ] Verify launch, storage initialization, fonts, and navigation
 - [ ] Verify camera permission denial, Open Settings recovery, and QR scanning
 - [ ] Verify photo-library selection, custom-photo removal, and stock-artwork restoration
