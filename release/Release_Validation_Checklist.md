@@ -43,18 +43,18 @@ Last updated: 2026-08-31
 ## 3. Store-track validation
 
 - [x] Submit the iOS build to App Store Connect/TestFlight
-- [ ] Install the TestFlight build on a physical iPhone
+- [x] Install the TestFlight build on a physical iPhone
 - [x] Submit the Android build to the Google Play internal track
-- [ ] Install the Play-distributed build on a physical Android device
+- [x] Install the Play-distributed build on a physical Android device
 - [x] Seed deterministic `mixed_stock_test_kit` with 15 importable labels plus one Order QR
 - [x] Generate reusable QR pack at `C:\PlaceWell\StockImageMixedTestPack-v2`
-- [ ] Verify launch, storage initialization, fonts, and navigation
+- [x] Verify launch, storage initialization, fonts, and navigation
 - [ ] Verify camera permission denial, Open Settings recovery, and QR scanning
 - [ ] Verify photo-library selection, custom-photo removal, and stock-artwork restoration
-- [ ] Verify rapid bulk import and stock-artwork preparation
+- [x] Verify rapid bulk import and stock-artwork preparation
 - [ ] Verify offline launch with previously cached stock artwork
 - [ ] Verify deep links: `placewell://scan` and `https://placewell.app/s/...`
-- [ ] Confirm no release-blocking crash or persistent loading state
+- [x] Confirm no release-blocking crash or persistent loading state
 
 ## 4. Production rollout
 
@@ -81,6 +81,7 @@ Last updated: 2026-08-31
 ## Release notes
 
 - Expo Go functional testing of the stock-artwork update is complete.
+- TestFlight build 27 and Google Play internal build 18 passed physical-device acceptance testing on iPhone and Android.
 - Production-native validation remains mandatory because Expo Go does not exercise the exact store binary, signing, or distribution environment.
 - Firebase Analytics native configuration remains deferred; it is not a version 1.1.0 release dependency.
 - Update this file after every build, store submission, review decision, or rollout status change.
