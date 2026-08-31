@@ -48,6 +48,8 @@ Last updated: 2026-08-31
 - [x] Install the Play-distributed build on a physical Android device
 - [x] Seed deterministic `mixed_stock_test_kit` with 15 importable labels plus one Order QR
 - [x] Generate reusable QR pack at `C:\PlaceWell\StockImageMixedTestPack-v2`
+- [x] Prepare eight Android phone screenshots at Google Play's recommended `1080x1920`
+- [x] Confirm seven iPhone screenshots use Apple's accepted `1179x2556` size
 - [x] Verify launch, storage initialization, fonts, and navigation
 - [ ] Verify camera permission denial, Open Settings recovery, and QR scanning
 - [ ] Verify photo-library selection, custom-photo removal, and stock-artwork restoration
