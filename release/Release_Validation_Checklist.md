@@ -49,7 +49,8 @@ Last updated: 2026-08-31
 - [x] Seed deterministic `mixed_stock_test_kit` with 15 importable labels plus one Order QR
 - [x] Generate reusable QR pack at `C:\PlaceWell\StockImageMixedTestPack-v2`
 - [x] Upload eight owner-provided Android phone screenshots accepted by Play Console
-- [x] Confirm seven iPhone screenshots use Apple's accepted `1179x2556` size
+- [x] Upload eight iPhone 6.9-inch screenshots at Apple's accepted `1290x2796` size
+- [x] Attach the shared deterministic reviewer QR sheet and version 1.1.0 review notes
 - [x] Verify launch, storage initialization, fonts, and navigation
 - [ ] Verify camera permission denial, Open Settings recovery, and QR scanning
 - [ ] Verify photo-library selection, custom-photo removal, and stock-artwork restoration
@@ -60,13 +61,13 @@ Last updated: 2026-08-31
 
 ## 4. Production rollout
 
-- [ ] Submit version 1.1.0 for App Store review
+- [x] Submit version 1.1.0 for App Store review
 - [ ] Promote version 1.1.0 through Google Play review/production rollout
 - [ ] Record submission and approval status below
 
 | Store | Submission status | Review status | Live status |
 |---|---|---|---|
-| Apple App Store | Build 27 uploaded to TestFlight; Apple processing | Not started | Version 1.0.0 currently live |
+| Apple App Store | Version 1.1.0 build 27 submitted | In review | Version 1.0.0 currently live; 1.1.0 will release automatically after approval |
 | Google Play | Version code 18 production rollout and screenshots submitted | In review | Not publicly released |
 
 ## Existing production configuration
@@ -85,6 +86,7 @@ Last updated: 2026-08-31
 - Expo Go functional testing of the stock-artwork update is complete.
 - TestFlight build 27 and Google Play internal build 18 passed physical-device acceptance testing on iPhone and Android.
 - Google Play production rollout and updated phone screenshots were submitted for review on 2026-08-31; managed publishing is off, so approval will publish automatically.
+- App Store version 1.1.0 build 27 was submitted for review on 2026-08-31 with automatic release enabled.
 - Production-native validation remains mandatory because Expo Go does not exercise the exact store binary, signing, or distribution environment.
 - Firebase Analytics native configuration remains deferred; it is not a version 1.1.0 release dependency.
 - Update this file after every build, store submission, review decision, or rollout status change.

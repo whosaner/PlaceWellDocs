@@ -1,0 +1,14 @@
+PlaceWell is a companion app for physical QR-coded home-organization labels. No account, login, payment, or subscription is required.
+
+The core setup and bulk-import flows begin by scanning a PlaceWell QR label. Reviewers will not have physical labels, so REVIEW-SHEET-v1.1.0.png is attached.
+
+REVIEW STEPS
+
+1. Launch PlaceWell and tap the round Scan button at the bottom of the Home screen.
+2. Tap Continue and grant camera permission.
+3. Display the attached QR sheet on another screen.
+4. Scan "Label Setup - Basil" to open the guided setup flow. Add an optional photo, select a room and zone, and save the label.
+5. Open the saved label from Home to view, search, edit, or update it.
+6. Scan "Order QR - Bulk Import" to load a reusable test order containing 15 labels across the round, rectangular, and square SKUs. The order includes spice stock artwork, storage fallbacks, and generic-container fallbacks.
+
+User-entered label names, photos, contents, notes, locations, and freshness data are stored locally on the device.

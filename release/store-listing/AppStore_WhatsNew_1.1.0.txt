@@ -1,0 +1,1 @@
+PlaceWell now automatically displays stock artwork for supported spice labels. This update also improves bulk label imports, offline artwork caching, custom-photo handling, and overall reliability.
