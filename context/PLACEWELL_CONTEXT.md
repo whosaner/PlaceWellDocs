@@ -1,189 +1,381 @@
-# PlaceWell — Complete Project Context
+# PlaceWell - Canonical Product and Technical Context
 
-> **Purpose of this file:** This document gives any AI assistant (GitHub Copilot, Claude, Cursor, etc.) full context to pick up PlaceWell work without prior conversation history. Treat every section as authoritative. Do not suggest revisiting closed decisions unless explicitly asked.
+Last updated: 2026-09-01
 
----
+## Purpose and authority
 
-## 1. What Is PlaceWell?
+This is the single canonical orientation document for PlaceWell. It is written
+for team members and AI assistants that need to understand the product,
+business direction, implemented system, current release state, and roadmap
+before recommending work.
 
-PlaceWell is a premium home organization label business co-founded by **Hussain** (tech, systems, B2B) and **Khadija** (brand, Etsy, social). It combines:
+Project `README.md` files are short entry points for setup and links. Detailed
+cross-project documentation belongs in `C:\PlaceWell\Docs`. Repository-local
+agent guides and implementation notes may remain beside code when they are
+specific to that repository.
 
-- **Physical labels** — beautifully designed, printed on waterproof material, shipped to customers
-- **QR codes on labels** — each label has a unique QR code that links to a digital inventory entry
-- **A companion mobile app** — React Native/Expo app where users manage what's behind/inside each label
+When documents conflict:
 
-The core value proposition: labels that are *designed objects* (not just utilitarian stickers) that also unlock smart home organization through QR-powered digital tracking.
+1. Current source code and production configuration define implemented
+   behavior.
+2. `Docs\release\Release_Validation_Checklist.md` defines current release
+   status.
+3. `Docs\roadmap\ROADMAP.md` defines agreed priorities.
+4. Feature specifications define detailed behavior within their scope.
+5. This file provides the broad, current synthesis.
 
----
+## Product
 
-## 2. The QR System (Technical Decision — Closed)
+PlaceWell combines physical QR-coded labels with a local-first mobile
+organization system. A customer places a label on a spice jar, pantry
+container, storage bin, drawer, basket, or similar object. Scanning the label
+opens a digital record containing information that cannot fit on the physical
+label.
 
-- **Format:** `placewell.app/scan/XJ72K` — short alphanumeric unique ID (5 chars), URL-encoded in QR
-- **QR standard chosen:** QR Code (not Data Matrix, not NFC, not BLE)
-  - Rationale: Universal phone camera compatibility, no app required to scan, works at the sizes labels will be printed, Etsy buyers don't need to install anything to scan
-- **Data storage (MVP):** All inventory data lives in the mobile app (local storage). The QR just holds the short ID; the app maps IDs to user data locally.
-- **Future:** Cloud sync / account system post-MVP, but no backend at launch
+Core value:
 
----
+- Premium physical labels remain useful and attractive without the app.
+- QR scanning connects a physical container to its digital record.
+- Users can quickly remember what something is, where it belongs, and what is
+  stored inside.
+- No account is required for the current product.
+- Personal inventory data stays on the user's device.
 
-## 3. Brand Identity (Do Not Deviate)
+The initial commercial focus is design-forward spice, pantry, and home-storage
+labels sold through the existing BeNiralu business. Longer-term opportunities
+include broader label categories, gifting kits, direct storefronts, and B2B
+homebuilder or realtor programs.
 
-### Palette
-| Token | Hex | Usage |
-|---|---|---|
-| Ink | `#2C2C2C` | Primary text, strong UI elements |
-| Chalk | `#F5F0EB` | Backgrounds, light surfaces |
-| Sage | `#8FAF8F` | Accents, nature/organic feel |
-| Terracotta | `#C4714A` | Warm accents, CTA highlights |
-| Stone | `#9E9E8F` | Secondary text, dividers |
+## Current stage
 
-### Typography
-| Role | Font | Notes |
-|---|---|---|
-| Display / hero | Cormorant Garamond | Elegant serif, used for label product names, headlines |
-| Utility / UI | DM Mono | Monospace, used for QR IDs, metadata, app UI labels |
-| Body / marketing | Jost | Clean sans-serif for web and marketing copy |
-| Secondary display | Libre Baskerville | Alt display serif for variety |
+- PlaceWell version 1.0.0 is publicly available on both Google Play and the
+  Apple App Store.
+- Version 1.1.0 was built and physically validated on Android and iPhone.
+- Android version code 18 was submitted for production review on 2026-08-31.
+- iOS build 27 was submitted for App Store review on 2026-08-31.
+- Google Play managed publishing is off and iOS automatic release is enabled,
+  so approved updates publish automatically.
+- There are currently no customer label orders in Firestore; production
+  records are controlled test fixtures.
+- The version 1.1.0 release adds the completed stock-artwork system and related
+  reliability improvements.
 
-### Aesthetic
-- **Warm minimal** — not cold/clinical, not maximalist/busy
-- Think: artisan pantry labels, linen texture, natural tones
-- Avoid: tech-startup blue/white, busy borders, drop shadows, gradients
-- Physical label design should look good *before* someone even scans the QR — the QR is integrated tastefully, not slapped on
+Always check `Docs\release\Release_Validation_Checklist.md` for status changes
+after this date.
 
----
+## Ecosystem
 
-## 4. Product Line (MVP Focus)
-
-### Entry Product: Spice & Pantry Labels
-- First Etsy listing category
-- High repurchase potential, gifting appeal, large existing Etsy market
-- Size: TBD per label design, but standard pantry jar label proportions
-- Material: **Waterproof polyester vinyl** (chosen over BOPP for durability, matte finish quality)
-- Print method: Digital print + laminate
-
-### Future Product Categories (Post-MVP)
-- Storage bin labels (garage, playroom, office)
-- Moving box labels
-- Builder/realtor welcome kit labels (B2B)
-- Nursery / kids' room labels
-
----
-
-## 5. Go-to-Market Strategy
-
-### Phase 1: Etsy (Current Focus)
-- **Store:** Listed under Khadija's existing **BeNiralu** Etsy store (not a new store)
-  - Rationale: BeNiralu has existing reviews and trust equity — starting fresh loses that
-  - PlaceWell is a product line within BeNiralu, eventually may spin out as its own store
-- **Positioning:** Premium design-forward labels, not cheapest option
-- **SEO targets:** "spice jar labels," "pantry organization labels," "custom kitchen labels," "QR home organization"
-- **Initial listing strategy:** 3–5 SKUs (e.g., spice label sets in different styles/sizes)
-- **Competitor gap:** No major Etsy seller combines premium design + QR digital tracking
-
-### Phase 2: B2B / Homebuilder Channel (Scaling Lever)
-- **Target:** New construction homebuilders and realtors in Cypress, TX and surrounding Houston metro
-- **Offer:** PlaceWell welcome kits — branded label sets as a move-in gift or buyer incentive
-- **Why this works:** Hussain lives in a Taylor Morrison new construction community, understands the buyer persona firsthand, and has proximity to the Cypress new construction market
-- **Format:** Custom-branded kits (builder's logo + PlaceWell branding), bulk pricing
-- **Status:** Identified as primary scaling lever; outreach not yet started
-
-### Known Competitors
-| Competitor | Weakness vs PlaceWell |
+| Repository | Role |
 |---|---|
-| SmartLabels | Not on Etsy; no design focus |
-| ToteScan | Not on Etsy; utilitarian aesthetic |
-| Generic Etsy label sellers | No QR/digital tracking |
+| `PlaceWellApp` | React Native/Expo customer app for scan, setup, recall, search, bulk import, photos, and freshness tracking |
+| `PlaceWellQRService` | FastAPI trust and metadata service for allocation, signed scan URLs, lookup, redirects, and order retrieval |
+| `PlaceWellUI` | Internal FastAPI operator interface for composing label orders and selecting templates |
+| `PlaceWellPdfGenerator` | Python library that renders printable label sheets and order manifests |
+| `PlaceWellAdmin` | Local control plane for shared category, template, and style configuration |
 
----
+Central documentation is in the separate `PlaceWellDocs` repository mounted at
+`C:\PlaceWell\Docs`.
 
-## 6. Tech Stack
+## End-to-end order flow
 
-### Mobile App (Primary Product Tech)
-- **Framework:** React Native with Expo
-- **MVP scope:**
-  - QR scan → open label detail view
-  - Add/edit item linked to a label ID
-  - Label list / home screen
-  - Local storage (no backend at MVP)
-- **Target platforms:** iOS and Android
-- **State management:** TBD (lean toward Zustand or Context API for simplicity)
-- **Navigation:** React Navigation (Expo Router also acceptable)
+1. An operator creates an order in PlaceWellUI.
+2. The UI resolves category defaults, SKU selection, printed names, and stock
+   `image_key` values.
+3. PlaceWellQRService allocates globally unique six-character label IDs and
+   stores label and order metadata in Firestore.
+4. The service returns signed QR URLs.
+5. PlaceWellPdfGenerator creates the printable labels and order manifest.
+6. The physical labels are printed and delivered.
+7. The customer scans individual labels or an Order QR in PlaceWellApp.
 
-### Label Generation / QR
-- QR codes generated programmatically (library TBD: `react-native-qrcode-svg` or server-side generation)
-- Short ID format: 5 uppercase alphanumeric chars (e.g., `XJ72K`)
-- QR resolves to: `placewell.app/scan/XJ72K`
-- Domain `placewell.app` is the intended domain (confirm registration status before build)
+## Mobile application
 
-### Web Presence
-- No web app at MVP
-- `placewell.app/scan/:id` may need a minimal redirect or landing page (app deep link)
-- Consider Expo's universal links / deep linking setup early
+### Stack
 
----
+- Expo SDK 54
+- React Native 0.81.5
+- React 19.1
+- React Navigation 7
+- AsyncStorage for structured local data
+- Expo FileSystem for durable app-owned user photos and stock-artwork cache
+- Expo Camera and Image Picker for scanning and photos
+- EAS Build and EAS Submit for store binaries
 
-## 7. Roles & Responsibilities
+The app currently has 31 Jest suites and 423 tests.
 
-| Area | Owner |
+### Main experiences
+
+- First-launch guidance and camera permission flow
+- In-app QR scanner
+- New-label setup wizard
+- Existing-label detail and recall
+- Spice freshness, best-by, in-use-since, brand, notes, and refill history
+- Home carousel, recently viewed labels, search, and room/zone filters
+- Custom user photos
+- Order QR bulk import with global and per-label room/zone choices
+- Settings for rooms, zones, archived labels, scan sound, and app information
+
+### Local data ownership
+
+User-managed records are stored locally:
+
+- Current label name
+- User photo
+- Contents and notes
+- Room and zone
+- Freshness dates and refill history
+- App preferences
+
+Firestore is not a cloud backup for this personal inventory. Reinstalling the
+app, clearing app data, or moving to another device does not restore local
+inventory in the current version.
+
+Android may restore AsyncStorage through automatic system backup after a
+reinstall. For a genuinely clean test installation, clear PlaceWell's app
+storage from Android settings.
+
+### Issued metadata
+
+The following values originate from the printed-label/order pipeline:
+
+- `id`
+- `printedLabelName`
+- `category`
+- `labelSku`
+- `imageKey`
+- Default location, zone, placeholder, and freshness category
+
+Once non-null issued metadata is saved locally, normal user edits do not
+replace it. Older or incomplete local records can request missing values from
+PlaceWellQRService.
+
+Deleting a Firestore record does not delete a label already saved on the same
+app installation. It does prevent reliable enrichment, new-device setup, and
+Order QR retrieval until the server record is restored.
+
+## QR identity, trust, and lookup
+
+Printed label URL:
+
+```text
+https://placewell.app/s/{LABEL_ID}-{SIGNATURE}?n={optional-name}
+```
+
+- `LABEL_ID` is six characters from the visually unambiguous PlaceWell
+  alphabet.
+- `SIGNATURE` is a four-character uppercase HMAC-derived value.
+- The signature lets the app reject malformed or counterfeit signed URLs
+  offline.
+- The optional name is a display hint, not authoritative inventory data.
+- Secrets and signing keys must never appear in documentation or prompts.
+
+Scan behavior:
+
+1. Parse and validate the PlaceWell URL.
+2. Verify the HMAC signature locally when the signed HTTPS URL is available.
+3. Look for the label in local app storage.
+4. If it exists locally, open Recall or Detail even if the server is
+   unavailable.
+5. If it is new, perform a best-effort metadata lookup and open Label Setup.
+6. If the record is an Order QR, fetch its order and open Bulk Import.
+
+PlaceWellQRService stores two Firestore collections:
+
+- `qr_codes`: issued label identity, order association, printed metadata,
+  status, and aggregate scan counters.
+- `orders`: order-level counts, categories, templates, status, and metadata
+  used by bulk import.
+
+User-entered photos, contents, notes, rooms, zones, and freshness records are
+not stored in these collections.
+
+## Stock artwork
+
+Version 1.1.0 includes remote stock artwork for 26 spices across three label
+SKUs, for 78 rendered assets in the initial release.
+
+Supported SKUs:
+
+- `round-1.5`
+- `rect-portrait`
+- `square-1.75`
+
+`PlaceWellUI\data\spice.csv` is the catalog source for stable `image_key`
+values. Keys match the renderer's spice identifiers one-to-one and are
+resolved upstream from printed names. The app never guesses an image key from
+an editable local name.
+
+Artwork identity:
+
+```text
+imageKey | labelSku | quantity
+```
+
+The initial catalog uses the manifest's default quantity. Quantity-specific
+artwork is a future expansion.
+
+### Distribution and cache
+
+- A static manifest and immutable, content-hashed WebP files are published
+  byte-identically to Firebase Hosting and the Linode release store.
+- The app downloads from the manifest's HTTPS base URL.
+- The operator UI and QR service validate pinned releases from
+  `/opt/placewell-stock/current`.
+- Image content is accepted only after HTTP success, WebP MIME sanity, complete
+  body download, and final SHA-256 verification against the manifest asset ID.
+- Cache writes use a same-directory temporary file followed by atomic rename.
+- Manifest ETag handling and last-known-good manifest storage support offline
+  reuse.
+- Downloads use bounded retries, four-transfer visible-first concurrency, and
+  in-flight request deduplication.
+- Cached stock images live in persistent app-owned storage and are excluded
+  from native backups.
+
+### Unified artwork precedence
+
+Every visible app surface uses `LabelArtwork` and the same precedence:
+
+1. Available user photo
+2. Verified cached/downloaded stock artwork
+3. Bundled category/SKU fallback artwork
+
+Printed label text is rendered consistently over stock and bundled artwork.
+Custom user photos use cover sizing and do not receive the stock label overlay.
+
+Removing a user photo reveals stock artwork again. A missing manifest, offline
+connection, failed download, corrupt cached bitmap, unavailable photo file, or
+unknown `image_key` falls through safely without crashing or leaving a blank
+screen.
+
+## Production infrastructure
+
+- Public domain: `placewell.app`
+- Linode hosts PlaceWellQRService, the operator UI, and scan landing/redirect
+  behavior behind Apache.
+- Firestore stores issued QR and order metadata.
+- Firebase Hosting serves the immutable stock-artwork package.
+- EAS builds and signs iOS and Android applications.
+- App Store Connect and Google Play distribute production builds.
+- Universal Links and Android App Links connect HTTPS scans to the installed
+  app.
+
+Production credentials are managed through environment files, EAS
+environments, platform credential stores, and service-account configuration.
+Never copy `.env` files, service-account JSON, certificates, API keys, HMAC
+values, or store credentials into an AI context packet.
+
+## Deterministic release testing
+
+The QR-service fixture seeder provides reusable fixed-ID test data:
+
+- The default `maestro` set supports automated smoke flows.
+- The `mixed-stock` set creates `mixed_stock_test_kit` with 15 importable
+  labels plus one Order QR.
+- The mixed order contains five labels per SKU: three stock-art spices, one
+  storage fallback, and one generic fallback.
+- Reseeding atomically recreates the same IDs and signed URLs after Firestore
+  test-data cleanup.
+
+The reusable mixed QR pack is generated outside source control at:
+
+```text
+C:\PlaceWell\StockImageMixedTestPack-v2
+```
+
+Store reviewers receive deterministic setup and Order QR instructions.
+
+## Reliability and offline principles
+
+- Local labels must remain usable without a network connection.
+- Network metadata enrichment is best-effort.
+- Missing server records must not delete local labels.
+- Missing artwork must resolve to a bundled fallback.
+- User photos must be copied out of temporary picker storage before saving.
+- Replacing or deleting photos must remove only app-owned files.
+- Async operations use bounded retries rather than permanent failure ledgers.
+- The app must never crash because a QR lookup, manifest, image, or cache write
+  is unavailable.
+
+## Closed decisions
+
+Do not reopen these decisions without an explicit product reason:
+
+- QR rather than NFC or Data Matrix for the primary physical label.
+- Six-character IDs with short HMAC signatures.
+- Local-first personal inventory with no required account in the current
+  product.
+- Firestore for issued label/order metadata.
+- Server-owned `image_key`; the app does not infer artwork from editable text.
+- Immutable, content-addressed WebP stock assets.
+- Firebase Hosting for app artwork downloads and Linode for pinned internal
+  release validation.
+- One shared `LabelArtwork` component for all app image surfaces.
+- User photo overrides stock artwork; removing it restores stock artwork.
+- Etsy/BeNiralu is the initial sales channel.
+- Firebase Analytics remains inactive until the planned Expo SDK upgrade and
+  corresponding privacy declarations.
+
+## Current priorities
+
+Release operations come first:
+
+1. Monitor Android and iOS version 1.1.0 reviews and verify public availability.
+2. Keep release documentation current after every store status change.
+3. Enable Firestore point-in-time recovery, scheduled backups, and delete
+   protection before customer label allocation.
+
+Product and business priorities remain subject to owner approval:
+
+- Real-world printing and scan testing across every physical label style/SKU
+- Product photography and Etsy listing launch
+- Deferred deep linking after app installation
+- Maestro regression coverage and CI
+- Guided jar capture and quantity markers
+- Multi-photo labels
+- Household sharing and optional cloud synchronization
+- Expo SDK 57 upgrade followed by Firebase Analytics activation
+- Additional label categories and direct/B2B sales channels
+
+See `Docs\roadmap\ROADMAP.md` for the prioritized backlog. Do not silently
+reorder roadmap items.
+
+## Collaboration rules
+
+- Follow feedback -> plan -> approval -> execution.
+- Present one decision, question, or plan section at a time.
+- Distinguish shipped behavior from proposals and roadmap ideas.
+- Investigate existing implementations and documentation before designing a
+  replacement.
+- Preserve unrelated working-tree changes.
+- Update central documentation with significant implementation or release
+  changes.
+- Never claim on-device behavior is complete without physical validation.
+- Include the required Copilot co-author trailer in commits made by Copilot.
+
+## Canonical document map
+
+| Need | Document |
 |---|---|
-| Brand identity, label design | Khadija |
-| Etsy listings, product photography, social | Khadija |
-| Mobile app development | Hussain |
-| B2B outreach, homebuilder channel | Hussain |
-| Systems, QR infrastructure, domain | Hussain |
-| Business strategy (joint) | Both |
+| Find documentation | `C:\PlaceWell\Docs\DOC_CATALOG.md` |
+| Product/technical orientation | `C:\PlaceWell\Docs\context\PLACEWELL_CONTEXT.md` |
+| Architecture and data flow | `C:\PlaceWell\Docs\architecture\System_Overview.md` |
+| Current roadmap | `C:\PlaceWell\Docs\roadmap\ROADMAP.md` |
+| Release status | `C:\PlaceWell\Docs\release\Release_Validation_Checklist.md` |
+| App setup | `C:\PlaceWell\Docs\setup\App_Setup.md` |
+| Design system | `C:\PlaceWell\Docs\design\Design_System.md` |
+| Stock-artwork contract | `C:\PlaceWell\Docs\roadmap\Stock_Image_Implementation_Plan.md` |
+| Store collateral | `C:\PlaceWell\Docs\release\store-listing\` |
+| Deployment and operations | `C:\PlaceWell\Docs\deployment\` |
+| App-specific coding workflow | `C:\PlaceWell\PlaceWellApp\agents\workflow.md` |
 
----
+## Suggested AI briefing
 
-## 8. Closed Decisions (Do Not Reopen Unless Asked)
+Upload this file together with the roadmap, system overview, and current
+release checklist. Then instruct the assistant:
 
-| Decision | Choice Made | Rationale |
-|---|---|---|
-| QR vs NFC | QR | Universal, no hardware cost, works at label sizes |
-| QR vs Data Matrix | QR | Better phone camera support, more consumer-familiar |
-| Etsy vs own storefront | Etsy first | Lower friction, existing BeNiralu trust equity |
-| New store vs BeNiralu | BeNiralu | Preserve review history |
-| Material | Waterproof polyester vinyl | Durability, matte finish, kitchen/pantry appropriate |
-| MVP data storage | Local (no backend) | Fastest to ship; cloud sync is post-MVP |
-| Entry product | Spice/pantry labels | High demand, gifting, repurchase |
-| Primary scaling lever | B2B homebuilder channel | Hussain's market proximity, higher AOV |
-
----
-
-## 9. Business Context
-
-- **Stage:** Pre-revenue, pre-launch. Still in build/design phase.
-- **Structure:** Side business alongside Hussain's role as Software Engineer at Microsoft
-- **Location:** Cypress, TX (Houston metro) — relevant for B2B homebuilder targeting
-- **Halal compliance:** All business practices and any physical product sourcing should be halal-compliant
-- **Etsy account:** Khadija's existing BeNiralu store; she manages the seller relationship
-- **Financial model:** Physical product margins (print + material + shipping) + eventual SaaS or premium app features (not yet scoped)
-
----
-
-## 10. Open Questions / Next Steps (as of last context update)
-
-- [ ] Finalize first label design(s) — Khadija leading
-- [ ] Register / confirm `placewell.app` domain
-- [ ] Set up Expo project scaffold
-- [ ] Define QR ID generation logic and short-ID schema
-- [ ] Build MVP app: scan → view → add item → list screen
-- [ ] Photograph first product set for Etsy listing
-- [ ] Write Etsy listing copy (SEO-optimized)
-- [ ] Begin B2B outreach research (homebuilders in Cypress TX area)
-
----
-
-## 11. How to Work on This Project
-
-When assisting with PlaceWell, default to:
-- **Brand-consistent language:** warm, confident, minimal. Avoid corporate jargon.
-- **Respecting closed decisions:** Don't re-suggest NFC, a standalone new Etsy store, BOPP, etc.
-- **Scope awareness:** MVP = app + Etsy. Don't gold-plate. Ship first, iterate.
-- **Hussain's working style:** Bias toward action. Start building and refine. Don't over-plan.
-- **Khadija's ownership:** Brand and Etsy are hers. Don't make decisions in those areas without flagging.
-
----
-
-*Last updated: April 2026. Maintained by Hussain. Source of truth for all AI assistant context on PlaceWell.*
+> Treat the uploaded PlaceWell documents as authoritative. First summarize the
+> product, implemented architecture, current release state, closed decisions,
+> and roadmap. Clearly separate shipped functionality from future plans. Do
+> not propose implementation until you understand the existing constraints.
+> Ask one focused clarification at a time and never request or reproduce
+> secrets.

@@ -68,7 +68,7 @@ Last updated: 2026-08-31
 | Store | Submission status | Review status | Live status |
 |---|---|---|---|
 | Apple App Store | Version 1.1.0 build 27 submitted | In review | Version 1.0.0 currently live; 1.1.0 will release automatically after approval |
-| Google Play | Version code 18 production rollout and screenshots submitted | In review | Not publicly released |
+| Google Play | Version code 18 production rollout and screenshots submitted | In review | Version 1.0.0 currently live; 1.1.0 not yet publicly released |
 
 ## Existing production configuration
 

@@ -1,6 +1,6 @@
 # PlaceWell Unified Roadmap
 
-Last updated: 2026-08-20
+Last updated: 2026-09-01
 
 **Single source of truth** for the PlaceWell ecosystem (app, QR service, UI, PDF generator, admin, business). Everything — launch status, shipped work, the prioritized backlog (the former separate todo list is folded in here), and detailed feature notes — lives in **this one file**. Nothing scattered.
 
@@ -10,9 +10,9 @@ To re-prioritize: edit the **Priority** column in the Master Priority List. Allo
 
 ## Launch Status 🚀
 
-- **Google Play (Android)** — ✅ **LIVE on Production** (version code **15**, v1.0.0) — approved & published **2026-08-09**; public listing at `play.google.com/store/apps/details?id=com.placewell.app`. Cleared two rejections en route: invalid demo QR (corrected to the `-84A3` sign-in URL) and the foreground-service permission declaration (removed via `android.blockedPermissions`).
-- **App Store (iOS)** — build **21** **REJECTED 2026-08-10** under **Guideline 5.1.1(iv)** (camera pre-permission screen: the "Allow Camera Access" CTA + a "Not now" delay button). **Fixed on `main` (commit `bbb7a09`):** button renamed to "Continue" (always proceeds to the OS request), "Not now" replaced with a top-left close (✕), and an "Open Settings" fallback when previously denied. **Next: rebuild iOS (build 23, bundles the camera fix + an intermittent scan-sound fix `cf56fd4` [retained audio player, respects the silent switch]) + resubmit + reply to the reviewer.** (The earlier EU DSA trader-status hold was cleared 2026-08-06.)
-- Auto-release on approval (Play: managed publishing off — already auto-published; App Store: automatic release).
+- **Google Play (Android)** — ✅ version **1.0.0** is live. Version **1.1.0**, version code **18**, passed internal-track physical-device testing and was submitted for production review on **2026-08-31** with updated screenshots and deterministic reviewer QR instructions.
+- **App Store (iOS)** — ✅ version **1.0.0** is live. Version **1.1.0**, build **27**, passed TestFlight physical-device testing and was submitted for review on **2026-08-31** with eight 6.9-inch screenshots and a shared deterministic reviewer QR sheet.
+- Auto-release on approval (Play managed publishing is off; App Store automatic release is enabled).
 - Store-listing assets, App-Review demo QR codes, and screenshots live in `Docs/release/store-listing/`.
 
 ---
@@ -41,7 +41,7 @@ The active batch, sequenced. Full rows are in the Master Priority List (Priority
 **Deferred from this batch:** #11 Multi-photo (up to 3) — extends #12's capture; will ride along with / after #12 rather than as its own slot.
 
 **Sequencing / timing notes:**
-- ⚠️ **iOS build 21 is still in store review** — per our workflow, hold app-code changes (#10/#12) until it's approved/live to avoid a mid-review rebuild.
+- ⚠️ **Version 1.1.0 is in review on both stores** — avoid starting release-bound app changes that could create pressure for a replacement binary before these reviews finish.
 - **#10 needs your jar images** before coding can finish.
 - **#9 requires the SDK 57 upgrade** (3-SDK jump) — do that first; #9 is placed last deliberately.
 - ⚠️ **#9 and #13 both require updating App Store + Play privacy declarations** (from "Data Not Collected").
@@ -94,7 +94,7 @@ Everything open, in one table (todos + roadmap, de-duplicated). ⭐ = deeper wri
 | 39 | New Home-Owner Kit (boxed gifting sets) | Business | Future | move-in gifting / builder partnerships |
 | 40 | Strip unused `SYSTEM_ALERT_WINDOW` permission (Android) | Ops | Low | React Native pulls "display over other apps" into the release manifest; PlaceWell doesn't use overlays. Remove via `android.blockedPermissions` (same mechanism as the foreground-service fix). Verify in the AAB after rebuild. |
 | 41 | Firestore backups + disaster recovery | Ops | High | Real label IDs are random (`secrets.choice`) and live ONLY in Firestore — deleting `qr_codes` with no backup permanently orphans every not-yet-activated physical label (camera scans return "not a PlaceWell code"). Enable PITR + daily/weekly scheduled backups + `--delete-protection` on `placewell-prod-60ef3` `(default)`; retain allocation data/PDFs as an independent second copy. Runbook: `Docs/deployment/Firestore_Backup_And_DR_Runbook.md` |
-| 42 | Per-label remote stock images ⭐ | App/Ops | Device validation | The revision 1 Firebase Hosting catalog is live with all 78 entries and verified immutable caching. Paired Firebase/Linode deployment tooling is implemented; the first operator run will establish `/opt/placewell-stock/current` without changing the manifest. Export, `image_key`, app caching/fallback/rendering, and bulk warming are implemented. Remaining work: first paired deployment plus iPhone/Android physical-device validation. Authoritative plan: `Docs/roadmap/Stock_Image_Implementation_Plan.md` |
+| 42 | Per-label remote stock images ⭐ | App/Ops | Complete | Revision 1 is deployed to Firebase Hosting and Linode with all 78 entries. App caching, fallbacks, unified rendering, photo precedence, bulk warming, production builds, and iPhone/Android validation are complete. Shipping in version 1.1.0. Authoritative plan: `Docs/roadmap/Stock_Image_Implementation_Plan.md` |
 
 ---
 
@@ -143,10 +143,11 @@ app-store release.**
   The QR service persists optional `image_key`; the app includes issued-metadata enrichment,
   verified persistent caching, durable user-photo ownership, native backup exclusion,
   unified `LabelArtwork` rendering across every surface, and bounded Bulk Import warming.
-  Firebase Hosting revision 1 and the production UI / QR Service `image_key` contract are
-  deployed and verified. The paired deployer, remote lock, immutable Linode release layout,
-  full dual-target verification, and atomic `current` activation are implemented but have
-  not been run during this code change. Physical-device release validation remains.
+  Firebase Hosting revision 1 and the production UI / QR Service `image_key`
+  contract are deployed and verified. The paired Firebase/Linode publication,
+  immutable Linode release layout, dual-target verification, and atomic
+  `current` activation are complete. Version 1.1.0 production binaries passed
+  physical-device validation on iPhone and Android and are in store review.
 - **Authoritative implementation spec: `Docs/roadmap/Stock_Image_Implementation_Plan.md`** (answers lookup/offline/caching/fallback/versioning/consistency; Phase 0 is a blocking server-side key reconciliation).
 - **Original research (scale math, URL/manifest schema, perf/memory, citations):** `Docs/roadmap/Jar_Image_Strategy_Research.md`.
 
