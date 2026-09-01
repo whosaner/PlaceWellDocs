@@ -1,0 +1,1 @@
+Stock artwork is now displayed automatically for supported spice labels. This update also improves bulk label import, offline artwork caching, custom-photo handling, camera permission recovery, and overall reliability.

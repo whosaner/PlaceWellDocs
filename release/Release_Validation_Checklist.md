@@ -48,7 +48,7 @@ Last updated: 2026-08-31
 - [x] Install the Play-distributed build on a physical Android device
 - [x] Seed deterministic `mixed_stock_test_kit` with 15 importable labels plus one Order QR
 - [x] Generate reusable QR pack at `C:\PlaceWell\StockImageMixedTestPack-v2`
-- [x] Prepare eight Android phone screenshots at Google Play's recommended `1080x1920`
+- [x] Upload eight owner-provided Android phone screenshots accepted by Play Console
 - [x] Confirm seven iPhone screenshots use Apple's accepted `1179x2556` size
 - [x] Verify launch, storage initialization, fonts, and navigation
 - [ ] Verify camera permission denial, Open Settings recovery, and QR scanning
@@ -67,7 +67,7 @@ Last updated: 2026-08-31
 | Store | Submission status | Review status | Live status |
 |---|---|---|---|
 | Apple App Store | Build 27 uploaded to TestFlight; Apple processing | Not started | Version 1.0.0 currently live |
-| Google Play | Version code 18 uploaded to internal testing | Not started | Not publicly released |
+| Google Play | Version code 18 production rollout and screenshots submitted | In review | Not publicly released |
 
 ## Existing production configuration
 
@@ -84,6 +84,7 @@ Last updated: 2026-08-31
 
 - Expo Go functional testing of the stock-artwork update is complete.
 - TestFlight build 27 and Google Play internal build 18 passed physical-device acceptance testing on iPhone and Android.
+- Google Play production rollout and updated phone screenshots were submitted for review on 2026-08-31; managed publishing is off, so approval will publish automatically.
 - Production-native validation remains mandatory because Expo Go does not exercise the exact store binary, signing, or distribution environment.
 - Firebase Analytics native configuration remains deferred; it is not a version 1.1.0 release dependency.
 - Update this file after every build, store submission, review decision, or rollout status change.
