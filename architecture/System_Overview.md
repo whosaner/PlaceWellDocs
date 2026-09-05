@@ -87,8 +87,10 @@ decision, see
 - It gathers category presets, per-label names, template selection, style options, footer options, and any blanks needed to fill a sheet.
 - The spice preset defaults to 26 named labels for the 30-position round SKU
   and the first 16 CSV rows for each 20-position rectangle/square SKU. Each
-  default adds one Order QR and three blanks; operator row edits remain allowed
-  and sheet composition is recalculated from the edited count.
+  default adds four printable blanks; operator row edits remain allowed and
+  sheet composition is recalculated from the edited customer-label count.
+- One Order QR record is still allocated for the manifest and bulk-import flow,
+  but it is metadata-only and never consumes or renders in a paid label slot.
 - It requests QR allocation from PlaceWellQRService, then builds a complete order dictionary.
 - That order dictionary is passed directly into PlaceWellPdfGenerator, which outputs two PDFs per order: a printable label sheet and a manifest.
 

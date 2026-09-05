@@ -91,6 +91,28 @@ Place[italic W in amber]ell
 - The W is italic and in `colors.amber` (#C9A66B)
 - Tagline below in `fonts.serifItalic`, 11px, `colors.inkMuted`
 
+### Printed order manifest
+
+The two-page order manifest uses the same wordmark and Porcelain Sky palette
+with restrained ink coverage:
+
+- Pale Sky is limited to one shallow masthead.
+- Order metadata sits on a clean baseline with a thin amber rule.
+- The item inventory flows through balanced editorial columns.
+- The Order QR is the dominant page-one action; download/store QRs remain a
+  smaller unboxed footer treatment.
+- Page two reads as a thank-you letter rather than an application screen.
+- A pale amber band is used only when an order includes a discount code.
+- Headings and QR modules use dark ink for print contrast.
+- Amber is an accent only; it is not used for QR modules.
+- Page one contains separate verified App Store and Google Play QR codes.
+- Page two does not repeat app-download codes; it contains one Etsy store QR
+  alongside review and support information.
+- Printed QR codes use square modules and a four-module quiet zone.
+
+Manifest brand primitives and store URLs are centralized in
+`PlaceWellPdfGenerator\placewell_generator\renderer\brand.py`.
+
 ---
 
 ## Spacing & Radius

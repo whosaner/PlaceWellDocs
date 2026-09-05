@@ -81,10 +81,10 @@ sequenceDiagram
     participant Disk as Linode PDF output
 
     Operator->>UI: Submit category, names, SKU, style and footer
-    UI->>Builder: Build named labels + Order QR + optional blanks
-    Builder-->>UI: Allocation item skeletons
+    UI->>Builder: Build named labels + printable blanks
+    Builder-->>UI: Label skeletons + metadata-only Order QR
     UI->>QR: POST /api/qr/allocate<br/>bearer-authenticated
-    loop Each physical label
+    loop Each label plus the manifest Order QR
         QR->>FS: Check generated 6-character ID is unused
         QR->>HMAC: Compute 4-character signature
         HMAC-->>QR: https://placewell.app/s/ID-SIGNATURE
