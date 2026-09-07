@@ -113,6 +113,15 @@ with restrained ink coverage:
 Manifest brand primitives and store URLs are centralized in
 `PlaceWellPdfGenerator\placewell_generator\renderer\brand.py`.
 
+### Printed label QR codes
+
+- Label QR codes remain 0.5 inches square with medium error correction and a
+  two-module quiet zone.
+- Modules are drawn as square vector shapes directly in the PDF.
+- QR foreground uses black-only `DeviceCMYK 0/0/0/100`, preventing the PDF
+  artwork from requesting a composite cyan/magenta/yellow black.
+- Label names and separators retain their selected style colors.
+
 ---
 
 ## Spacing & Radius
