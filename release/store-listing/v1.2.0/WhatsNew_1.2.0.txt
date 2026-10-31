@@ -1,0 +1,5 @@
+=== APP STORE — What's New in This Version (1.2.0) ===
+Getting started is easier than ever. PlaceWell now welcomes you with a quick guided tour: the home screen shows you exactly where to scan your PlaceWell Order Label, and a short walkthrough helps you set up a whole label kit right after you scan.
+
+=== GOOGLE PLAY — Release notes (1.2.0)  [<= 500 chars] ===
+New: a quick guided tour helps you get started. The home screen points you to scan your PlaceWell Order Label, and a short walkthrough guides you through setting up a whole kit after you scan.

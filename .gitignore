@@ -1,0 +1,8 @@
+# Private financial records must never be committed.
+Finances/
+
+# Duplicate root-level POC copies retained only because a local viewer holds
+# them open. Canonical copies live under experimental-design-concepts/.
+research/poc/box-tote-labels/SL522-XW_Typography_Layout_POC.pdf
+research/poc/box-tote-labels/SL573-XW_Typography_Layout_POC.pdf
+research/poc/box-tote-labels/production-algorithm-baseline/_page_parts/

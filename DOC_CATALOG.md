@@ -14,11 +14,18 @@ Use this catalog when you know the task but not which PlaceWell document to open
 | Build or submit the mobile app | `Docs\release\iOS_Android_Build_Guide.md` and `PlaceWellApp\PRE_BUILD_COMMANDS.txt` |
 | Manually validate a release | `Docs\release\Release_Validation_Checklist.md` and `PlaceWellApp\VERIFICATION_CHECKLIST.txt` |
 | Understand system architecture and deep links | `Docs\architecture\Architecture_Diagrams.html` for ordinary images; `System_Overview.md` and `Visual_Call_Flows.md` for details |
+| Brief ChatGPT or another external AI safely | `Docs\AI\PLACEWELL_CHATGPT_CONTEXT.md` plus `Docs\AI\STARTER_PROMPT.txt`; read `Docs\AI\README.md` before uploading |
 | Understand scan landing page states | `Docs\specs\PlaceWell_Scan_Landing_Spec.md` |
 | Run Maestro E2E tests (one command) | `Docs\maestro\Maestro_Setup_Guide.md`; `PlaceWellApp\scripts\maestro\README.md` (`npm run maestro`); `Docs\scripts\run-maestro.ps1` |
 | Regenerate test QR codes/fixtures, or make correctly-signed demo QR PNGs | `Docs\scripts\seed-test-fixtures.ps1` (one-shot wrapper, pass your prod HMAC secret); `PlaceWellQRService\scripts\README.md` (`seed_test_fixtures.py`) |
 | Run unit tests (app Jest + QR service pytest) | `Docs\scripts\run-tests.ps1` |
 | Add a new label category | `Docs\setup\Adding_A_Category.md` |
+| Evaluate larger SheetLabels SKUs for boxes/totes | `Docs\research\SheetLabels_Box_Tote_SKU_Research.md` |
+| Compare label sizes against common US boxes, totes, and competitors | `Docs\research\US_Moving_Box_Tote_Label_Market_Comparison.md` |
+| Print/review the official-template typography and QR POC for SL573/SL522 | `Docs\research\poc\box-tote-labels\README.md` |
+| Plan a new physical label SKU across PlaceWell | `Docs\research\PlaceWell_New_Label_SKU_Change_Impact.md` |
+| Evaluate labels without individual QR codes | `Docs\research\PlaceWell_QR_Less_Labels_Feasibility.md` |
+| Build the SheetLabels SKU Template Compiler dashboard/framework | `Docs\specs\PlaceWell_SKU_Template_Compiler_V1_Spec.md` |
 | Generate PDFs or export label PNGs | `PlaceWellPdfGenerator\README.md` and `PlaceWellPdfGenerator\LABEL_EXPORT_WIKI.md` |
 | Find the Android SHA-256 fingerprint process | `Docs\release\Release_Validation_Checklist.md` and `PlaceWellApp\PRE_BUILD_COMMANDS.txt` |
 
@@ -46,6 +53,8 @@ Use this catalog when you know the task but not which PlaceWell document to open
 | `Docs\architecture\Firebase_Linode_SQL_Decision.md` | Current hosting inventory and database decision record. | Understand what runs on Linode versus Firebase, whether label metadata can move to SQL Server, and why Firestore remains the recommended current store. | Current/future service inventory; actual Firestore benefits used; Firestore vs SQL Server; managed PostgreSQL alternative; migration architecture and decision triggers. |
 | `Docs\architecture\Architecture_Diagrams.html` | Browser-viewable static architecture gallery backed by PNG exports. | View all architecture diagrams without Mermaid support or a Markdown extension. | Ten high-resolution diagrams covering system boundaries, scan flows, local storage, order production, infrastructure ownership and database abstraction. |
 | `Docs\context\PLACEWELL_CONTEXT.md` | Canonical product, business, architecture, release, and roadmap orientation for PlaceWell. | Give a team member or AI assistant one current overview before product or technical work. | Current product and release stage; ecosystem; mobile data ownership; QR trust; stock artwork; infrastructure; testing; closed decisions; priorities; canonical document map. |
+| `Docs\AI\PLACEWELL_CHATGPT_CONTEXT.md` | Sanitized, upload-ready PlaceWell briefing for external AI tools. | Give ChatGPT broad product, business, architecture, physical-label, release, Shopify/domain, privacy, and roadmap context without operational secrets. | Snapshot status; shipped vs experimental behavior; system and data flow; QR/label geometry; storefront constraints; closed decisions; uncertainties; source map. |
+| `Docs\AI\README.md` | Safety and maintenance guide for external-AI context. | Decide what to upload, which specialist document to add, and which sensitive files must never be shared. | Recommended upload set; task-specific additions; prohibited secret/private files; refresh procedure. |
 | `PlaceWellApp\docs\overview\App_Overview.md` | App-specific architecture, MVP requirements, QR/deep-link strategy, and setup. | Understand mobile screens, label data, app flow, and app project structure. | Project summary; architecture; label data model; QR format; validation/deep links; MVP screens; setup; tests; key source areas. |
 | `PlaceWellApp\AGENTS.md` | Instructions for coding agents working in the app repo. | Delegate or perform app work while following repo-specific rules. | Quick facts; user collaboration rules; topical guides; hard rules. |
 | `PlaceWellApp\agents\conventions.md` | App coding conventions. | Match existing file layout, theme token, component, comment, test, import, and git conventions. | File layout; theme tokens; component style; comments; tests; imports; git; non-conventions. |

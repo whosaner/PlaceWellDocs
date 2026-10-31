@@ -1,6 +1,6 @@
 # PlaceWell - Canonical Product and Technical Context
 
-Last updated: 2026-09-01
+Last updated: 2026-10-22
 
 ## Purpose and authority
 
@@ -18,11 +18,13 @@ When documents conflict:
 
 1. Current source code and production configuration define implemented
    behavior.
-2. `Docs\release\Release_Validation_Checklist.md` defines current release
-   status.
-3. `Docs\roadmap\ROADMAP.md` defines agreed priorities.
-4. Feature specifications define detailed behavior within their scope.
-5. This file provides the broad, current synthesis.
+2. Live stores and their owner consoles define actual release status.
+3. The latest version-specific release collateral and validation checklist
+   define the most recent documented release process.
+4. `Docs\roadmap\ROADMAP.md` defines agreed priorities, subject to its update
+   date and explicit owner changes.
+5. Feature specifications define detailed behavior within their scope.
+6. This file provides the broad, current synthesis.
 
 ## Product
 
@@ -41,27 +43,32 @@ Core value:
 - No account is required for the current product.
 - Personal inventory data stays on the user's device.
 
-The initial commercial focus is design-forward spice, pantry, and home-storage
-labels sold through the existing BeNiralu business. Longer-term opportunities
-include broader label categories, gifting kits, direct storefronts, and B2B
-homebuilder or realtor programs.
+The commercial focus is design-forward spice, pantry, and home-storage labels
+sold through the existing BeNiralu business. Etsy remains an established
+channel. A PlaceWell Shopify storefront is being prepared as a direct
+storefront. Longer-term opportunities include broader label categories,
+gifting kits, and B2B homebuilder or realtor programs.
 
 ## Current stage
 
-- PlaceWell version 1.0.0 is publicly available on both Google Play and the
-  Apple App Store.
-- Version 1.1.0 was built and physically validated on Android and iPhone.
-- Android version code 18 was submitted for production review on 2026-08-31.
-- iOS build 27 was submitted for App Store review on 2026-08-31.
-- Google Play managed publishing is off and iOS automatic release is enabled,
-  so approved updates publish automatically.
-- There are currently no customer label orders in Firestore; production
-  records are controlled test fixtures.
-- The version 1.1.0 release adds the completed stock-artwork system and related
+- The current mobile source marketing version is `1.2.0`.
+- Apple publicly lists PlaceWell version 1.2.0, released on 2026-09-18.
+- The Google Play listing is public, but its public page does not expose the
+  exact production version. Check Play Console before claiming the current
+  Android production version.
+- Version 1.2.0 was physically sanity-tested on iOS and Android before release.
+- Version 1.2.0 adds empty-home scan guidance and a recurring three-step Order
+  QR bulk-import walkthrough.
+- The release test baseline was 32 Jest suites and 443 passing tests.
+- The 1.1.0 line introduced the remote stock-artwork system and related
   reliability improvements.
+- Current customer-order/production Firestore volume was not re-verified for
+  this update and must not be inferred from older status notes.
 
-Always check `Docs\release\Release_Validation_Checklist.md` for status changes
-after this date.
+The version-specific 1.2.0 release packet is under
+`Docs\release\store-listing\v1.2.0\`. Older release and roadmap files retain
+historical 1.0/1.1 status and must be interpreted according to their update
+dates.
 
 ## Ecosystem
 
@@ -72,6 +79,8 @@ after this date.
 | `PlaceWellUI` | Internal FastAPI operator interface for composing label orders and selecting templates |
 | `PlaceWellPdfGenerator` | Python library that renders printable label sheets and order manifests |
 | `PlaceWellAdmin` | Local control plane for shared category, template, and style configuration |
+| `PlaceWell-StockImageMasters` | Prepared stock-artwork sources and deterministic release packaging |
+| `Shopify\placewell-shopify-theme` | Direct-storefront theme and release tooling |
 
 Central documentation is in the separate `PlaceWellDocs` repository mounted at
 `C:\PlaceWell\Docs`.
@@ -101,11 +110,11 @@ Central documentation is in the separate `PlaceWellDocs` repository mounted at
 - Expo Camera and Image Picker for scanning and photos
 - EAS Build and EAS Submit for store binaries
 
-The app currently has 31 Jest suites and 423 tests.
+The 1.2.0 release baseline has 32 Jest suites and 443 passing tests.
 
 ### Main experiences
 
-- First-launch guidance and camera permission flow
+- Empty-home Scan-button guidance and camera permission flow
 - In-app QR scanner
 - New-label setup wizard
 - Existing-label detail and recall
@@ -113,6 +122,7 @@ The app currently has 31 Jest suites and 423 tests.
 - Home carousel, recently viewed labels, search, and room/zone filters
 - Custom user photos
 - Order QR bulk import with global and per-label room/zone choices
+- Recurring three-step Order QR bulk-import walkthrough
 - Settings for rooms, zones, archived labels, scan sound, and app information
 
 ### Local data ownership
@@ -189,10 +199,40 @@ PlaceWellQRService stores two Firestore collections:
 User-entered photos, contents, notes, rooms, zones, and freshness records are
 not stored in these collections.
 
+## Physical labels and QR geometry
+
+Current production templates:
+
+| Template | Physical size | Labels per Letter sheet | Frame treatment |
+|---|---:|---:|---|
+| `round-1.5` | 1.5-inch diameter | 30 | No outer or inner circle |
+| `rect-portrait` | 1.25 x 2.125 inches | 20 | Outer die-cut frame removed; inset inner frame retained |
+| `square-1.75` | 1.75 x 1.75 inches | 20 | Outer die-cut frame removed; inset inner frame retained |
+
+Frames on the die-cut boundary were removed because normal printer and die-cut
+registration drift caused them to straddle the physical edge or make otherwise
+acceptable alignment look off-center.
+
+The current production label QR is:
+
+- 0.5 x 0.5 inch overall, including the quiet zone
+- Two quiet-zone modules per side
+- Error-correction level M
+- Vector artwork using explicit CMYK 0/0/0/100 (K-only) dark modules
+- The same physical size across all three label SKUs
+
+The 35-character signed sample URL used for current QR-size testing (without an
+optional name query) produces a version-3, 29 x 29 QR matrix. At 0.5 inch,
+including the quiet zone, a module is approximately 0.385 mm. Longer optional
+name queries can require a larger matrix. Experiments are testing smaller
+printed QRs with the same sample URL, but 0.5 inch remains the production size
+until physical tests establish a reliable smaller floor.
+
 ## Stock artwork
 
-Version 1.1.0 includes remote stock artwork for 26 spices across three label
-SKUs, for 78 rendered assets in the initial release.
+The stock-artwork system, introduced in the 1.1.0 line and retained in 1.2.0,
+includes remote artwork for 26 spices across three label SKUs, for 78 rendered
+assets in the initial release.
 
 Supported SKUs:
 
@@ -258,6 +298,27 @@ screen.
 - App Store Connect and Google Play distribute production builds.
 - Universal Links and Android App Links connect HTTPS scans to the installed
   app.
+- A Shopify direct storefront is being prepared.
+
+`placewell.app` is a permanent compatibility surface for issued labels and
+released app binaries. A storefront launch must preserve:
+
+- `/s/*` issued label and Order QR scan routes
+- `/o/*` supported dedicated Order QR routes
+- `/api/qr/lookup/*` app metadata lookups
+- `/api/qr/order/*` app order retrieval
+- `/.well-known/apple-app-site-association`
+- `/.well-known/assetlinks.json`
+- `/privacy`
+
+Replacing only the root storefront is safe. Pointing the entire apex domain
+directly to Shopify without path-aware routing would break existing labels,
+bulk imports, released apps, and native link verification. The safest
+architecture is Shopify on `www.placewell.app` with the apex preserving the
+runtime routes and redirecting ordinary storefront traffic. If Shopify must
+appear at the exact apex, use an edge router/reverse proxy. Narrow Apple's
+association file to QR-owned paths before hosting ordinary storefront pages on
+the same domain so product links do not attempt to open the app.
 
 Production credentials are managed through environment files, EAS
 environments, platform credential stores, and service-account configuration.
@@ -311,33 +372,39 @@ Do not reopen these decisions without an explicit product reason:
   release validation.
 - One shared `LabelArtwork` component for all app image surfaces.
 - User photo overrides stock artwork; removing it restores stock artwork.
-- Etsy/BeNiralu is the initial sales channel.
+- Production label QRs use high-contrast vector K-only artwork.
+- Existing `placewell.app` printed routes remain backward-compatible regardless
+  of storefront hosting.
+- Etsy/BeNiralu remains a sales channel; Shopify is the planned direct
+  PlaceWell storefront.
 - Firebase Analytics remains inactive until the planned Expo SDK upgrade and
   corresponding privacy declarations.
 
 ## Current priorities
 
-Release operations come first:
+Priorities remain subject to explicit owner approval. Current active themes
+include:
 
-1. Monitor Android and iOS version 1.1.0 reviews and verify public availability.
-2. Keep release documentation current after every store status change.
-3. Enable Firestore point-in-time recovery, scheduled backups, and delete
-   protection before customer label allocation.
-
-Product and business priorities remain subject to owner approval:
-
-- Real-world printing and scan testing across every physical label style/SKU
-- Product photography and Etsy listing launch
-- Deferred deep linking after app installation
-- Maestro regression coverage and CI
-- Guided jar capture and quantity markers
-- Multi-photo labels
-- Household sharing and optional cloud synchronization
-- Expo SDK 57 upgrade followed by Firebase Analytics activation
-- Additional label categories and direct/B2B sales channels
+1. Launch the PlaceWell Shopify storefront without breaking apex-domain
+   QR/API/deep-link routes.
+2. Continue real-world printing and scan testing across every physical label
+   style/SKU and candidate QR sizes.
+3. Keep release/store status and central documentation current.
+4. Enable Firestore point-in-time recovery, scheduled backups, and delete
+   protection before real customer allocations scale.
+5. Complete product photography and commerce launch work.
+6. Expand Maestro regression coverage and CI.
+7. Plan deferred deep linking after installation.
+8. Continue approved product exploration such as guided jar capture, quantity
+   markers, and multi-photo labels.
+9. Preserve the local-first default while evaluating optional household
+   sharing/cloud synchronization.
+10. Upgrade Expo before separately approving analytics activation.
+11. Explore additional label categories and direct/B2B sales channels.
 
 See `Docs\roadmap\ROADMAP.md` for the prioritized backlog. Do not silently
-reorder roadmap items.
+reorder roadmap items, and account for that document's update date when a newer
+owner decision differs.
 
 ## Collaboration rules
 
@@ -358,6 +425,8 @@ reorder roadmap items.
 |---|---|
 | Find documentation | `C:\PlaceWell\Docs\DOC_CATALOG.md` |
 | Product/technical orientation | `C:\PlaceWell\Docs\context\PLACEWELL_CONTEXT.md` |
+| Sanitized external-AI briefing | `C:\PlaceWell\Docs\AI\PLACEWELL_CHATGPT_CONTEXT.md` |
+| AI upload/use instructions | `C:\PlaceWell\Docs\AI\README.md` |
 | Architecture and data flow | `C:\PlaceWell\Docs\architecture\System_Overview.md` |
 | Current roadmap | `C:\PlaceWell\Docs\roadmap\ROADMAP.md` |
 | Release status | `C:\PlaceWell\Docs\release\Release_Validation_Checklist.md` |
@@ -370,12 +439,11 @@ reorder roadmap items.
 
 ## Suggested AI briefing
 
-Upload this file together with the roadmap, system overview, and current
-release checklist. Then instruct the assistant:
+For external AI tools, upload
+`Docs\AI\PLACEWELL_CHATGPT_CONTEXT.md` and use
+`Docs\AI\STARTER_PROMPT.txt`. Add the roadmap, system overview, design system,
+or version-specific release packet only when the task needs that detail.
 
-> Treat the uploaded PlaceWell documents as authoritative. First summarize the
-> product, implemented architecture, current release state, closed decisions,
-> and roadmap. Clearly separate shipped functionality from future plans. Do
-> not propose implementation until you understand the existing constraints.
-> Ask one focused clarification at a time and never request or reproduce
-> secrets.
+Never upload `.env` files, service-account JSON, certificates, API/HMAC values,
+customer/order exports, financial records, or
+`PlaceWellApp\PRE_BUILD_COMMANDS.txt`.

@@ -1,0 +1,28 @@
+Treat the attached PlaceWell context as authoritative for this conversation.
+
+First:
+1. Summarize the product, business model, implemented architecture, current
+   release state, physical-label constraints, closed decisions, and known
+   uncertainties.
+2. Clearly separate shipped behavior from experiments, planned work, and
+   future ideas.
+3. Identify any fact in my request that conflicts with the context rather than
+   silently replacing the documented design.
+
+While helping:
+- Ask one focused clarification at a time.
+- Follow feedback -> plan -> approval -> execution.
+- Do not propose a replacement until you understand the existing system.
+- Preserve PlaceWell's local-first, no-required-account behavior unless I
+  explicitly approve changing it.
+- Treat printed QR URLs and already-issued physical labels as long-lived
+  compatibility contracts.
+- Never request, reproduce, or invent credentials, signing keys, HMAC values,
+  API tokens, service-account files, customer data, or financial data.
+- If release or production status matters, state what is verified, what is
+  dated, and what requires checking in App Store Connect or Play Console.
+- Do not claim physical-device, printer, app-store, or production behavior was
+  validated unless I explicitly confirm that validation.
+
+Do not start implementation until I approve a concrete plan.
+*** End of File

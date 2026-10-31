@@ -1,0 +1,1653 @@
+[
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "josefin-sans-ultralight",
+    "style_name": "Josefin Sans",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "TOOLS",
+    "font_name": "JosefinSans-Regular",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "TOOLS"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "josefin-sans-ultralight",
+    "style_name": "Josefin Sans",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "WINTER CLOTHES",
+    "font_name": "JosefinSans-Regular",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "WINTER CLOTHES"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "josefin-sans-ultralight",
+    "style_name": "Josefin Sans",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "HOLIDAY DECORATIONS",
+    "font_name": "JosefinSans-Regular",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "HOLIDAY DECORATIONS"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "josefin-sans-ultralight",
+    "style_name": "Josefin Sans",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHRISTMAS TREE DECORATIONS",
+    "font_name": "JosefinSans-Regular",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "CHRISTMAS TREE DECORATIONS"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "josefin-sans-ultralight",
+    "style_name": "Josefin Sans",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHILDRENS WINTER CLOTHING",
+    "font_name": "JosefinSans-Regular",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "CHILDRENS WINTER CLOTHING"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "josefin-sans-ultralight",
+    "style_name": "Josefin Sans",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "GARAGE SPORTS EQUIPMENT",
+    "font_name": "JosefinSans-Regular",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "GARAGE SPORTS EQUIPMENT"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "editorial-serif",
+    "style_name": "Editorial Serif",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "TOOLS",
+    "font_name": "CormorantGaramond",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Tools"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "editorial-serif",
+    "style_name": "Editorial Serif",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "WINTER CLOTHES",
+    "font_name": "CormorantGaramond",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Winter Clothes"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "editorial-serif",
+    "style_name": "Editorial Serif",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "HOLIDAY DECORATIONS",
+    "font_name": "CormorantGaramond",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Holiday Decorations"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "editorial-serif",
+    "style_name": "Editorial Serif",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHRISTMAS TREE DECORATIONS",
+    "font_name": "CormorantGaramond",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Christmas Tree Decorations"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "editorial-serif",
+    "style_name": "Editorial Serif",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHILDRENS WINTER CLOTHING",
+    "font_name": "CormorantGaramond",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Childrens Winter Clothing"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "editorial-serif",
+    "style_name": "Editorial Serif",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "GARAGE SPORTS EQUIPMENT",
+    "font_name": "CormorantGaramond",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Garage Sports Equipment"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "modern-sans",
+    "style_name": "Modern Sans",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "TOOLS",
+    "font_name": "Jost",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Tools"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "modern-sans",
+    "style_name": "Modern Sans",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "WINTER CLOTHES",
+    "font_name": "Jost",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Winter Clothes"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "modern-sans",
+    "style_name": "Modern Sans",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "HOLIDAY DECORATIONS",
+    "font_name": "Jost",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Holiday Decorations"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "modern-sans",
+    "style_name": "Modern Sans",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHRISTMAS TREE DECORATIONS",
+    "font_name": "Jost",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Christmas Tree Decorations"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "modern-sans",
+    "style_name": "Modern Sans",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHILDRENS WINTER CLOTHING",
+    "font_name": "Jost",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Childrens Winter Clothing"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "modern-sans",
+    "style_name": "Modern Sans",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "GARAGE SPORTS EQUIPMENT",
+    "font_name": "Jost",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Garage Sports Equipment"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "mono-spec",
+    "style_name": "Mono Spec",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "TOOLS",
+    "font_name": "DMMono",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "TOOLS"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "mono-spec",
+    "style_name": "Mono Spec",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "WINTER CLOTHES",
+    "font_name": "DMMono",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "WINTER CLOTHES"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "mono-spec",
+    "style_name": "Mono Spec",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "HOLIDAY DECORATIONS",
+    "font_name": "DMMono",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "HOLIDAY DECORATIONS"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "mono-spec",
+    "style_name": "Mono Spec",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHRISTMAS TREE DECORATIONS",
+    "font_name": "DMMono",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "CHRISTMAS TREE DECORATIONS"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "mono-spec",
+    "style_name": "Mono Spec",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHILDRENS WINTER CLOTHING",
+    "font_name": "DMMono",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "CHILDRENS WINTER CLOTHING"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "mono-spec",
+    "style_name": "Mono Spec",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "GARAGE SPORTS EQUIPMENT",
+    "font_name": "DMMono",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "GARAGE SPORTS EQUIPMENT"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "classic-script",
+    "style_name": "Classic Script",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "TOOLS",
+    "font_name": "PlaceWellClassicScript-MediumItalic",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Tools"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "classic-script",
+    "style_name": "Classic Script",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "WINTER CLOTHES",
+    "font_name": "PlaceWellClassicScript-MediumItalic",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Winter Clothes"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "classic-script",
+    "style_name": "Classic Script",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "HOLIDAY DECORATIONS",
+    "font_name": "PlaceWellClassicScript-MediumItalic",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Holiday Decorations"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "classic-script",
+    "style_name": "Classic Script",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHRISTMAS TREE DECORATIONS",
+    "font_name": "PlaceWellClassicScript-MediumItalic",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Christmas Tree Decorations"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "classic-script",
+    "style_name": "Classic Script",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHILDRENS WINTER CLOTHING",
+    "font_name": "PlaceWellClassicScript-MediumItalic",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Childrens Winter Clothing"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "classic-script",
+    "style_name": "Classic Script",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "GARAGE SPORTS EQUIPMENT",
+    "font_name": "PlaceWellClassicScript-MediumItalic",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Garage Sports Equipment"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "josefin-sans-ultralight",
+    "style_name": "Josefin Sans",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "TOOLS",
+    "font_name": "JosefinSans-Regular",
+    "font_size_pt": 56.0,
+    "line_count": 1,
+    "rendered_lines": [
+      "TOOLS"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "josefin-sans-ultralight",
+    "style_name": "Josefin Sans",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "WINTER CLOTHES",
+    "font_name": "JosefinSans-Regular",
+    "font_size_pt": 43.5,
+    "line_count": 2,
+    "rendered_lines": [
+      "WINTER",
+      "CLOTHES"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "josefin-sans-ultralight",
+    "style_name": "Josefin Sans",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "HOLIDAY DECORATIONS",
+    "font_name": "JosefinSans-Regular",
+    "font_size_pt": 27.0,
+    "line_count": 2,
+    "rendered_lines": [
+      "HOLIDAY",
+      "DECORATIONS"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "josefin-sans-ultralight",
+    "style_name": "Josefin Sans",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHRISTMAS TREE DECORATIONS",
+    "font_name": "JosefinSans-Regular",
+    "font_size_pt": 27.0,
+    "line_count": 3,
+    "rendered_lines": [
+      "CHRISTMAS",
+      "TREE",
+      "DECORATIONS"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "josefin-sans-ultralight",
+    "style_name": "Josefin Sans",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHILDRENS WINTER CLOTHING",
+    "font_name": "JosefinSans-Regular",
+    "font_size_pt": 34.5,
+    "line_count": 3,
+    "rendered_lines": [
+      "CHILDRENS",
+      "WINTER",
+      "CLOTHING"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "josefin-sans-ultralight",
+    "style_name": "Josefin Sans",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "GARAGE SPORTS EQUIPMENT",
+    "font_name": "JosefinSans-Regular",
+    "font_size_pt": 33.0,
+    "line_count": 3,
+    "rendered_lines": [
+      "GARAGE",
+      "SPORTS",
+      "EQUIPMENT"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "editorial-serif",
+    "style_name": "Editorial Serif",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "TOOLS",
+    "font_name": "CormorantGaramond",
+    "font_size_pt": 56.0,
+    "line_count": 1,
+    "rendered_lines": [
+      "Tools"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "editorial-serif",
+    "style_name": "Editorial Serif",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "WINTER CLOTHES",
+    "font_name": "CormorantGaramond",
+    "font_size_pt": 52.0,
+    "line_count": 2,
+    "rendered_lines": [
+      "Winter",
+      "Clothes"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "editorial-serif",
+    "style_name": "Editorial Serif",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "HOLIDAY DECORATIONS",
+    "font_name": "CormorantGaramond",
+    "font_size_pt": 52.0,
+    "line_count": 2,
+    "rendered_lines": [
+      "Holiday",
+      "Decorations"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "editorial-serif",
+    "style_name": "Editorial Serif",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHRISTMAS TREE DECORATIONS",
+    "font_name": "CormorantGaramond",
+    "font_size_pt": 42.5,
+    "line_count": 2,
+    "rendered_lines": [
+      "Christmas Tree",
+      "Decorations"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "editorial-serif",
+    "style_name": "Editorial Serif",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHILDRENS WINTER CLOTHING",
+    "font_name": "CormorantGaramond",
+    "font_size_pt": 39.5,
+    "line_count": 2,
+    "rendered_lines": [
+      "Childrens",
+      "Winter Clothing"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "editorial-serif",
+    "style_name": "Editorial Serif",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "GARAGE SPORTS EQUIPMENT",
+    "font_name": "CormorantGaramond",
+    "font_size_pt": 47.0,
+    "line_count": 2,
+    "rendered_lines": [
+      "Garage Sports",
+      "Equipment"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "modern-sans",
+    "style_name": "Modern Sans",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "TOOLS",
+    "font_name": "Jost",
+    "font_size_pt": 56.0,
+    "line_count": 1,
+    "rendered_lines": [
+      "Tools"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "modern-sans",
+    "style_name": "Modern Sans",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "WINTER CLOTHES",
+    "font_name": "Jost",
+    "font_size_pt": 52.0,
+    "line_count": 2,
+    "rendered_lines": [
+      "Winter",
+      "Clothes"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "modern-sans",
+    "style_name": "Modern Sans",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "HOLIDAY DECORATIONS",
+    "font_name": "Jost",
+    "font_size_pt": 51.5,
+    "line_count": 2,
+    "rendered_lines": [
+      "Holiday",
+      "Decorations"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "modern-sans",
+    "style_name": "Modern Sans",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHRISTMAS TREE DECORATIONS",
+    "font_name": "Jost",
+    "font_size_pt": 41.5,
+    "line_count": 2,
+    "rendered_lines": [
+      "Christmas Tree",
+      "Decorations"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "modern-sans",
+    "style_name": "Modern Sans",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHILDRENS WINTER CLOTHING",
+    "font_name": "Jost",
+    "font_size_pt": 38.0,
+    "line_count": 2,
+    "rendered_lines": [
+      "Childrens",
+      "Winter Clothing"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "modern-sans",
+    "style_name": "Modern Sans",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "GARAGE SPORTS EQUIPMENT",
+    "font_name": "Jost",
+    "font_size_pt": 42.5,
+    "line_count": 2,
+    "rendered_lines": [
+      "Garage Sports",
+      "Equipment"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "mono-spec",
+    "style_name": "Mono Spec",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "TOOLS",
+    "font_name": "DMMono",
+    "font_size_pt": 56.0,
+    "line_count": 1,
+    "rendered_lines": [
+      "TOOLS"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "mono-spec",
+    "style_name": "Mono Spec",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "WINTER CLOTHES",
+    "font_name": "DMMono",
+    "font_size_pt": 52.0,
+    "line_count": 2,
+    "rendered_lines": [
+      "WINTER",
+      "CLOTHES"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "mono-spec",
+    "style_name": "Mono Spec",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "HOLIDAY DECORATIONS",
+    "font_name": "DMMono",
+    "font_size_pt": 36.5,
+    "line_count": 2,
+    "rendered_lines": [
+      "HOLIDAY",
+      "DECORATIONS"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "mono-spec",
+    "style_name": "Mono Spec",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHRISTMAS TREE DECORATIONS",
+    "font_name": "DMMono",
+    "font_size_pt": 34.5,
+    "line_count": 3,
+    "rendered_lines": [
+      "CHRISTMAS",
+      "TREE",
+      "DECORATIONS"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "mono-spec",
+    "style_name": "Mono Spec",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHILDRENS WINTER CLOTHING",
+    "font_name": "DMMono",
+    "font_size_pt": 34.5,
+    "line_count": 3,
+    "rendered_lines": [
+      "CHILDRENS",
+      "WINTER",
+      "CLOTHING"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "mono-spec",
+    "style_name": "Mono Spec",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "GARAGE SPORTS EQUIPMENT",
+    "font_name": "DMMono",
+    "font_size_pt": 34.5,
+    "line_count": 3,
+    "rendered_lines": [
+      "GARAGE",
+      "SPORTS",
+      "EQUIPMENT"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "classic-script",
+    "style_name": "Classic Script",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "TOOLS",
+    "font_name": "PlaceWellClassicScript-MediumItalic",
+    "font_size_pt": 56.0,
+    "line_count": 1,
+    "rendered_lines": [
+      "Tools"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "classic-script",
+    "style_name": "Classic Script",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "WINTER CLOTHES",
+    "font_name": "PlaceWellClassicScript-MediumItalic",
+    "font_size_pt": 52.0,
+    "line_count": 2,
+    "rendered_lines": [
+      "Winter",
+      "Clothes"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "classic-script",
+    "style_name": "Classic Script",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "HOLIDAY DECORATIONS",
+    "font_name": "PlaceWellClassicScript-MediumItalic",
+    "font_size_pt": 52.0,
+    "line_count": 2,
+    "rendered_lines": [
+      "Holiday",
+      "Decorations"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "classic-script",
+    "style_name": "Classic Script",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHRISTMAS TREE DECORATIONS",
+    "font_name": "PlaceWellClassicScript-MediumItalic",
+    "font_size_pt": 46.0,
+    "line_count": 2,
+    "rendered_lines": [
+      "Christmas Tree",
+      "Decorations"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "classic-script",
+    "style_name": "Classic Script",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHILDRENS WINTER CLOTHING",
+    "font_name": "PlaceWellClassicScript-MediumItalic",
+    "font_size_pt": 41.5,
+    "line_count": 2,
+    "rendered_lines": [
+      "Childrens",
+      "Winter Clothing"
+    ]
+  },
+  {
+    "template": "SL573",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "classic-script",
+    "style_name": "Classic Script",
+    "template_base_size_pt": 56.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "GARAGE SPORTS EQUIPMENT",
+    "font_name": "PlaceWellClassicScript-MediumItalic",
+    "font_size_pt": 48.0,
+    "line_count": 2,
+    "rendered_lines": [
+      "Garage Sports",
+      "Equipment"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "josefin-sans-ultralight",
+    "style_name": "Josefin Sans",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "TOOLS",
+    "font_name": "JosefinSans-Regular",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "TOOLS"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "josefin-sans-ultralight",
+    "style_name": "Josefin Sans",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "WINTER CLOTHES",
+    "font_name": "JosefinSans-Regular",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "WINTER CLOTHES"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "josefin-sans-ultralight",
+    "style_name": "Josefin Sans",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "HOLIDAY DECORATIONS",
+    "font_name": "JosefinSans-Regular",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "HOLIDAY DECORATIONS"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "josefin-sans-ultralight",
+    "style_name": "Josefin Sans",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHRISTMAS TREE DECORATIONS",
+    "font_name": "JosefinSans-Regular",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "CHRISTMAS TREE DECORATIONS"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "editorial-serif",
+    "style_name": "Editorial Serif",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "TOOLS",
+    "font_name": "CormorantGaramond",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Tools"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "editorial-serif",
+    "style_name": "Editorial Serif",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "WINTER CLOTHES",
+    "font_name": "CormorantGaramond",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Winter Clothes"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "editorial-serif",
+    "style_name": "Editorial Serif",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "HOLIDAY DECORATIONS",
+    "font_name": "CormorantGaramond",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Holiday Decorations"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "editorial-serif",
+    "style_name": "Editorial Serif",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHRISTMAS TREE DECORATIONS",
+    "font_name": "CormorantGaramond",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Christmas Tree Decorations"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "modern-sans",
+    "style_name": "Modern Sans",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "TOOLS",
+    "font_name": "Jost",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Tools"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "modern-sans",
+    "style_name": "Modern Sans",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "WINTER CLOTHES",
+    "font_name": "Jost",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Winter Clothes"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "modern-sans",
+    "style_name": "Modern Sans",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "HOLIDAY DECORATIONS",
+    "font_name": "Jost",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Holiday Decorations"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "modern-sans",
+    "style_name": "Modern Sans",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHRISTMAS TREE DECORATIONS",
+    "font_name": "Jost",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Christmas Tree Decorations"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "mono-spec",
+    "style_name": "Mono Spec",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "TOOLS",
+    "font_name": "DMMono",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "TOOLS"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "mono-spec",
+    "style_name": "Mono Spec",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "WINTER CLOTHES",
+    "font_name": "DMMono",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "WINTER CLOTHES"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "mono-spec",
+    "style_name": "Mono Spec",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "HOLIDAY DECORATIONS",
+    "font_name": "DMMono",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "HOLIDAY DECORATIONS"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "mono-spec",
+    "style_name": "Mono Spec",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHRISTMAS TREE DECORATIONS",
+    "font_name": "DMMono",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "CHRISTMAS TREE DECORATIONS"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "classic-script",
+    "style_name": "Classic Script",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "TOOLS",
+    "font_name": "PlaceWellClassicScript-MediumItalic",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Tools"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "classic-script",
+    "style_name": "Classic Script",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "WINTER CLOTHES",
+    "font_name": "PlaceWellClassicScript-MediumItalic",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Winter Clothes"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "classic-script",
+    "style_name": "Classic Script",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "HOLIDAY DECORATIONS",
+    "font_name": "PlaceWellClassicScript-MediumItalic",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Holiday Decorations"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "AS_IS_RECT_SIZE",
+    "scenario_description": "Nearest current rectangle sizing copied unchanged",
+    "style_id": "classic-script",
+    "style_name": "Classic Script",
+    "template_base_size_pt": 11.5,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHRISTMAS TREE DECORATIONS",
+    "font_name": "PlaceWellClassicScript-MediumItalic",
+    "font_size_pt": 11.5,
+    "line_count": 1,
+    "rendered_lines": [
+      "Christmas Tree Decorations"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "josefin-sans-ultralight",
+    "style_name": "Josefin Sans",
+    "template_base_size_pt": 64.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "TOOLS",
+    "font_name": "JosefinSans-Regular",
+    "font_size_pt": 60.0,
+    "line_count": 1,
+    "rendered_lines": [
+      "TOOLS"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "josefin-sans-ultralight",
+    "style_name": "Josefin Sans",
+    "template_base_size_pt": 64.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "WINTER CLOTHES",
+    "font_name": "JosefinSans-Regular",
+    "font_size_pt": 43.5,
+    "line_count": 2,
+    "rendered_lines": [
+      "WINTER",
+      "CLOTHES"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "josefin-sans-ultralight",
+    "style_name": "Josefin Sans",
+    "template_base_size_pt": 64.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "HOLIDAY DECORATIONS",
+    "font_name": "JosefinSans-Regular",
+    "font_size_pt": 27.0,
+    "line_count": 2,
+    "rendered_lines": [
+      "HOLIDAY",
+      "DECORATIONS"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "josefin-sans-ultralight",
+    "style_name": "Josefin Sans",
+    "template_base_size_pt": 64.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHRISTMAS TREE DECORATIONS",
+    "font_name": "JosefinSans-Regular",
+    "font_size_pt": 27.0,
+    "line_count": 3,
+    "rendered_lines": [
+      "CHRISTMAS",
+      "TREE",
+      "DECORATIONS"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "editorial-serif",
+    "style_name": "Editorial Serif",
+    "template_base_size_pt": 64.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "TOOLS",
+    "font_name": "CormorantGaramond",
+    "font_size_pt": 64.0,
+    "line_count": 1,
+    "rendered_lines": [
+      "Tools"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "editorial-serif",
+    "style_name": "Editorial Serif",
+    "template_base_size_pt": 64.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "WINTER CLOTHES",
+    "font_name": "CormorantGaramond",
+    "font_size_pt": 64.0,
+    "line_count": 2,
+    "rendered_lines": [
+      "Winter",
+      "Clothes"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "editorial-serif",
+    "style_name": "Editorial Serif",
+    "template_base_size_pt": 64.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "HOLIDAY DECORATIONS",
+    "font_name": "CormorantGaramond",
+    "font_size_pt": 55.0,
+    "line_count": 2,
+    "rendered_lines": [
+      "Holiday",
+      "Decorations"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "editorial-serif",
+    "style_name": "Editorial Serif",
+    "template_base_size_pt": 64.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHRISTMAS TREE DECORATIONS",
+    "font_name": "CormorantGaramond",
+    "font_size_pt": 55.0,
+    "line_count": 3,
+    "rendered_lines": [
+      "Christmas",
+      "Tree",
+      "Decorations"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "modern-sans",
+    "style_name": "Modern Sans",
+    "template_base_size_pt": 64.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "TOOLS",
+    "font_name": "Jost",
+    "font_size_pt": 64.0,
+    "line_count": 1,
+    "rendered_lines": [
+      "Tools"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "modern-sans",
+    "style_name": "Modern Sans",
+    "template_base_size_pt": 64.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "WINTER CLOTHES",
+    "font_name": "Jost",
+    "font_size_pt": 64.0,
+    "line_count": 2,
+    "rendered_lines": [
+      "Winter",
+      "Clothes"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "modern-sans",
+    "style_name": "Modern Sans",
+    "template_base_size_pt": 64.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "HOLIDAY DECORATIONS",
+    "font_name": "Jost",
+    "font_size_pt": 51.5,
+    "line_count": 2,
+    "rendered_lines": [
+      "Holiday",
+      "Decorations"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "modern-sans",
+    "style_name": "Modern Sans",
+    "template_base_size_pt": 64.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHRISTMAS TREE DECORATIONS",
+    "font_name": "Jost",
+    "font_size_pt": 51.5,
+    "line_count": 3,
+    "rendered_lines": [
+      "Christmas",
+      "Tree",
+      "Decorations"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "mono-spec",
+    "style_name": "Mono Spec",
+    "template_base_size_pt": 64.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "TOOLS",
+    "font_name": "DMMono",
+    "font_size_pt": 64.0,
+    "line_count": 1,
+    "rendered_lines": [
+      "TOOLS"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "mono-spec",
+    "style_name": "Mono Spec",
+    "template_base_size_pt": 64.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "WINTER CLOTHES",
+    "font_name": "DMMono",
+    "font_size_pt": 57.5,
+    "line_count": 2,
+    "rendered_lines": [
+      "WINTER",
+      "CLOTHES"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "mono-spec",
+    "style_name": "Mono Spec",
+    "template_base_size_pt": 64.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "HOLIDAY DECORATIONS",
+    "font_name": "DMMono",
+    "font_size_pt": 36.5,
+    "line_count": 2,
+    "rendered_lines": [
+      "HOLIDAY",
+      "DECORATIONS"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "mono-spec",
+    "style_name": "Mono Spec",
+    "template_base_size_pt": 64.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHRISTMAS TREE DECORATIONS",
+    "font_name": "DMMono",
+    "font_size_pt": 36.5,
+    "line_count": 3,
+    "rendered_lines": [
+      "CHRISTMAS",
+      "TREE",
+      "DECORATIONS"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "classic-script",
+    "style_name": "Classic Script",
+    "template_base_size_pt": 64.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "TOOLS",
+    "font_name": "PlaceWellClassicScript-MediumItalic",
+    "font_size_pt": 64.0,
+    "line_count": 1,
+    "rendered_lines": [
+      "Tools"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "classic-script",
+    "style_name": "Classic Script",
+    "template_base_size_pt": 64.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "WINTER CLOTHES",
+    "font_name": "PlaceWellClassicScript-MediumItalic",
+    "font_size_pt": 64.0,
+    "line_count": 2,
+    "rendered_lines": [
+      "Winter",
+      "Clothes"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "classic-script",
+    "style_name": "Classic Script",
+    "template_base_size_pt": 64.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "HOLIDAY DECORATIONS",
+    "font_name": "PlaceWellClassicScript-MediumItalic",
+    "font_size_pt": 56.5,
+    "line_count": 2,
+    "rendered_lines": [
+      "Holiday",
+      "Decorations"
+    ]
+  },
+  {
+    "template": "SL522",
+    "scenario": "LARGE_TEMPLATE_START",
+    "scenario_description": "Large-label template base size; same production fitter",
+    "style_id": "classic-script",
+    "style_name": "Classic Script",
+    "template_base_size_pt": 64.0,
+    "template_min_size_pt": 5.0,
+    "input_name": "CHRISTMAS TREE DECORATIONS",
+    "font_name": "PlaceWellClassicScript-MediumItalic",
+    "font_size_pt": 56.5,
+    "line_count": 3,
+    "rendered_lines": [
+      "Christmas",
+      "Tree",
+      "Decorations"
+    ]
+  }
+]

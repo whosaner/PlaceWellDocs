@@ -1,0 +1,57 @@
+PlaceWell 1.2.0 — App Review Information
+
+PlaceWell has no account, login, purchases, subscriptions, or shared
+user-generated content. Personal inventory data stays on the user's device.
+
+WHAT'S NEW IN 1.2.0
+On first use (no labels yet), the Home screen shows a brief guided hint pointing
+to the round Scan button ("Scan your PlaceWell Order Label"). After scanning an
+Order QR, a short 3-step walkthrough explains bulk setup. These hints are purely
+informational and are dismissed with "Got it" / "Skip".
+
+FUNCTION AND TARGET AUDIENCE
+PlaceWell is the companion app for physical QR-coded home-organization labels used
+on spice jars, pantry containers, storage bins, drawers, and moving boxes. Scanning
+a label opens its digital record, where the user can add a name, photo,
+contents/notes, room, zone, and freshness information. It helps home organizers
+keep an accurate digital record of what is stored behind each physical label and
+recall it later.
+
+SETUP AND REVIEW ACCESS
+No credentials or account are required.
+Demo QR codes are attached (REVIEW-SHEET). They cover Setup, Recall, Detail, and
+Order QR bulk import.
+
+Review steps:
+1. Launch PlaceWell. On the empty Home screen, tap "Got it" on the scan hint, then
+   tap the round Scan button.
+2. Grant camera permission.
+3. Display the attached QR sheet on another screen and scan a code.
+4. Complete Label Setup: add a name, optional photo, room/zone, and notes; Save.
+5. Open the saved label from Home to view, search, edit, or update it.
+6. Scan "Order QR - Bulk Import" to import a complete label kit (the guided
+   walkthrough appears on this screen).
+
+TEST DEVICES
+Built and tested via TestFlight (iOS) and internal testing (Android) on physical
+devices. [UPDATE with the exact 1.2.0 build number + device/OS before submitting.]
+
+EXTERNAL SERVICES
+- PlaceWell QR Service (Linode) validates issued QR labels and returns non-personal
+  label/order metadata; supports bulk import and deep-link/download fallback pages.
+- Google Cloud Firestore stores issued-label metadata (label ID, printed name,
+  category, SKU, order association, status, aggregate scan counters).
+- Apple App Store/TestFlight and Google Play distribute the app.
+- Expo/React Native modules provide camera, photo picker, haptics, local audio,
+  and local storage.
+
+User-entered contents, notes, room/zone assignments, freshness info, and photos are
+stored locally on-device and are NOT stored in Firestore. PlaceWell uses no
+authentication provider, payment processor, advertising SDK, AI service, or
+cross-app tracking.
+
+REGIONAL DIFFERENCES
+None. PlaceWell functions consistently across all regions.
+
+REGULATED INDUSTRY / THIRD-PARTY MATERIAL
+Not applicable.
