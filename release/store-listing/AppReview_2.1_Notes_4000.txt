@@ -33,11 +33,6 @@ Review steps:
 5. Open the saved label from Home to view, search, edit, or update it.
 6. Scan "Order QR - Bulk Import" to test importing a complete label kit.
 
-Verified fallback links:
-Setup: https://placewell.app/s/PWMSP2-84A3
-Recall: https://placewell.app/s/PWMXS5-EB24
-Detail: https://placewell.app/s/PWMXT6-4682
-Bulk import: https://placewell.app/s/PWMQR7-8C64
 
 5. EXTERNAL SERVICES
 

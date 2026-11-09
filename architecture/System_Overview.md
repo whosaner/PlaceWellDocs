@@ -8,8 +8,8 @@ PlaceWell is a five-project ecosystem that turns printed QR labels into a local-
 |---|---|---|
 | **PlaceWellApp** | React Native + Expo mobile app for scan, setup, recall, search, and management | Scans PlaceWell QR labels, validates HMAC offline, optionally looks up metadata from PlaceWellQRService, stores user inventory locally |
 | **PlaceWellQRService** | FastAPI service for QR allocation, lookup, and scan redirects | Allocates label IDs, stores QR records in Firestore, serves `/s/` scan URLs, returns label metadata to the app |
-| **PlaceWellUI** | FastAPI operator form for building print orders | Collects label names and template choices, calls QR allocation, builds order payloads, triggers PDF generation |
-| **PlaceWellPdfGenerator** | Python library for rendering print-ready PDFs | Generates label sheets and manifest PDFs from the order payload built by PlaceWellUI |
+| **PlaceWellUI** | FastAPI operator portal for building print orders and compiling new SKU templates | Discovers production SKUs from PdfGenerator, orchestrates Smart/Standard orders, and hosts the authenticated compiler dashboard |
+| **PlaceWellPdfGenerator** | Python library and canonical SKU authority | Extracts official template geometry, validates versioned SKU JSON, computes render plans, and generates production/proof PDFs |
 | **PlaceWellAdmin** | Local configuration manager across the ecosystem | Updates shared template/style/category config in sibling repos so App, UI, and PDF generation stay in sync |
 
 ## End-to-end production flow
@@ -84,6 +84,16 @@ decision, see
 
 ### 2. PlaceWellUI -> PlaceWellPdfGenerator
 - PlaceWellUI is the operator-facing order builder.
+- Its production SKU choices, capacities, modes, enabled fonts, and colors are
+  discovered from PdfGenerator rather than duplicated in UI configuration.
+- The Operations Portal exposes separate Create Spice Labels and Create
+  Storage Labels actions. Both use the shared production backend, while each
+  route filters discovered SKUs by capability category and renders only
+  workflow-relevant fields.
+- Location, Zone, and Placeholder are Smart-only QR metadata in both order
+  workflows. Standard mode hides them and submits null values.
+- Every physical SKU supports Smart and Standard. The customer/order selects
+  one mode independently; mode is not part of SKU identity.
 - It gathers category presets, per-label names, template selection, style options, footer options, and any blanks needed to fill a sheet.
 - The spice preset defaults to 26 named labels for the 30-position round SKU
   and the first 16 CSV rows for each 20-position rectangle/square SKU. Each
@@ -91,12 +101,39 @@ decision, see
   sheet composition is recalculated from the edited customer-label count.
 - One Order QR record is still allocated for the manifest and bulk-import flow,
   but it is metadata-only and never consumes or renders in a paid label slot.
-- It requests QR allocation from PlaceWellQRService, then builds a complete order dictionary.
+- Smart orders request QR allocation. Canonical Smart
+  orders allocate every named and writable blank position plus one non-printing
+  Order QR, but first pass a non-mutating PdfGenerator render preflight so text
+  fit failures occur before Firestore allocation. Standard orders bypass QR
+  allocation entirely.
+- PlaceWellApp Bulk Import shows freshness controls only when at least one
+  imported spice label carries freshness metadata; storage-only orders never
+  show or receive automatic best-by behavior.
+- Storage Box and Generic Container fallback text uses artwork-derived
+  rotation geometry so dynamic text follows each perspective label patch;
+  spice fallback geometry is unchanged.
 - That order dictionary is passed directly into PlaceWellPdfGenerator, which outputs two PDFs per order: a printable label sheet and a manifest.
+- PdfGenerator renders both outputs to temporary sibling files and publishes
+  the pair only after both documents complete; caught render/publication
+  failures restore any prior pair.
+- The authenticated SKU Template Compiler separately accepts one official
+  SheetLabels PDF, keeps it in a short-lived single-process workspace, and
+  calls only the public PdfGenerator compiler facade. PdfGenerator owns
+  extraction, normalization, recommendation, coupled adjustments, validation,
+  production proofs, metrics, and the downloadable change bundle.
+- One recommendation/bundle contains both reviewed mode profiles over the same
+  locked source geometry. Typography, frame, and name-zone controls apply to
+  both profiles; QR and separator controls apply only to Smart. Finalization
+  validates both profiles and returns the complete bundle before the browser
+  explicitly deletes the temporary workspace.
+- Reviewed canonical JSON is installed under
+  `placewell_generator/skus/`; after restart, the UI discovers it without a
+  per-SKU code or registry change.
 
 ### 3. PlaceWellAdmin across all projects
 - PlaceWellAdmin is the control plane for shared configuration.
-- Template edits update PDF layout definitions and UI template options together.
+- Legacy template edits remain coordinated during migration; new physical SKU
+  definitions are canonical PdfGenerator JSON discovered by the UI.
 - Style edits update typography/color configuration used by rendered labels and operator choices.
 - Category edits update operator dropdowns and mobile-app category behavior so newly generated labels scan into the correct experience.
 
@@ -192,7 +229,9 @@ https://placewell.app/s/{LABELID}-{SIGNATURE}?n={name}
 3. **Short signed QR URLs:** QR codes stay compact enough for physical labels while still carrying an authenticity signal.
 4. **Offline validation, online enrichment:** the app can reject bad codes immediately and only depends on the network for richer metadata.
 5. **Separate order and label records:** Firestore stores per-label allocation in `qr_codes` and higher-level batch/order facts in `orders`.
-6. **Shared config, not duplicated logic:** templates, styles, and categories are managed centrally through PlaceWellAdmin so UI, PDFs, and app behavior stay aligned.
+6. **Generator-owned SKU logic:** PdfGenerator is authoritative for canonical
+   SKU geometry, typography, QR policy, adjustments, validation, and production
+   capabilities; PlaceWellUI only orchestrates and displays results.
 7. **One server, isolated internal services:** Apache fronts public traffic while QR Service and UI run on internal localhost ports.
 
 ## Analytics

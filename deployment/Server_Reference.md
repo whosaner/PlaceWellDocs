@@ -55,6 +55,8 @@
 | `/opt/placewell-ui/app/` | FastAPI application code |
 | `/opt/placewell-ui/data/` | CSV content presets |
 | `/opt/placewell-ui/output/` | Generated PDFs |
+| `/opt/placewell-ui/placewell_generator/` | PdfGenerator package deployed atomically with the UI |
+| `/opt/placewell-ui/runtime/sku-compiler/` | Ephemeral compiler workspaces and exclusive process lease |
 | `/opt/placewell-ui/.env` | UI environment variables |
 | `/etc/systemd/system/placewell-ui.service` | UI systemd service definition |
 | `/etc/httpd/.htpasswd_placewell_ui` | Apache Basic Auth file for `/ui` |
@@ -108,6 +110,14 @@ systemctl restart placewell-ui
 journalctl -u placewell-ui -f
 curl http://127.0.0.1:8080/health
 ```
+
+`placewell-ui` must run with one Uvicorn worker while SKU Compiler Version 1
+uses process-local workspace metadata. Apache caps `/ui` requests at 11 MiB;
+the UI applies its lower configured compiler request/upload limits as well.
+The UI `.env` must set `PLACEWELL_ENV=production` and
+`SKU_COMPILER_ALLOWED_ORIGINS=https://placewell.app`. Apache Basic Auth
+protects every compiler route, and state-changing requests additionally
+require that exact browser Origin.
 
 ### Apache and SSL
 

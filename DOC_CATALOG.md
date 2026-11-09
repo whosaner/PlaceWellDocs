@@ -9,6 +9,7 @@ Use this catalog when you know the task but not which PlaceWell document to open
 | Check out every repo from scratch | `Docs\setup\Project_Checkout_Guide.md` |
 | Set up one local project | `Docs\setup\App_Setup.md`, `QRService_Setup.md`, `PdfGenerator_Setup.md`, or `UI_Setup.md` |
 | Deploy QR service/UI/PDF code to Linode | `Docs\scripts\deploy.ps1` (one-shot), or `Docs\deployment\Server_Reference.md` + `Linode_Deployment.md`/`UI_Deployment.md` |
+| Copy a compiled SKU JSON from a bundle | `Docs\scripts\Copy-SkuBundle.ps1` |
 | Deploy stock artwork to Firebase + Linode | `Docs\deployment\Stock_Image_Deployment.md` and `Docs\scripts\deploy_stock_images.ps1` |
 | Back up or recover Firestore (labels + orders) | `Docs\deployment\Firestore_Backup_And_DR_Runbook.md` |
 | Build or submit the mobile app | `Docs\release\iOS_Android_Build_Guide.md` and `PlaceWellApp\PRE_BUILD_COMMANDS.txt` |
@@ -73,6 +74,7 @@ Use this catalog when you know the task but not which PlaceWell document to open
 | `Docs\deployment\Stock_Image_Deployment.md` | Paired Firebase Hosting + Linode stock-artwork runbook. | Deploy, verify, roll back, or provision permissions for immutable stock releases. | Dedicated/opt-in commands; release-ID layout; remote lock; staged verification; paired-target invariant; atomic `current`; SELinux/systemd permissions; failure and no-pruning policy. |
 | `Docs\scripts\deploy.ps1` | One-shot PowerShell deploy script. Packages QR Service + PDF Generator + UI, uploads via scp, extracts on Linode, and restarts services. | Push local server-side code changes to Linode in a single command (does NOT deploy the mobile app); explicitly add stock deployment when needed. | Default UI/PDF/QR flow is unchanged; `-DeployStockImages` invokes the dedicated paired deployment afterward and propagates failures. Uses absolute paths — run from anywhere. |
 | `Docs\scripts\deploy_stock_images.ps1` | Dedicated deterministic stock-artwork deployer. | Prepare and validate locally, deploy the identical release to Linode and Firebase, or run a safe local-only validation. | Calls the masters `prepare_release.ps1`; `-ValidateOnly`; verifies every WebP; stages and locks Linode; deploys Firebase from the masters package; verifies both; atomically switches `current`. |
+| `Docs\scripts\Copy-SkuBundle.ps1` | Simple SKU bundle copy helper. | Copy complete generated SKU JSON files from a bundle ZIP or extracted folder into PdfGenerator's `skus` directory. | Defaults to `C:\PlaceWell\PlaceWellPdfGenerator\placewell_generator\skus`; accepts a custom destination; does not validate, test, deploy, or restart services. |
 
 ## Build, release, and validation
 

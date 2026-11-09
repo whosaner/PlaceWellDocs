@@ -1,6 +1,6 @@
 # PlaceWell Unified Roadmap
 
-Last updated: 2026-09-01
+Last updated: 2026-10-31
 
 **Single source of truth** for the PlaceWell ecosystem (app, QR service, UI, PDF generator, admin, business). Everything — launch status, shipped work, the prioritized backlog (the former separate todo list is folded in here), and detailed feature notes — lives in **this one file**. Nothing scattered.
 
@@ -26,6 +26,11 @@ Completed work, grouped. Kept brief on purpose — this roadmap is forward-looki
 - **Platform** — QR Service on Linode (allocate / lookup / order / scan) backed by Firestore + HMAC-signed URLs; per-label SKU-driven presets across UI → QR → PDF → app; Order QR bulk load + Firestore order record; split scan analytics (`camera_scan_count` / `app_scan_count`, both non-blocking); **scan landing page (7 server-rendered states, App Links / Universal Links)**; `assetlinks.json` (incl. Play signing cert) + `apple-app-site-association` deployed.
 - **Build / ops** — iOS + Android production builds via EAS; **secrets split & moved to EAS** (ALLOCATE vs read-only LOOKUP; HMAC + LOOKUP as EAS secrets, `app.config.js` reads at build time); **production PW monogram icon set** (iOS, Android adaptive w/ gradient background, splash); **cold-start deep-link fix** (leading-slash App Link path routing); Maestro E2E scaffolding (Phase 0 testIDs + Phase 1 smoke suite + scenario generator).
 - **Docs / tooling** — consolidated `Docs/` repo; `DOC_CATALOG.md`; `Project_Checkout_Guide.md`; `deploy.ps1` + `seed-test-fixtures.ps1` in version control (`Docs/scripts/`); Etsy launch plan.
+- **Scalable label SKU onboarding** — authenticated SheetLabels SKU Template
+  Compiler; deterministic geometry/recommendation/proof/bundle pipeline;
+  generator-owned adjustment validation; one dual-profile SL522/SL573
+  acceptance flow per physical SKU; production SKU discovery in PlaceWellUI; canonical Smart
+  fill-all allocation and QR-free Standard production branches.
 
 ---
 
@@ -95,6 +100,7 @@ Everything open, in one table (todos + roadmap, de-duplicated). ⭐ = deeper wri
 | 40 | Strip unused `SYSTEM_ALERT_WINDOW` permission (Android) | Ops | Low | React Native pulls "display over other apps" into the release manifest; PlaceWell doesn't use overlays. Remove via `android.blockedPermissions` (same mechanism as the foreground-service fix). Verify in the AAB after rebuild. |
 | 41 | Firestore backups + disaster recovery | Ops | High | Real label IDs are random (`secrets.choice`) and live ONLY in Firestore — deleting `qr_codes` with no backup permanently orphans every not-yet-activated physical label (camera scans return "not a PlaceWell code"). Enable PITR + daily/weekly scheduled backups + `--delete-protection` on `placewell-prod-60ef3` `(default)`; retain allocation data/PDFs as an independent second copy. Runbook: `Docs/deployment/Firestore_Backup_And_DR_Runbook.md` |
 | 42 | Per-label remote stock images ⭐ | App/Ops | Complete | Revision 1 is deployed to Firebase Hosting and Linode with all 78 entries. App caching, fallbacks, unified rendering, photo precedence, bulk warming, production builds, and iPhone/Android validation are complete. Shipping in version 1.1.0. Authoritative plan: `Docs/roadmap/Stock_Image_Implementation_Plan.md` |
+| 43 | Scalable SKU Template Compiler | UI/PDF/Ops | Complete | SheetLabels extraction, one deterministic dual-profile recommendation/bundle per physical SKU, per-order Smart/Standard customer choice, generator-owned adjustments, production proofs, ephemeral authenticated UI workflow, and generator-discovered production registry. Spec: `Docs/specs/PlaceWell_SKU_Template_Compiler_V1_Spec.md` |
 
 ---
 

@@ -30,10 +30,11 @@ SSH into the server:
 ssh root@45.56.71.137
 ```
 
-Create the directory:
+Create the directories:
 
 ```bash
 mkdir -p /opt/placewell-ui/output
+mkdir -p /opt/placewell-ui/runtime/sku-compiler
 ```
 
 ### Step 2 — Copy project files from Windows
@@ -45,7 +46,12 @@ scp -r C:\PlaceWellUI\app root@45.56.71.137:/opt/placewell-ui/
 scp -r C:\PlaceWellUI\data root@45.56.71.137:/opt/placewell-ui/
 scp C:\PlaceWellUI\requirements.txt root@45.56.71.137:/opt/placewell-ui/
 scp C:\PlaceWellUI\.env.example root@45.56.71.137:/opt/placewell-ui/
+scp -r C:\PlaceWell\PlaceWellPdfGenerator\placewell_generator root@45.56.71.137:/opt/placewell-ui/
 ```
+
+Deploy the UI and `placewell_generator` in the same maintenance operation.
+The SKU compiler dashboard calls the generator-owned adjustment API, so
+mixing versions is unsupported.
 
 ### Step 3 — Verify files arrived
 
@@ -65,11 +71,17 @@ You should see: `app/`, `data/`, `output/`, `requirements.txt`, `.env.example`
 
 ```bash
 cd /opt/placewell-ui
+python3 --version
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+pip check
 deactivate
 ```
+
+The pinned compiler dependencies support Python 3.9 through the local Python
+3.13 development runtime. Do not install unpinned newer Pillow, jsonschema,
+pikepdf, or PyMuPDF releases into this environment.
 
 ---
 
@@ -88,8 +100,20 @@ Fill in the values:
 USERNAME_PREFIX=hussain
 QR_SERVICE_URL=http://127.0.0.1:8000
 QR_ALLOCATE_SECRET=<same value as PLACEWELL_ALLOCATE_SECRET in /opt/placewell-service/.env>
-PDF_GENERATOR_PATH=/opt/placewell-ui/placewell_generator
+PDF_GENERATOR_PATH=/opt/placewell-ui
 PDF_OUTPUT_DIR=/opt/placewell-ui/output
+PLACEWELL_ENV=production
+SKU_COMPILER_ALLOWED_ORIGINS=https://placewell.app
+SKU_COMPILER_WORKSPACE_ROOT=/opt/placewell-ui/runtime/sku-compiler
+SKU_COMPILER_MAX_UPLOAD_BYTES=10485760
+SKU_COMPILER_MAX_REQUEST_BYTES=10747904
+SKU_COMPILER_MAX_ACTIVE_WORKSPACES=12
+SKU_COMPILER_IDLE_TTL_SECONDS=1800
+SKU_COMPILER_MAX_LIFETIME_SECONDS=7200
+SKU_COMPILER_CLEANUP_INTERVAL_SECONDS=60
+SKU_COMPILER_CONCURRENT_OPERATIONS=2
+SKU_COMPILER_OPERATION_TIMEOUT_SECONDS=120
+SKU_COMPILER_ALLOW_MISSING_ORIGIN=false
 ```
 
 To get the QR allocate secret:
@@ -108,6 +132,7 @@ Press `Ctrl + X`, then `Y`, then `Enter` to save.
 chmod 600 /opt/placewell-ui/.env
 chmod 755 /opt/placewell-ui
 chmod 755 /opt/placewell-ui/app
+chmod 700 /opt/placewell-ui/runtime/sku-compiler
 ```
 
 ---
@@ -165,7 +190,7 @@ Type=simple
 User=root
 WorkingDirectory=/opt/placewell-ui
 EnvironmentFile=/opt/placewell-ui/.env
-ExecStart=/opt/placewell-ui/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8080 --workers 2
+ExecStart=/opt/placewell-ui/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8080 --workers 1
 Restart=always
 RestartSec=5
 StandardOutput=journal
@@ -176,6 +201,11 @@ WantedBy=multi-user.target
 ```
 
 Press `Ctrl + X`, then `Y`, then `Enter` to save.
+
+> The single worker is mandatory for SKU Compiler Version 1 because workspace
+> metadata is intentionally ephemeral and process-local. The workspace root
+> also holds an exclusive process lease, so a multi-worker configuration
+> fails fast rather than routing an operator to the wrong workspace.
 
 ### Step 9 — Enable and start the service
 
@@ -258,6 +288,7 @@ Find the existing proxy lines for the QR Service (they look like this):
         AuthName "PlaceWell Operator"
         AuthUserFile /etc/httpd/.htpasswd_placewell_ui
         Require valid-user
+        LimitRequestBody 11534336
 
         ProxyPass http://127.0.0.1:8080/
         ProxyPassReverse http://127.0.0.1:8080/
@@ -303,6 +334,10 @@ Find the existing proxy lines for the QR Service (they look like this):
 ```
 
 Press `Ctrl + X`, then `Y`, then `Enter` to save.
+
+`LimitRequestBody` is the outer 11 MiB request cap. PlaceWellUI also enforces
+its configured request cap at the ASGI receive layer for both declared-length
+and chunked uploads before the multipart parser runs.
 
 ### Step 14 — Test and restart Apache
 
@@ -350,20 +385,20 @@ Should show the FastAPI interactive docs — no password required.
 
 ## Deploying Code Updates
 
-### Update UI code
+### Deploy UI, PdfGenerator, and QR Service code
 
-On your Windows machine:
+Use the version-controlled deployment script from Windows:
 
+```powershell
+C:\PlaceWell\Docs\scripts\deploy.ps1
 ```
-scp -r C:\PlaceWellUI\app\* root@45.56.71.137:/opt/placewell-ui/app/
-```
 
-On the server:
-
-```bash
-systemctl restart placewell-ui
-systemctl status placewell-ui | head -5
-```
+The script packages and uploads all three projects, detects each service's
+actual virtualenv, installs both UI/PdfGenerator and QR Service requirements,
+runs `pip check`, creates the restricted compiler runtime directory, restarts
+both services, and waits for both health checks. On failure it prints the
+focused systemd status and recent journals; do not replace this flow with an
+app-only `scp` and restart because new imports may require new dependencies.
 
 ### Update CSV data (e.g., add/remove spice names)
 

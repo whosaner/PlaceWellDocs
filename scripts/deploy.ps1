@@ -76,8 +76,102 @@ Invoke-Native "QR Service upload" {
 
 # ── Extract and restart ──────────────────────────────────────────────────────
 Write-Host "Extracting and restarting services..." -ForegroundColor Yellow
+$remoteDeploy = @'
+set -euo pipefail
+
+find_python() {
+    for candidate in "$@"; do
+        if [ -x "$candidate" ]; then
+            printf '%s\n' "$candidate"
+            return 0
+        fi
+    done
+    return 1
+}
+
+UI_PYTHON="$(find_python \
+    /opt/placewell-ui/venv/bin/python \
+    /opt/placewell-ui/.venv/bin/python)" || {
+    echo "PlaceWellUI virtualenv Python was not found." >&2
+    exit 1
+}
+QR_PYTHON="$(find_python \
+    /opt/placewell-service/.venv/bin/python \
+    /opt/placewell-service/venv/bin/python)" || {
+    echo "PlaceWell QR Service virtualenv Python was not found." >&2
+    exit 1
+}
+
+echo "[1/5] Verifying and extracting release archives"
+tar -tzf /tmp/placewell-ui.tar.gz >/dev/null
+tar -tzf /tmp/placewell-qr.tar.gz >/dev/null
+if [ -d /opt/placewell-ui/placewell_generator/skus ]; then
+    find /opt/placewell-ui/placewell_generator/skus \
+        -maxdepth 1 -type f -name '*.json' -delete
+fi
+tar -xzf /tmp/placewell-ui.tar.gz -C /opt/placewell-ui
+tar -xzf /tmp/placewell-qr.tar.gz -C /opt/placewell-service
+
+if ! grep -q '^PLACEWELL_ENV=production$' /opt/placewell-ui/.env \
+    || ! grep -q '^SKU_COMPILER_ALLOWED_ORIGINS=https://placewell.app$' \
+        /opt/placewell-ui/.env; then
+    echo "PlaceWellUI production Origin environment is incomplete." >&2
+    exit 1
+fi
+
+echo "[2/5] Installing and checking UI/PdfGenerator dependencies"
+"$UI_PYTHON" -m pip install \
+    --disable-pip-version-check \
+    --no-input \
+    --quiet \
+    -r /opt/placewell-ui/requirements.txt \
+    -r /opt/placewell-ui/pdf_requirements.txt
+"$UI_PYTHON" -m pip check
+install -d -m 700 /opt/placewell-ui/runtime/sku-compiler
+
+echo "[3/5] Installing and checking QR Service dependencies"
+"$QR_PYTHON" -m pip install \
+    --disable-pip-version-check \
+    --no-input \
+    --quiet \
+    -r /opt/placewell-service/requirements.txt
+"$QR_PYTHON" -m pip check
+
+echo "[4/5] Restarting services"
+rm -f /tmp/placewell-ui.tar.gz /tmp/placewell-qr.tar.gz
+systemctl reset-failed placewell-ui placewell.service || true
+systemctl restart placewell-ui placewell.service
+
+echo "[5/5] Waiting for health checks"
+for attempt in $(seq 1 30); do
+    if systemctl is-active --quiet placewell-ui placewell.service \
+        && curl -fs http://127.0.0.1:8080/health \
+            >/tmp/placewell-ui-health.json \
+        && curl -fs http://127.0.0.1:8000/health \
+            >/tmp/placewell-qr-health.json; then
+        cat /tmp/placewell-ui-health.json
+        echo
+        cat /tmp/placewell-qr-health.json
+        echo
+        rm -f \
+            /tmp/placewell-ui-health.json \
+            /tmp/placewell-qr-health.json
+        exit 0
+    fi
+    sleep 1
+done
+
+echo "Service health checks failed." >&2
+systemctl status placewell-ui placewell.service --no-pager -l || true
+echo "=== placewell-ui journal ===" >&2
+journalctl -u placewell-ui -n 100 --no-pager -o cat || true
+echo "=== placewell QR Service journal ===" >&2
+journalctl -u placewell.service -n 100 --no-pager -o cat || true
+exit 1
+'@
+$remoteDeploy = $remoteDeploy.Replace("`r`n", "`n")
 Invoke-Native "Server extraction and restart" {
-    ssh $SERVER "tar -xzf /tmp/placewell-ui.tar.gz -C /opt/placewell-ui && tar -xzf /tmp/placewell-qr.tar.gz -C /opt/placewell-service && rm -f /tmp/placewell-ui.tar.gz /tmp/placewell-qr.tar.gz && systemctl restart placewell-ui placewell.service && for attempt in {1..20}; do if systemctl is-active --quiet placewell-ui placewell.service && curl -fsS http://127.0.0.1:8080/health >/tmp/placewell-ui-health.json && curl -fsS http://127.0.0.1:8000/health >/tmp/placewell-qr-health.json; then cat /tmp/placewell-ui-health.json && echo && cat /tmp/placewell-qr-health.json && echo && rm -f /tmp/placewell-ui-health.json /tmp/placewell-qr-health.json && exit 0; fi; sleep 1; done; systemctl status placewell-ui placewell.service --no-pager -l; exit 1"
+    $remoteDeploy | ssh $SERVER "bash -se"
 }
 
 # ── Cleanup ───────────────────────────────────────────────────────────────────
