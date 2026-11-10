@@ -284,7 +284,7 @@ Find the existing proxy lines for the QR Service (they look like this):
     ProxyPreserveHost On
 
     # Exact Shopify label preview endpoint — public, no operator auth
-    ProxyPassMatch "^/api/shopify/label-preview$" "http://127.0.0.1:8080/api/shopify/label-preview"
+    ProxyPass "/api/shopify/label-preview" "http://127.0.0.1:8080/api/shopify/label-preview"
     ProxyPassReverse "/api/shopify/label-preview" "http://127.0.0.1:8080/api/shopify/label-preview"
 
     # PlaceWell UI — password-protected operator interface on port 8080

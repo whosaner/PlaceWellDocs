@@ -1,6 +1,6 @@
 # Release Validation Checklist - App Store & Play Store
 
-Last updated: 2026-08-31
+Last updated: 2026-11-10
 
 ## Release target
 
@@ -80,6 +80,23 @@ Last updated: 2026-08-31
   `71:60:05:01:D2:63:A4:E1:65:90:AB:4A:10:49:00:6C:D1:2A:68:35:E6:15:0C:15:D9:B4:EE:89:9A:52:37:C7`
 - Stock-image manifest:
   `https://placewell-prod-60ef3.web.app/stock-images/manifest.v1.json`
+- Shopify exact-preview endpoint:
+  `https://placewell.app/api/shopify/label-preview`
+- Unpublished Shopify QA theme: `PlaceWell - Exact Preview QA`
+  (`167591018582`)
+
+## 5. Shopify exact-preview rollout
+
+- [x] Deploy matching PlaceWellUI and PdfGenerator preview code to Linode
+- [x] Configure the approved Shopify preview Origins in PlaceWellUI
+- [x] Add and validate the narrow Apache preview proxy
+- [x] Verify public CORS preflight from `gptyry-um.myshopify.com`
+- [x] Generate and decode live Smart and Standard PNG/PDF responses
+- [x] Push the exact-preview theme to unpublished QA theme `167591018582`
+- [x] Confirm uploaded configurator and product-section hashes match local files
+- [ ] Complete browser/mobile product-page QA in the unpublished theme
+- [ ] Print the fit-guide PDF at 100% and physically verify the one-inch square
+- [ ] Publish the Shopify theme only after explicit approval
 
 ## Release notes
 
@@ -89,4 +106,7 @@ Last updated: 2026-08-31
 - App Store version 1.1.0 build 27 was submitted for review on 2026-08-31 with automatic release enabled.
 - Production-native validation remains mandatory because Expo Go does not exercise the exact store binary, signing, or distribution environment.
 - Firebase Analytics native configuration remains deferred; it is not a version 1.1.0 release dependency.
+- The Shopify preview backend was deployed on 2026-11-10. Smart and Standard
+  preview artifacts passed production endpoint smoke tests; the live Shopify
+  theme was not changed.
 - Update this file after every build, store submission, review decision, or rollout status change.
