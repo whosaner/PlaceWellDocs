@@ -115,7 +115,7 @@ tar -xzf /tmp/placewell-qr.tar.gz -C /opt/placewell-service
 if ! grep -q '^PLACEWELL_ENV=production$' /opt/placewell-ui/.env \
     || ! grep -q '^SKU_COMPILER_ALLOWED_ORIGINS=https://placewell.app$' \
         /opt/placewell-ui/.env \
-    || ! grep -q '^SHOPIFY_PREVIEW_ALLOWED_ORIGINS=https://gptyry-um.myshopify.com,https://www.placewell.app$' \
+    || ! grep -q '^SHOPIFY_PREVIEW_ALLOWED_ORIGINS=https://gptyry-um.myshopify.com,https://shopplacewell.com,https://www.placewell.app$' \
         /opt/placewell-ui/.env; then
     echo "PlaceWellUI production Origin environment is incomplete." >&2
     exit 1

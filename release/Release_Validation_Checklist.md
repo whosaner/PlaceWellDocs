@@ -88,7 +88,7 @@ Last updated: 2026-11-10
 ## 5. Shopify exact-preview rollout
 
 - [x] Deploy matching PlaceWellUI and PdfGenerator preview code to Linode
-- [x] Configure the approved Shopify preview Origins in PlaceWellUI
+- [x] Configure the MyShopify, `shopplacewell.com`, and future PlaceWell preview Origins in PlaceWellUI
 - [x] Add and validate the narrow Apache preview proxy
 - [x] Verify public CORS preflight from `gptyry-um.myshopify.com`
 - [x] Generate and decode live Smart and Standard PNG/PDF responses
