@@ -116,6 +116,13 @@ decision, see
 - PdfGenerator renders both outputs to temporary sibling files and publishes
   the pair only after both documents complete; caught render/publication
   failures restore any prior pair.
+- Shopify product pages call one public, route-scoped PlaceWellUI preview
+  endpoint only when the customer clicks **Preview My Labels**. The endpoint
+  parses the same version-4 `_pw_configuration` used by the cart, validates all
+  names through the production renderer, and returns a no-store JSON response
+  containing a watermarked PNG plus an actual-size PDF. Smart previews use an
+  invalid production-shaped sample QR and never allocate QR identities or
+  access Firestore; Standard previews contain no QR.
 - The authenticated SKU Template Compiler separately accepts one official
   SheetLabels PDF, keeps it in a short-lived single-process workspace, and
   calls only the public PdfGenerator compiler facade. PdfGenerator owns

@@ -20,6 +20,7 @@
 | QR Service docs | `https://placewell.app/docs` | `127.0.0.1:8000` | Public FastAPI docs |
 | QR allocation + lookup | `https://placewell.app/api/qr/*` | `127.0.0.1:8000` | Allocation requires bearer token |
 | Scan redirect | `https://placewell.app/s/*` | `127.0.0.1:8000` | Public label scan endpoint |
+| Shopify label preview | `https://placewell.app/api/shopify/label-preview` | `127.0.0.1:8080` | Public exact path; route-scoped CORS; no QR allocation |
 | Operator UI | `https://placewell.app/ui` | `127.0.0.1:8080` | Apache Basic Auth protected |
 | Static UI assets | `https://placewell.app/static/*` | `127.0.0.1:8080` | Protected with same UI auth |
 | UI downloads | `https://placewell.app/download/*` | `127.0.0.1:8080` | Protected with same UI auth |
@@ -115,9 +116,11 @@ curl http://127.0.0.1:8080/health
 uses process-local workspace metadata. Apache caps `/ui` requests at 11 MiB;
 the UI applies its lower configured compiler request/upload limits as well.
 The UI `.env` must set `PLACEWELL_ENV=production` and
-`SKU_COMPILER_ALLOWED_ORIGINS=https://placewell.app`. Apache Basic Auth
-protects every compiler route, and state-changing requests additionally
-require that exact browser Origin.
+`SKU_COMPILER_ALLOWED_ORIGINS=https://placewell.app`. It must also set
+`SHOPIFY_PREVIEW_ALLOWED_ORIGINS` to the approved Shopify development and live
+storefront origins. Apache Basic Auth protects every compiler route, and
+state-changing compiler requests additionally require their configured
+operator Origin. Only the exact Shopify preview path is public on port 8080.
 
 ### Apache and SSL
 

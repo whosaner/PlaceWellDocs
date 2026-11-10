@@ -104,6 +104,7 @@ PDF_GENERATOR_PATH=/opt/placewell-ui
 PDF_OUTPUT_DIR=/opt/placewell-ui/output
 PLACEWELL_ENV=production
 SKU_COMPILER_ALLOWED_ORIGINS=https://placewell.app
+SHOPIFY_PREVIEW_ALLOWED_ORIGINS=https://gptyry-um.myshopify.com,https://www.placewell.app
 SKU_COMPILER_WORKSPACE_ROOT=/opt/placewell-ui/runtime/sku-compiler
 SKU_COMPILER_MAX_UPLOAD_BYTES=10485760
 SKU_COMPILER_MAX_REQUEST_BYTES=10747904
@@ -282,6 +283,10 @@ Find the existing proxy lines for the QR Service (they look like this):
 ```apache
     ProxyPreserveHost On
 
+    # Exact Shopify label preview endpoint — public, no operator auth
+    ProxyPassMatch "^/api/shopify/label-preview$" "http://127.0.0.1:8080/api/shopify/label-preview"
+    ProxyPassReverse "/api/shopify/label-preview" "http://127.0.0.1:8080/api/shopify/label-preview"
+
     # PlaceWell UI — password-protected operator interface on port 8080
     <Location /ui>
         AuthType Basic
@@ -338,6 +343,11 @@ Press `Ctrl + X`, then `Y`, then `Enter` to save.
 `LimitRequestBody` is the outer 11 MiB request cap. PlaceWellUI also enforces
 its configured request cap at the ASGI receive layer for both declared-length
 and chunked uploads before the multipart parser runs.
+
+The Shopify preview proxy is intentionally limited to one exact public path.
+Do not proxy `/api/shopify/*` or `/api/*` to port 8080. The `/ui`, `/static`,
+`/download`, artwork, and compiler surfaces remain protected by Apache Basic
+Auth. Before restarting Apache, run `httpd -t`.
 
 ### Step 14 — Test and restart Apache
 
