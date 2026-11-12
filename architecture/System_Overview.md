@@ -8,7 +8,7 @@ PlaceWell is a five-project ecosystem that turns printed QR labels into a local-
 |---|---|---|
 | **PlaceWellApp** | React Native + Expo mobile app for scan, setup, recall, search, and management | Scans PlaceWell QR labels, validates HMAC offline, optionally looks up metadata from PlaceWellQRService, stores user inventory locally |
 | **PlaceWellQRService** | FastAPI service for QR allocation, lookup, and scan redirects | Allocates label IDs, stores QR records in Firestore, serves `/s/` scan URLs, returns label metadata to the app |
-| **PlaceWellUI** | FastAPI operator portal for building print orders and compiling new SKU templates | Discovers production SKUs from PdfGenerator, orchestrates Smart/Standard orders, and hosts the authenticated compiler dashboard |
+| **PlaceWellUI** | FastAPI operator portal for building print orders and compiling new SKU templates | Discovers production SKUs from PdfGenerator, orchestrates connected Plain/QR orders, and hosts the authenticated compiler dashboard |
 | **PlaceWellPdfGenerator** | Python library and canonical SKU authority | Extracts official template geometry, validates versioned SKU JSON, computes render plans, and generates production/proof PDFs |
 | **PlaceWellAdmin** | Local configuration manager across the ecosystem | Updates shared template/style/category config in sibling repos so App, UI, and PDF generation stay in sync |
 
@@ -90,10 +90,11 @@ decision, see
   Storage Labels actions. Both use the shared production backend, while each
   route filters discovered SKUs by capability category and renders only
   workflow-relevant fields.
-- Location, Zone, and Placeholder are Smart-only QR metadata in both order
-  workflows. Standard mode hides them and submits null values.
-- Every physical SKU supports Smart and Standard. The customer/order selects
-  one mode independently; mode is not part of SKU identity.
+- Operator workflows default to Plain (`plain`) and also support QR (`qr`).
+  Location, Zone, and Placeholder remain available and are submitted in both.
+- Mode is independent of SKU identity. The forms adapt copies of generator
+  Standard/Smart capabilities to Plain/QR; compiler API/JSON retains its
+  existing internal profile names.
 - It gathers category presets, per-label names, template selection, style options, footer options, and any blanks needed to fill a sheet.
 - The spice preset defaults to 26 named labels for the 30-position round SKU
   and the first 16 CSV rows for each 20-position rectangle/square SKU. Each
@@ -101,11 +102,14 @@ decision, see
   sheet composition is recalculated from the edited customer-label count.
 - One Order QR record is still allocated for the manifest and bulk-import flow,
   but it is metadata-only and never consumes or renders in a paid label slot.
-- Smart orders request QR allocation. Canonical Smart
+- Both modes request allocation with the explicit selected mode. Canonical
   orders allocate every named and writable blank position plus one non-printing
   Order QR, but first pass a non-mutating PdfGenerator render preflight so text
-  fit failures occur before Firestore allocation. Standard orders bypass QR
-  allocation entirely.
+  fit failures occur before Firestore allocation. Legacy spice blanks remain
+  optional. Plain named labels have no printed QR or separator underline.
+- The QR client requires a matching mode confirmation from the service. This
+  integration is local, not deployed; matching UI, generator, and QR Service
+  support must ship together.
 - PlaceWellApp Bulk Import shows freshness controls only when at least one
   imported spice label carries freshness metadata; storage-only orders never
   show or receive automatic best-by behavior.
@@ -120,9 +124,20 @@ decision, see
   endpoint only when the customer clicks **Preview My Labels**. The endpoint
   parses the same version-4 `_pw_configuration` used by the cart, validates all
   names through the production renderer, and returns a no-store JSON response
-  containing a watermarked PNG plus an actual-size PDF. Smart previews use an
+  containing a watermarked PNG plus an actual-size PDF. QR previews use an
   invalid production-shaped sample QR and never allocate QR identities or
-  access Firestore; Standard previews contain no QR.
+  access Firestore; Plain previews contain no QR.
+- The Shopify importer remains review-only. Its shared parser accepts
+  `plain`/`qr`, defaults missing modes to Plain with a review warning, and maps
+  explicit `standard` to `plain` and `smart` to `qr`. Mixed modes are rejected
+  after normalization. Preview rendering maps back to internal layout names;
+  the reviewed-import-to-production handoff is not enabled.
+- The local Shopify theme now defaults all three product templates to Plain
+  and emits explicit `plain`/`qr` values for previews and cart configurations.
+  The mode is merchant-only. Compatible older saved modes retain their
+  meaning; mismatched or unidentified cart layouts are blocked rather than
+  silently converted. Theme publication, Admin-copy review, and replacement
+  product media remain outstanding.
 - The authenticated SKU Template Compiler separately accepts one official
   SheetLabels PDF, keeps it in a short-lived single-process workspace, and
   calls only the public PdfGenerator compiler facade. PdfGenerator owns
@@ -130,7 +145,10 @@ decision, see
   production proofs, metrics, and the downloadable change bundle.
 - One recommendation/bundle contains both reviewed mode profiles over the same
   locked source geometry. Typography, frame, and name-zone controls apply to
-  both profiles; QR and separator controls apply only to Smart. Finalization
+  both profiles; QR and separator controls apply only to QR. The operator
+  compiler defaults to Plain and labels the profiles Plain/QR throughout its
+  controls, proofs, and bundle instructions. Internal API/JSON keys remain
+  `standard`/`smart`, so existing SKU definitions need no migration. Finalization
   validates both profiles and returns the complete bundle before the browser
   explicitly deletes the temporary workspace.
 - Reviewed canonical JSON is installed under
@@ -188,6 +206,47 @@ https://placewell.app/s/{LABELID}-{SIGNATURE}?n={name}
   experience when the app is not installed.
 
 ## Firestore schema
+
+### Plain / QR service contract (2026-11-11, not deployed)
+
+The QR service allocation endpoint now accepts request-level `label_mode`:
+`plain` (default) or `qr`. Both register the same stable identities and issued
+metadata for named labels, writable blanks, and the Order QR. Every item and
+order document stores the submitted mode. Allocation echoes it; individual
+lookup and each order-lookup item return it. For the Order QR record, the mode
+describes the physical labels in the order, not the scannability of the Order
+QR itself.
+
+Per-item signed URLs are still generated for both modes; rendering is a separate
+responsibility. Existing records missing the field read as `qr`, while new
+requests missing it default to `plain`. Invalid values are rejected.
+
+Matching local UI/PDF integration now connects both operator modes and sends
+the selected mode explicitly. Deploy matching versions together, not this
+service in isolation. The app's current exclusion of blanks from bulk import
+is unchanged.
+
+### Connected Plain / QR PDF contract (2026-11-11, not deployed)
+
+PdfGenerator now accepts explicit `label_mode: plain | qr` orders.
+Plain selects the existing Standard print profile: named labels have no
+individual QR or separator underline, and writable blanks retain their writing
+treatment. QR selects the existing Smart print profile. Both require exactly
+one allocated, non-blank Order QR with an HTTPS URL; it renders on the manifest
+only. Internally allocated item URLs may accompany Plain items but are never
+printed on the physical labels.
+
+Plain manifests explain optional app setup, importing via the Order QR, finding
+records in Home/Search, and keeping the card. Re-import does not recover
+personal device-local edits. Canonical preflight accepts the new names, while
+compiler profiles, preview APIs, and advertised SKU capabilities keep their
+existing Smart/Standard vocabulary.
+
+Existing generator `smart`/`standard` inputs and omitted-mode behavior are
+preserved for other callers. PlaceWellUI operator forms now default to Plain
+and explicitly pass `plain`/`qr` to allocation and PDF generation. The Shopify
+parser normalizes to those same values, while compiler schemas and preview
+rendering retain internal layout names. These changes remain local.
 
 ### `qr_codes` collection
 

@@ -115,6 +115,10 @@ Manifest brand primitives and store URLs are centralized in
 
 ### Printed label QR codes
 
+- Approved Plain named labels have no individual QR or separator underline.
+  Writable-blank frames/writing areas remain independent. Local PdfGenerator
+  support is implemented; the existing UI and production rollout are not yet
+  switched to Plain.
 - Label QR codes remain 0.5 inches square with medium error correction and a
   two-module quiet zone.
 - Modules are drawn as square vector shapes directly in the PDF.
