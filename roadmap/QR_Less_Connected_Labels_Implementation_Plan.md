@@ -2,14 +2,20 @@
 
 Date: 2026-11-11
 
-Status: Service, PDF, and operator UI components approved and implemented locally.
-Not deployed. Remaining product phases require owner approval.
+Status: Service, PDF, operator UI/compiler, and Shopify parser deployed to Linode
+on 2026-11-11. Shopify theme pushed to unpublished QA theme `167591018582`;
+the live storefront is unchanged. Remaining product phases require owner approval.
+
+Release: `plain-qr-20261112T004130Z` (UTC). Server rollback archives are under
+`/opt/placewell-release-backups/plain-qr-20261112T004130Z`. UI/QR health, live
+mode contracts, and both public preview layouts were verified without allocating
+test orders. Customer/physical testing and the fulfillment handoff remain pending.
 
 ### First component: QR service
 
 Owner-approved naming is `plain` (default) and `qr`, replacing the proposed
 customer-facing Smart/Standard distinction. QR service support is implemented
-locally as of 2026-11-11 and is not deployed:
+and deployed to Linode on 2026-11-11:
 
 - Allocation accepts request-level `label_mode` and persists it on every named,
   blank, Order QR, and order record.
@@ -21,7 +27,7 @@ locally as of 2026-11-11 and is not deployed:
 
 ### Second component: PDF generator prerequisite
 
-Implemented locally on 2026-11-11 after owner approval; not deployed:
+Implemented after owner approval; deployed to Linode on 2026-11-11:
 
 - Explicit `plain` and `qr` production orders reuse the Standard and Smart print
   profiles, respectively.
@@ -39,7 +45,7 @@ Implemented locally on 2026-11-11 after owner approval; not deployed:
 
 ### Third component: operator UI integration
 
-Implemented locally after owner approval; not deployed:
+Implemented after owner approval; deployed to Linode on 2026-11-11:
 
 - Spice and Storage forms default to Plain and offer QR as the alternative.
 - Both modes preserve metadata and allocate named labels, included blanks, and
@@ -50,11 +56,11 @@ Implemented locally after owner approval; not deployed:
 - Form capability mapping does not mutate the generator registry. Shopify
   previews/configuration and compiler profile names remain unchanged.
 
-App, Shopify fulfillment, media, and deployment phases remain pending.
+App, Shopify fulfillment, media, and live-theme publication remain pending.
 
 ### Fourth component: SKU compiler alignment
 
-Implemented locally after owner approval; not deployed:
+Implemented after owner approval; deployed to Linode on 2026-11-11:
 
 - Compiler controls, rationale, review packs, proof filenames, and bundle
   instructions use Plain/QR wording. Preview and reset defaults are Plain.
@@ -65,7 +71,7 @@ Implemented locally after owner approval; not deployed:
 
 ### Fifth component: Shopify parser and review alignment
 
-Implemented locally after owner approval; not deployed:
+Implemented after owner approval; deployed to Linode on 2026-11-11:
 
 - The review-only importer accepts `plain`/`qr` and normalizes explicit older
   `standard`/`smart` values without changing their physical-layout meaning.
@@ -80,7 +86,8 @@ Implemented locally after owner approval; not deployed:
 
 ### Sixth component: Shopify theme mode alignment
 
-Implemented locally after owner approval; not pushed or published:
+Implemented after owner approval; pushed to unpublished QA theme `167591018582`
+on 2026-11-11. Not published to the live storefront:
 
 - Round, Rectangle, and Square templates explicitly select Plain. Liquid
   defaults and the merchant-only mode setting use `plain`/`qr`.
@@ -91,7 +98,7 @@ Implemented locally after owner approval; not pushed or published:
 - Product-page source copy explains QR-free labels and optional app setup
   through the Order QR, without a customer mode choice.
 - Shopify-hosted descriptions/media, unpublished-theme browser/variant QA,
-  the import-to-production handoff, and deployment remain separate gates.
+  the import-to-production handoff, and live publication remain separate gates.
 
 ## 1. Product and architecture foundation
 

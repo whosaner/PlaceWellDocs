@@ -107,9 +107,9 @@ decision, see
   Order QR, but first pass a non-mutating PdfGenerator render preflight so text
   fit failures occur before Firestore allocation. Legacy spice blanks remain
   optional. Plain named labels have no printed QR or separator underline.
-- The QR client requires a matching mode confirmation from the service. This
-  integration is local, not deployed; matching UI, generator, and QR Service
-  support must ship together.
+- The QR client requires a matching mode confirmation from the service. The
+  matching UI, generator, and QR Service integration was deployed to Linode on
+  2026-11-11; future releases must keep these components coordinated.
 - PlaceWellApp Bulk Import shows freshness controls only when at least one
   imported spice label carries freshness metadata; storage-only orders never
   show or receive automatic best-by behavior.
@@ -132,12 +132,13 @@ decision, see
   explicit `standard` to `plain` and `smart` to `qr`. Mixed modes are rejected
   after normalization. Preview rendering maps back to internal layout names;
   the reviewed-import-to-production handoff is not enabled.
-- The local Shopify theme now defaults all three product templates to Plain
+- The Shopify theme now defaults all three product templates to Plain
   and emits explicit `plain`/`qr` values for previews and cart configurations.
   The mode is merchant-only. Compatible older saved modes retain their
   meaning; mismatched or unidentified cart layouts are blocked rather than
-  silently converted. Theme publication, Admin-copy review, and replacement
-  product media remain outstanding.
+  silently converted. It is pushed to unpublished QA theme `167591018582`.
+  Live-theme publication, Admin-copy review, and replacement product media
+  remain outstanding.
 - The authenticated SKU Template Compiler separately accepts one official
   SheetLabels PDF, keeps it in a short-lived single-process workspace, and
   calls only the public PdfGenerator compiler facade. PdfGenerator owns
@@ -207,7 +208,7 @@ https://placewell.app/s/{LABELID}-{SIGNATURE}?n={name}
 
 ## Firestore schema
 
-### Plain / QR service contract (2026-11-11, not deployed)
+### Plain / QR service contract (deployed 2026-11-11)
 
 The QR service allocation endpoint now accepts request-level `label_mode`:
 `plain` (default) or `qr`. Both register the same stable identities and issued
@@ -221,12 +222,12 @@ Per-item signed URLs are still generated for both modes; rendering is a separate
 responsibility. Existing records missing the field read as `qr`, while new
 requests missing it default to `plain`. Invalid values are rejected.
 
-Matching local UI/PDF integration now connects both operator modes and sends
+Matching deployed UI/PDF integration now connects both operator modes and sends
 the selected mode explicitly. Deploy matching versions together, not this
 service in isolation. The app's current exclusion of blanks from bulk import
 is unchanged.
 
-### Connected Plain / QR PDF contract (2026-11-11, not deployed)
+### Connected Plain / QR PDF contract (deployed 2026-11-11)
 
 PdfGenerator now accepts explicit `label_mode: plain | qr` orders.
 Plain selects the existing Standard print profile: named labels have no
@@ -246,7 +247,8 @@ Existing generator `smart`/`standard` inputs and omitted-mode behavior are
 preserved for other callers. PlaceWellUI operator forms now default to Plain
 and explicitly pass `plain`/`qr` to allocation and PDF generation. The Shopify
 parser normalizes to those same values, while compiler schemas and preview
-rendering retain internal layout names. These changes remain local.
+rendering retain internal layout names. The server components are deployed;
+the Shopify theme is available only in the unpublished QA preview.
 
 ### `qr_codes` collection
 
