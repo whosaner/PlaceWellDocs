@@ -3,8 +3,9 @@
 Date: 2026-11-11
 
 Status: Service, PDF, operator UI/compiler, and Shopify parser deployed to Linode
-on 2026-11-11. Shopify theme pushed to unpublished QA theme `167591018582`;
-the live storefront is unchanged. Remaining product phases require owner approval.
+on 2026-11-11. Shopify theme `167591018582` was published on 2026-11-12,
+including the approved smart-label copy and weatherproof messaging.
+Remaining product phases require owner approval.
 
 Release: `plain-qr-20261112T004130Z` (UTC). Server rollback archives are under
 `/opt/placewell-release-backups/plain-qr-20261112T004130Z`. UI/QR health, live
@@ -56,7 +57,7 @@ Implemented after owner approval; deployed to Linode on 2026-11-11:
 - Form capability mapping does not mutate the generator registry. Shopify
   previews/configuration and compiler profile names remain unchanged.
 
-App, Shopify fulfillment, media, and live-theme publication remain pending.
+App alignment, full Shopify fulfillment, media, and physical sign-off remain pending.
 
 ### Fourth component: SKU compiler alignment
 
@@ -86,8 +87,8 @@ Implemented after owner approval; deployed to Linode on 2026-11-11:
 
 ### Sixth component: Shopify theme mode alignment
 
-Implemented after owner approval; pushed to unpublished QA theme `167591018582`
-on 2026-11-11. Not published to the live storefront:
+Implemented after owner approval; pushed to QA theme `167591018582`
+on 2026-11-11 and published by the owner on 2026-11-12:
 
 - Round, Rectangle, and Square templates explicitly select Plain. Liquid
   defaults and the merchant-only mode setting use `plain`/`qr`.
@@ -97,8 +98,27 @@ on 2026-11-11. Not published to the live storefront:
   rather than silently converted.
 - Product-page source copy explains QR-free labels and optional app setup
   through the Order QR, without a customer mode choice.
-- Shopify-hosted descriptions/media, unpublished-theme browser/variant QA,
-  the import-to-production handoff, and live publication remain separate gates.
+- Product titles and collection copy advertise Weatherproof Smart Spice Labels.
+- Shopify-hosted descriptions/media, browser/variant QA, full fulfillment,
+  and physical product approval remain separate gates.
+
+### Seventh component: single-line-item Shopify production handoff
+
+Owner approved the small single-line-item scope on 2026-11-12:
+
+- Review remains non-mutating. One approved configuration exposes an explicit
+  Confirm & Generate PDFs action with purchased quantity and operator confirmation.
+- Production revalidates the submitted configuration and preserves exact names,
+  casing, styles, colors, complete sheets, blanks, and Plain/QR mode.
+- A generator opt-in preserves imported physical positions without changing
+  legacy manual-order sorting. Quantity repeats complete sheet sets.
+- One registration and manifest Order QR cover the resulting order. The current
+  single-batch handoff is limited to 498 physical labels.
+- A persistent production record blocks duplicate generation and retains the
+  allocated order before rendering. Automatic retry/reprint, multi-line-item
+  production, and the Order History screen remain deferred.
+- A synthetic configuration is linked from the operator importer; explicitly
+  generating it creates real Firestore records, while reviewing does not.
 
 ## 1. Product and architecture foundation
 
@@ -274,9 +294,9 @@ Dependencies: shared contracts and backend production path.
   preview requests together.
 - Preserve exact print-ready text, line breaks, font/color choices, sheet
   composition, quantities, and predefined-name snapshots through fulfillment.
-- Complete the existing review-only Shopify import handoff into production.
-  Parsing alone must remain non-mutating; registration occurs only after
-  operator confirmation.
+- The single-line-item handoff in component seven connects reviewed imports to
+  production after explicit operator confirmation. Complete multi-line-item
+  production and retry/reprint recovery before calling the full workflow complete.
 - Support the actual launch catalog's line-item combinations and purchased
   quantities under the correct fulfillment order. Do not silently flatten
   different SKUs/styles or generate unrelated import cards for one order.
@@ -382,7 +402,8 @@ product model and actual rollout state.
   blanks are excluded; records deduplicate by ID; printed-name search is absent.
 - `Shopify\placewell-shopify-theme\assets\pw-label-configurator.js`: current
   version-4 configuration, mode routing, previews, and cart restoration.
-- `PlaceWellUI\app\templates\shopify_import.html`: Shopify import is review-only.
+- `PlaceWellUI\app\templates\shopify_import.html`: review is non-mutating;
+  component seven adds explicit single-line-item production.
 - Representative prepared gallery, product cutout, and kitchen/app composite:
   individual QRs are baked into both physical product and phone imagery.
 
