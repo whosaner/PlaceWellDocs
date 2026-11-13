@@ -164,10 +164,10 @@ Approval gate: agree on this product and architecture before implementation.
 Resolve each decision separately before implementing its dependent phase.
 
 1. Approve the product and architecture in section 1.
-2. Approve writable-blank activation. Recommendation: retain unused blank
-   records with stable IDs and let the customer name and activate them from an
-   order-associated app entry point. Do not automatically fill Home with
-   unnamed records.
+2. Writable-blank import is owner-approved: include every blank in Order QR
+   setup as an editable `Blank1` through `BlankN` entry using its issued ID.
+   These app-only names do not change the physical printed label. This replaces
+   the earlier recommendation for a separate delayed activation entry point.
 3. Approve the app's primary navigation action. Recommendation: keep an
    explicitly labeled Order QR import action and emphasize Home/search for
    everyday retrieval. Do not imply that the camera recognizes label text.
@@ -179,9 +179,9 @@ Resolve each decision separately before implementing its dependent phase.
    keep-card/insert plus an operator-supported way to resend the same import
    link. A customer portal or automated email integration is separate scope.
 
-The order-associated blank entry point needs a lightweight local order
-reference. This is not a promise to build a full order-history or tracking
-product.
+Numbering uses the complete fixed issued blank set, before local duplicate
+filtering, ordered by immutable item ID with issued label ID as fallback and
+tie-break. No local order-history or separate blank-activation UI is required.
 
 ## 3. Shared contracts and order integrity
 
@@ -267,10 +267,11 @@ working Order QR, correct metadata, correct label counts, and repeatable IDs.
 Dependencies: agreed blank/navigation decisions and backend response contract.
 
 - Preserve existing Order QR scanning, app links, and bulk-import setup.
-- Persist the minimum order/item association needed to locate unused blanks
-  and reopen their activation entry point.
-- Implement the approved blank activation flow using each blank's issued ID.
-  Reopening or re-importing the order must not create another copy.
+- Include writable blanks in the existing import review, room/zone selection,
+  individual setup, and bulk save as editable numbered records.
+- Keep blank-origin metadata and empty printed names across subsequent edits.
+  Do not prefetch stock artwork or auto-apply freshness metadata for blanks.
+  Reopening a saved entry uses edit mode; re-import never creates another copy.
 - Preserve duplicate named labels as distinct records by ID, never by name.
 - Add `printedLabelName` to text search alongside the existing editable name,
   contents, notes, room, and zone matches.
@@ -283,8 +284,14 @@ Dependencies: agreed blank/navigation decisions and backend response contract.
 - Keep the current user-photo/stock/fallback precedence. Update artwork and
   overlay geometry only where required to match the approved new label face.
 
-Acceptance gate: import, rename, photograph, edit, search by printed or edited
-name, activate a blank, repeat import, and retrieve offline on iOS and Android.
+Numbered blank import is implemented in app source; installed iOS/Android
+sign-off and an updated app build remain pending. App commit `78a9291` on `main`
+passes the full regression suite (463 tests across 32 suites).
+The Shopify sample now imports
+60 records (four named labels and 56 writable blanks), excluding the Order QR.
+Verify numbering on repeat/partial imports, blank room/zone setup, renaming,
+personal photos/contents, archived-record preservation, and offline retrieval.
+Printed-name search and QR-bearing stock photography remain deferred.
 A fresh installation restores issued metadata only, not prior personal edits.
 
 ## 6. Shopify configuration and fulfillment
