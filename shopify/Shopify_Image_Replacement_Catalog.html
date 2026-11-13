@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PlaceWell Shopify Image Replacement Catalog</title>
+  <style>
+    :root {
+      --navy: #2f3e53;
+      --green: #0b5a49;
+      --gold: #d4b06a;
+      --ink: #1c1b19;
+      --muted: #5e6863;
+      --line: #d9ded9;
+      --paper: #fcfaf6;
+      --panel: #ffffff;
+      --pale: #eef5e9;
+      --replace: #9c3d32;
+      --retouch: #9a620f;
+      --capture: #42669a;
+      --keep: #427350;
+      --new: #6a4b91;
+      --dynamic: #48606e;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 15px/1.48 "Segoe UI", Arial, sans-serif;
+    }
+
+    header {
+      padding: 38px clamp(20px, 5vw, 72px) 28px;
+      color: white;
+      background: linear-gradient(135deg, var(--navy), #183c39);
+    }
+
+    header h1 {
+      max-width: 1000px;
+      margin: 0;
+      font: 500 clamp(31px, 5vw, 58px)/1.02 Georgia, serif;
+    }
+
+    header p {
+      max-width: 920px;
+      margin: 16px 0 0;
+      color: #eef3ef;
+    }
+
+    main {
+      width: min(1440px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 70px;
+    }
+
+    .notice {
+      margin-bottom: 20px;
+      padding: 18px 20px;
+      border-left: 5px solid var(--gold);
+      border-radius: 6px;
+      background: #fff8e9;
+    }
+
+    .notice strong { color: var(--navy); }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .summary article {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    .summary strong {
+      display: block;
+      color: var(--navy);
+      font-size: 25px;
+    }
+
+    .summary span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .search-panel {
+      position: sticky;
+      z-index: 20;
+      top: 0;
+      display: flex;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(252, 250, 246, 0.96);
+      backdrop-filter: blur(8px);
+    }
+
+    .search-panel input {
+      flex: 1;
+      min-width: 0;
+      padding: 12px 14px;
+      border: 1px solid #aeb8b1;
+      border-radius: 6px;
+      background: white;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    .search-panel button {
+      padding: 0 18px;
+      border: 0;
+      border-radius: 6px;
+      background: var(--green);
+      color: white;
+      cursor: pointer;
+      font-weight: 650;
+    }
+
+    #resultsCount {
+      margin: 12px 2px 20px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .page-group {
+      margin: 0 0 24px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel);
+      overflow: clip;
+    }
+
+    .page-group > summary {
+      padding: 18px 20px;
+      cursor: pointer;
+      list-style: none;
+      color: var(--navy);
+      background: var(--pale);
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .page-group > summary::-webkit-details-marker { display: none; }
+    .page-group > summary::after { content: " - click to collapse"; color: var(--muted); font-size: 11px; font-weight: 400; }
+    .page-group:not([open]) > summary::after { content: " - click to expand"; }
+
+    .catalog-list {
+      margin: 0;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      list-style: none;
+    }
+
+    .photo-card {
+      min-width: 0;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 190px minmax(0, 1fr);
+      gap: 15px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .thumb {
+      width: 190px;
+      height: 190px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 6px;
+      background:
+        linear-gradient(45deg, #f1f1ed 25%, transparent 25%),
+        linear-gradient(-45deg, #f1f1ed 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #f1f1ed 75%),
+        linear-gradient(-45deg, transparent 75%, #f1f1ed 75%),
+        white;
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+      background-size: 16px 16px;
+    }
+
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+    }
+
+    .thumb--none {
+      padding: 20px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .card-body h3 {
+      margin: 7px 0 3px;
+      color: var(--navy);
+      font-size: 17px;
+      line-height: 1.18;
+    }
+
+    .room {
+      margin: 0 0 9px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      color: white;
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .badge--replace { background: var(--replace); }
+    .badge--retouch { background: var(--retouch); }
+    .badge--capture { background: var(--capture); }
+    .badge--keep { background: var(--keep); }
+    .badge--new { background: var(--new); }
+    .badge--dynamic { background: var(--dynamic); }
+
+    dl {
+      margin: 0;
+      display: grid;
+      grid-template-columns: 104px minmax(0, 1fr);
+      gap: 5px 8px;
+      font-size: 12px;
+    }
+
+    dt { color: var(--muted); font-weight: 650; }
+    dd { margin: 0; overflow-wrap: anywhere; }
+    code { color: #654418; font-size: 11px; }
+
+    .ai {
+      margin: 11px 0 0;
+      padding: 9px 10px;
+      border-radius: 5px;
+      background: #f3f5f2;
+      font-size: 12px;
+    }
+
+    .ai strong { color: var(--green); }
+
+    .empty {
+      padding: 42px 20px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    footer {
+      margin-top: 30px;
+      padding: 20px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 980px) {
+      .summary { grid-template-columns: repeat(2, 1fr); }
+      .catalog-list { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 620px) {
+      main { width: min(100% - 20px, 1440px); }
+      .photo-card { grid-template-columns: 1fr; }
+      .thumb { width: 100%; height: 240px; }
+      .search-panel { flex-direction: column; }
+      .search-panel button { min-height: 42px; }
+      dl { grid-template-columns: 88px minmax(0, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>PlaceWell Shopify Image Replacement Catalog</h1>
+    <p>
+      Live-store image inventory for the transition to QR-free individual labels.
+      Individual labels remain represented in Firestore and the Order QR remains
+      the customer entry point for importing the complete order.
+    </p>
+  </header>
+
+  <main>
+    <div class="notice">
+      <strong>Creative rule for every replacement:</strong>
+      use AI to create or retouch the room, jar, hand, and lighting only.
+      Do not ask an AI image model to draw the final label text. Generate a clean
+      blank label face, then composite the approved QR-free PlaceWell label from
+      PdfGenerator or a controlled design file so the font, spelling, size, border,
+      and alignment remain exact.
+    </div>
+
+    <section class="summary" aria-label="Catalog summary">
+      <article><strong id="slotCount">0</strong><span>visible image slots by page</span></article>
+      <article><strong id="uniqueCount">0</strong><span>unique asset groups/workstreams</span></article>
+      <article><strong id="replaceCount">0</strong><span>current photo groups needing work</span></article>
+      <article><strong id="newCount">0</strong><span>new recommended Order-QR images</span></article>
+    </section>
+
+    <div class="search-panel">
+      <input id="catalogSearch" type="search" autocomplete="off"
+             placeholder="Search page, room, spice, format, asset filename, or instruction...">
+      <button id="clearSearch" type="button">Clear</button>
+    </div>
+    <p id="resultsCount" aria-live="polite"></p>
+    <div id="catalog"></div>
+    <div id="emptyState" class="empty" hidden>No catalog items match that search.</div>
+
+    <footer>
+      Audit basis: live Shopify theme <code>151699849302</code>, active product
+      media queried from Shopify, and theme assets pulled on 2026-11-12.
+      Responsive <code>-2x</code> and mobile files are grouped with their master
+      composition rather than counted as separate creative concepts.
+    </footer>
+  </main>
+
+  <script>
+    const ASSET_BASE = "../../Shopify/placewell-shopify-theme/assets/";
+
+    const items = [
+      {
+        page: "Home Page",
+        room: "Hero - bright kitchen countertop",
+        title: "Hero background and responsive crops",
+        status: "replace",
+        assetKey: "home-hero-background",
+        thumb: "pw-hero-photography.jpg",
+        files: "pw-hero-photography.jpg (1024x360); pw-hero-photography-2x.jpg (2048x720); pw-hero-photography-mobile.jpg (941x1672)",
+        current: "Warm kitchen scene with QR-bearing Black Pepper round, Cloves rectangle, and Mustard Seeds square labels baked into the source.",
+        replacement: "Create a coordinated QR-free hero background. Best option: make the counter scene clean with no baked jars, then place the three QR-free foreground jar cutouts separately.",
+        ai: "Yes. Generate the clean kitchen/counter scene with AI, but add all jars and exact labels afterward."
+      },
+      {
+        page: "Home Page",
+        room: "Hero - foreground jar 1",
+        title: "Black Pepper - 1.5-inch Round",
+        status: "retouch",
+        assetKey: "black-pepper-round-cutout",
+        thumb: "pw-black-pepper-round-trim.png",
+        files: "pw-black-pepper-round-trim.png (807x1155, transparent)",
+        current: "Tall black-lid Black Pepper jar with a round label, separator line, and individual QR.",
+        replacement: "Retain the jar cutout and replace only the label face with the approved QR-free 1.5-inch Round design.",
+        ai: "AI is optional. Prefer retouching the existing transparent cutout, then overlay the exact generated label."
+      },
+      {
+        page: "Home Page",
+        room: "Hero - foreground jar 2",
+        title: "Chili Flakes - Rectangle",
+        status: "retouch",
+        assetKey: "chili-rectangle-cutout",
+        thumb: "pw-hero-chili-stock.png",
+        files: "pw-hero-chili-stock.png (420x974, transparent)",
+        current: "Tall Chili Flakes jar with portrait rectangle label and individual QR.",
+        replacement: "Replace the current label face with the final QR-free rectangle layout while preserving the jar and spice texture.",
+        ai: "AI is optional. Retouch/generative-fill the label area, then composite the exact QR-free label."
+      },
+      {
+        page: "Home Page",
+        room: "Hero - foreground jar 3",
+        title: "Oregano - 1.75-inch Square",
+        status: "retouch",
+        assetKey: "oregano-square-cutout",
+        thumb: "pw-hero-oregano-stock.png",
+        files: "pw-hero-oregano-stock.png (783x1082, transparent)",
+        current: "Clamp-lid Oregano jar with a square label and individual QR.",
+        replacement: "Replace the current label face with the approved QR-free square layout.",
+        ai: "AI is optional. Preserve the jar cutout and replace the label deterministically."
+      },
+      {
+        page: "Home Page",
+        room: "Connected system - kitchen counter",
+        title: "Oregano jar beside phone app record",
+        status: "replace",
+        assetKey: "connected-kitchen",
+        thumb: "pw-connected-kitchen-hero.png",
+        files: "pw-connected-kitchen-hero.png (2400x1350)",
+        current: "Wide kitchen scene with an Oregano square label containing an individual QR. The phone photo also shows that QR-bearing label.",
+        replacement: "Rebuild the jar with a QR-free label and replace the photo inside the phone record with the same QR-free jar.",
+        ai: "Yes for the kitchen/jar scene. Do not AI-generate the app UI; use a real PlaceWell app screenshot in the phone."
+      },
+      {
+        page: "Home Page",
+        room: "Formats - bright kitchen counter",
+        title: "Round, Rectangle, and Square format trio",
+        status: "replace",
+        assetKey: "formats-scene",
+        thumb: "pw-formats-photography.jpg",
+        files: "pw-formats-photography.jpg (1024x576); pw-formats-photography-2x.jpg (2048x1153); pw-formats-photography-mobile.jpg (941x1672)",
+        current: "Cardamom round lid label, Cloves portrait rectangle label, and Mustard Seeds square label; all show individual QR codes.",
+        replacement: "Recreate the same three-format comparison using QR-free labels, with coordinated desktop, 2x, and mobile crops.",
+        ai: "Yes. Generate the kitchen/jar scene with blank label faces, then add all three exact labels afterward."
+      },
+
+      {
+        page: "Shop / Collection",
+        room: "Product card - white studio",
+        title: "Round collection card",
+        status: "retouch",
+        assetKey: "round-product-01",
+        thumb: "pw-round-real-01.jpg",
+        files: "pw-round-real-01.jpg (1254x1254)",
+        current: "Top view of Chili Flakes, Cardamom, and Black Pepper jars with round lid labels and individual QRs.",
+        replacement: "Use the updated Round product gallery master with all three QRs removed.",
+        ai: "No separate AI image is needed; this card reuses the Round product master."
+      },
+      {
+        page: "Shop / Collection",
+        room: "Product card - white studio",
+        title: "Rectangle collection card",
+        status: "retouch",
+        assetKey: "rect-product-01",
+        thumb: "pw-rect-real-01.jpg",
+        files: "pw-rect-real-01.jpg (1254x1254)",
+        current: "Three jars labeled Cloves, Chili Flakes, and Black Pepper in the portrait rectangle format with QRs.",
+        replacement: "Use the updated Rectangle product gallery master with QR-free label faces.",
+        ai: "No separate AI image is needed; this card reuses the Rectangle product master."
+      },
+      {
+        page: "Shop / Collection",
+        room: "Product card - white studio",
+        title: "Square collection card",
+        status: "retouch",
+        assetKey: "square-product-01",
+        thumb: "pw-square-real-01.jpg",
+        files: "pw-square-real-01.jpg (1254x1254)",
+        current: "Mustard Seeds, Chili Flakes, and Oregano clamp jars with square labels and individual QRs.",
+        replacement: "Use the updated Square product gallery master with QR-free label faces.",
+        ai: "No separate AI image is needed; this card reuses the Square product master."
+      },
+
+      {
+        page: "Product - 1.5-inch Round",
+        room: "Gallery image 1 - top-view studio group",
+        title: "Round trio: Chili Flakes, Cardamom, Black Pepper",
+        status: "retouch",
+        assetKey: "round-product-01",
+        thumb: "pw-round-real-01.jpg",
+        files: "Shopify: 01-pw-round-real-01.jpg; source: pw-round-real-01.jpg (1254x1254)",
+        current: "Three jar lids viewed from above; every round label contains a QR.",
+        replacement: "Retouch all three lid labels with the final QR-free Round layout.",
+        ai: "Use AI generative fill only to clean the old QR area; overlay exact label artwork afterward."
+      },
+      {
+        page: "Product - 1.5-inch Round",
+        room: "Gallery image 2 - alternate top-view studio group",
+        title: "Round trio alternate arrangement",
+        status: "retouch",
+        assetKey: "round-product-02",
+        thumb: "pw-round-real-02.jpg",
+        files: "Shopify: 02-pw-round-real-02.jpg; source: pw-round-real-02.jpg (1254x1254)",
+        current: "Alternate grouping of Chili Flakes, Cardamom, and Black Pepper lid labels with QRs.",
+        replacement: "Replace all three label faces with the QR-free Round design.",
+        ai: "AI retouch is appropriate; do not generate the label typography with AI."
+      },
+      {
+        page: "Product - 1.5-inch Round",
+        room: "Gallery image 3 - single jar studio",
+        title: "Black Pepper single Round label",
+        status: "retouch",
+        assetKey: "round-product-05",
+        thumb: "pw-round-real-05.jpg",
+        files: "Shopify: 03-pw-round-real-05.jpg; source: pw-round-real-05.jpg (1800x1800)",
+        current: "Single Black Pepper jar with front-facing round QR label.",
+        replacement: "Retain the jar and replace the front label with a QR-free Round label.",
+        ai: "AI is optional; a direct label replacement is preferred."
+      },
+      {
+        page: "Product - 1.5-inch Round",
+        room: "Gallery image 4 - single jar studio",
+        title: "Chili Flakes single Round label",
+        status: "retouch",
+        assetKey: "round-product-07",
+        thumb: "pw-round-real-07.jpg",
+        files: "Shopify: 04-pw-round-real-07.jpg; source: pw-round-real-07.jpg (1800x1800)",
+        current: "Single Chili Flakes jar with front-facing round QR label.",
+        replacement: "Retain the jar and replace the front label with a QR-free Round label.",
+        ai: "AI is optional; a direct label replacement is preferred."
+      },
+      {
+        page: "Product - 1.5-inch Round",
+        room: "Find Your Perfect Fit",
+        title: "Three format cutouts",
+        status: "retouch",
+        assetKey: "fit-guide-cutouts",
+        thumb: "pw-black-pepper-round-trim.png",
+        files: "pw-black-pepper-round-trim.png; pw-turmeric-rect-trim.png; pw-oregano-square-trim.png",
+        current: "Black Pepper Round, Turmeric Rectangle, and Oregano Square comparison cutouts; every label shows an individual QR.",
+        replacement: "Create one coordinated QR-free cutout for each format. These same three files are reused on every product page.",
+        ai: "AI is optional. Retouch the existing transparent jars and composite exact QR-free labels."
+      },
+      {
+        page: "Product - 1.5-inch Round",
+        room: "Preview result",
+        title: "Dynamic exact label preview",
+        status: "dynamic",
+        assetKey: "dynamic-preview",
+        thumb: "",
+        files: "Generated by Linode/PdfGenerator; not uploaded as Shopify product media",
+        current: "Watermarked preview generated from the customer's current configuration.",
+        replacement: "Do not create a replacement photo. Update the production renderer in the separate QR-free-label work so this preview automatically follows the approved layout.",
+        ai: "No AI. This must remain generator-owned."
+      },
+
+      {
+        page: "Product - Rectangle",
+        room: "Gallery image 1 - front studio group",
+        title: "Cloves, Chili Flakes, Black Pepper trio",
+        status: "retouch",
+        assetKey: "rect-product-01",
+        thumb: "pw-rect-real-01.jpg",
+        files: "Shopify: 01-pw-rect-real-01.jpg; source: pw-rect-real-01.jpg (1254x1254)",
+        current: "Three black-lid jars with portrait rectangle labels and individual QRs.",
+        replacement: "Replace all three labels with the final QR-free Rectangle layout.",
+        ai: "Use AI only for label-area cleanup; add exact labels afterward."
+      },
+      {
+        page: "Product - Rectangle",
+        room: "Gallery image 2 - angled studio group",
+        title: "Rectangle trio alternate angle",
+        status: "retouch",
+        assetKey: "rect-product-02",
+        thumb: "pw-rect-real-02.jpg",
+        files: "Shopify: 02-pw-rect-real-02.jpg; source: pw-rect-real-02.jpg (1254x1254)",
+        current: "Angled Cloves, Chili Flakes, and Black Pepper jars with rectangle QR labels.",
+        replacement: "Retouch all visible label faces to the QR-free Rectangle design.",
+        ai: "AI retouch is appropriate; preserve the real glass, contents, and lighting."
+      },
+      {
+        page: "Product - Rectangle",
+        room: "Gallery image 3 - single jar studio",
+        title: "Cloves single Rectangle label",
+        status: "retouch",
+        assetKey: "rect-product-04",
+        thumb: "pw-rect-real-04.jpg",
+        files: "Shopify: 03-pw-rect-real-04.jpg; source: pw-rect-real-04.jpg (1800x1800)",
+        current: "Single Cloves jar with a portrait rectangle QR label.",
+        replacement: "Replace the label with a QR-free Rectangle label.",
+        ai: "AI is optional; direct label replacement is preferred."
+      },
+      {
+        page: "Product - Rectangle",
+        room: "Find Your Perfect Fit",
+        title: "Three format cutouts",
+        status: "retouch",
+        assetKey: "fit-guide-cutouts",
+        thumb: "pw-turmeric-rect-trim.png",
+        files: "pw-black-pepper-round-trim.png; pw-turmeric-rect-trim.png; pw-oregano-square-trim.png",
+        current: "Shared format comparison cutouts, all currently QR-bearing.",
+        replacement: "Reuse the same updated QR-free cutout set created for the Round product page.",
+        ai: "No separate image generation; update the shared masters once."
+      },
+      {
+        page: "Product - Rectangle",
+        room: "Preview result",
+        title: "Dynamic exact label preview",
+        status: "dynamic",
+        assetKey: "dynamic-preview",
+        thumb: "",
+        files: "Generated by Linode/PdfGenerator",
+        current: "Watermarked customer preview.",
+        replacement: "No uploaded image. Keep the renderer aligned with the final QR-free production layout.",
+        ai: "No AI."
+      },
+
+      {
+        page: "Product - 1.75-inch Square",
+        room: "Gallery image 1 - single clamp jar",
+        title: "Chili Flakes single Square label",
+        status: "retouch",
+        assetKey: "square-product-04",
+        thumb: "pw-square-real-04.jpg",
+        files: "Shopify: 01-pw-square-real-04.jpg; source: pw-square-real-04.jpg (1800x1800)",
+        current: "Single Chili Flakes clamp jar with square QR label.",
+        replacement: "Replace the label face with the final QR-free Square layout.",
+        ai: "AI is optional; direct retouch is preferred."
+      },
+      {
+        page: "Product - 1.75-inch Square",
+        room: "Gallery image 2 - studio trio",
+        title: "Chili Flakes, Oregano, Mustard Seeds",
+        status: "retouch",
+        assetKey: "square-product-02",
+        thumb: "pw-square-real-02.jpg",
+        files: "Shopify: 02-pw-square-real-02.jpg; source: pw-square-real-02.jpg (1254x1254)",
+        current: "Three clamp jars with square labels and individual QRs.",
+        replacement: "Replace all three label faces with QR-free Square labels.",
+        ai: "AI retouch is appropriate; add exact label art afterward."
+      },
+      {
+        page: "Product - 1.75-inch Square",
+        room: "Gallery image 3 - studio trio alternate",
+        title: "Mustard Seeds, Chili Flakes, Oregano",
+        status: "retouch",
+        assetKey: "square-product-01",
+        thumb: "pw-square-real-01.jpg",
+        files: "Shopify: 03-pw-square-real-01.jpg; source: pw-square-real-01.jpg (1254x1254)",
+        current: "Alternate three-jar square-label grouping with individual QRs.",
+        replacement: "Replace all three label faces with QR-free Square labels.",
+        ai: "AI retouch is appropriate; add exact label art afterward."
+      },
+      {
+        page: "Product - 1.75-inch Square",
+        room: "Find Your Perfect Fit",
+        title: "Three format cutouts",
+        status: "retouch",
+        assetKey: "fit-guide-cutouts",
+        thumb: "pw-oregano-square-trim.png",
+        files: "pw-black-pepper-round-trim.png; pw-turmeric-rect-trim.png; pw-oregano-square-trim.png",
+        current: "Shared format comparison cutouts, all currently QR-bearing.",
+        replacement: "Reuse the same updated QR-free cutout set created once for all product pages.",
+        ai: "No separate image generation; update the shared masters once."
+      },
+      {
+        page: "Product - 1.75-inch Square",
+        room: "Preview result",
+        title: "Dynamic exact label preview",
+        status: "dynamic",
+        assetKey: "dynamic-preview",
+        thumb: "",
+        files: "Generated by Linode/PdfGenerator",
+        current: "Watermarked customer preview.",
+        replacement: "No uploaded image. Keep the renderer aligned with the final QR-free production layout.",
+        ai: "No AI."
+      },
+
+      {
+        page: "The PlaceWell App",
+        room: "Hero - white studio",
+        title: "Oregano jar beside app Home screen",
+        status: "replace",
+        assetKey: "app-oregano-home",
+        thumb: "pw-app-oregano-home.png",
+        files: "pw-app-oregano-home.png (1254x1254)",
+        current: "Oregano clamp jar with a square QR label beside a handheld phone.",
+        replacement: "Use a QR-free Oregano label and update any jar image shown inside the phone.",
+        ai: "AI may rebuild the hand/jar scene. Use a real app screenshot for the phone UI."
+      },
+      {
+        page: "The PlaceWell App",
+        room: "Set It Up - white studio",
+        title: "Black Pepper jar beside app",
+        status: "replace",
+        assetKey: "app-black-pepper-home",
+        thumb: "pw-app-black-pepper-home.png",
+        files: "pw-app-black-pepper-home.png (1254x1254)",
+        current: "Black Pepper jar with a rectangle QR label beside a handheld phone.",
+        replacement: "Replace the physical label with the QR-free design and update the phone's displayed jar image.",
+        ai: "AI may rebuild the scene. The app screen must be a real capture, not AI-generated."
+      },
+      {
+        page: "The PlaceWell App",
+        room: "Find It Later - white studio",
+        title: "Oregano jar beside Recall record",
+        status: "replace",
+        assetKey: "app-oregano-record",
+        thumb: "pw-app-oregano-record.png",
+        files: "pw-app-oregano-record.png (1254x1254)",
+        current: "Oregano square QR label beside a phone showing the saved Oregano record.",
+        replacement: "Show the same jar with a QR-free label and update the record photo.",
+        ai: "AI may create the scene; capture the PlaceWell screen from the real app."
+      },
+      {
+        page: "The PlaceWell App",
+        room: "One Connected System - kitchen counter",
+        title: "Connected Oregano kitchen scene",
+        status: "replace",
+        assetKey: "connected-kitchen",
+        thumb: "pw-connected-kitchen-hero.png",
+        files: "pw-connected-kitchen-hero.png (2400x1350)",
+        current: "Shared QR-bearing Oregano jar and phone scene.",
+        replacement: "Reuse the updated connected-system master created for the Home Page.",
+        ai: "No separate generation; replace the shared master once."
+      },
+
+      {
+        page: "How It Works",
+        room: "Hero - kitchen counter",
+        title: "Three-format jar scene",
+        status: "replace",
+        assetKey: "formats-scene",
+        thumb: "pw-formats-photography.jpg",
+        files: "pw-formats-photography.jpg; pw-formats-photography-2x.jpg; pw-formats-photography-mobile.jpg",
+        current: "Shared Cardamom Round, Cloves Rectangle, and Mustard Seeds Square scene with individual QRs.",
+        replacement: "Reuse the updated QR-free formats scene.",
+        ai: "No separate generation; replace the shared master once."
+      },
+      {
+        page: "How It Works",
+        room: "Connected system - kitchen counter",
+        title: "Oregano jar beside phone record",
+        status: "replace",
+        assetKey: "connected-kitchen",
+        thumb: "pw-connected-kitchen-hero.png",
+        files: "pw-connected-kitchen-hero.png",
+        current: "Shared connected scene with QR-bearing physical and phone-photo labels.",
+        replacement: "Reuse the updated connected-system master.",
+        ai: "No separate generation; replace the shared master once."
+      },
+      {
+        page: "How It Works",
+        room: "App explanation",
+        title: "Turmeric Recall app screenshot",
+        status: "capture",
+        assetKey: "turmeric-recall",
+        thumb: "pw-turmeric-recall.png",
+        files: "pw-turmeric-recall.png (944x2048)",
+        current: "Real PlaceWell Recall screen whose jar photo contains a rectangle label with an individual QR.",
+        replacement: "Capture a new real app screenshot after the Turmeric record photo uses the QR-free label.",
+        ai: "No. Capture the real app; do not generate app UI with AI."
+      },
+
+      {
+        page: "Our Story",
+        room: "Hero - softly blurred kitchen",
+        title: "Chili Flakes Square jar",
+        status: "retouch",
+        assetKey: "story-square-hero",
+        thumb: "pw-home-hero-real-square.png",
+        files: "pw-home-hero-real-square.png (1254x1254, transparent)",
+        current: "Single clamp jar with Chili Flakes square label and QR.",
+        replacement: "Replace the label face with the QR-free Square design.",
+        ai: "AI is optional. Retouch the existing jar and preserve its transparent cutout."
+      },
+      {
+        page: "Our Story",
+        room: "Connection - kitchen counter",
+        title: "Oregano connected-system scene",
+        status: "replace",
+        assetKey: "connected-kitchen",
+        thumb: "pw-connected-kitchen-hero.png",
+        files: "pw-connected-kitchen-hero.png",
+        current: "Shared connected scene.",
+        replacement: "Reuse the updated connected-system master.",
+        ai: "No separate generation."
+      },
+      {
+        page: "Our Story",
+        room: "Product formats - kitchen counter",
+        title: "Three-format jar scene",
+        status: "replace",
+        assetKey: "formats-scene",
+        thumb: "pw-formats-photography.jpg",
+        files: "pw-formats-photography.jpg; pw-formats-photography-2x.jpg; pw-formats-photography-mobile.jpg",
+        current: "Shared three-format QR-bearing scene.",
+        replacement: "Reuse the updated QR-free formats scene.",
+        ai: "No separate generation."
+      },
+      {
+        page: "Our Story",
+        room: "App story",
+        title: "Turmeric Recall app screenshot",
+        status: "capture",
+        assetKey: "turmeric-recall",
+        thumb: "pw-turmeric-recall.png",
+        files: "pw-turmeric-recall.png",
+        current: "Shared app screenshot containing a QR-bearing jar photo.",
+        replacement: "Reuse the new real app capture from How It Works.",
+        ai: "No AI."
+      },
+
+      {
+        page: "FAQ",
+        room: "Hero - bright kitchen",
+        title: "Three-format jar scene",
+        status: "replace",
+        assetKey: "formats-scene",
+        thumb: "pw-formats-photography.jpg",
+        files: "pw-formats-photography.jpg; pw-formats-photography-2x.jpg",
+        current: "Shared Round, Rectangle, and Square scene with individual QRs.",
+        replacement: "Reuse the updated QR-free formats scene.",
+        ai: "No separate generation."
+      },
+
+      {
+        page: "Size Guide and Utility Pages",
+        room: "Size Guide",
+        title: "CSS diagrams and downloadable outline PDF",
+        status: "keep",
+        assetKey: "size-guide-diagrams",
+        thumb: "",
+        files: "CSS-rendered shapes plus pw-label-size-templates.pdf",
+        current: "No product photography and no individual QR image.",
+        replacement: "No replacement photo is required. Review copy and the PDF separately if physical label geometry changes.",
+        ai: "No AI."
+      },
+      {
+        page: "Size Guide and Utility Pages",
+        room: "Headers, footers, cart, contact, shipping, search",
+        title: "PlaceWell wordmarks",
+        status: "keep",
+        assetKey: "wordmarks",
+        thumb: "pw-wordmark-solid.png",
+        files: "pw-wordmark-solid.png; pw-wordmark-light-solid.png (1026x182)",
+        current: "Navy/gold and light PlaceWell logos. No QR content.",
+        replacement: "Keep both wordmarks unchanged.",
+        ai: "No AI."
+      },
+      {
+        page: "Size Guide and Utility Pages",
+        room: "Search and cart product thumbnails",
+        title: "Dynamic product featured images",
+        status: "retouch",
+        assetKey: "dynamic-product-media",
+        thumb: "pw-round-real-01.jpg",
+        files: "Uses the same Shopify product media listed on the Round, Rectangle, and Square product pages",
+        current: "Search/cart surfaces inherit product featured images that currently show QR-bearing labels.",
+        replacement: "No separate files. Replacing the product media automatically updates these surfaces.",
+        ai: "No separate AI work."
+      },
+
+      {
+        page: "New Recommended Images",
+        room: "Product gallery or How It Works",
+        title: "Order QR anchor pack shot",
+        status: "new",
+        assetKey: "new-order-qr-packshot",
+        thumb: "",
+        files: "New asset - suggested 1800x1800 product image",
+        current: "Not currently shown.",
+        replacement: "Create a clear pack shot showing several QR-free individual labels plus the separate Order QR card/label that imports the complete order.",
+        ai: "Yes for the package scene. Composite a controlled, non-production sample Order QR afterward; do not let AI invent the QR."
+      },
+      {
+        page: "New Recommended Images",
+        room: "How It Works or The PlaceWell App",
+        title: "Scan Order QR and import entire order",
+        status: "new",
+        assetKey: "new-order-qr-app-flow",
+        thumb: "",
+        files: "New asset - suggested 2400x1350 desktop plus mobile crop",
+        current: "Not currently shown.",
+        replacement: "Show a customer scanning the separate Order QR and the PlaceWell Bulk Import screen loading the full set of QR-free labels.",
+        ai: "Use AI or photography for the hand/room scene, but composite a real PlaceWell Bulk Import screenshot and controlled sample Order QR."
+      }
+    ];
+
+    const labels = {
+      replace: "Recreate shared scene",
+      retouch: "Retouch current photo",
+      capture: "Capture real app",
+      keep: "Keep as-is",
+      new: "Create new",
+      dynamic: "Renderer-owned"
+    };
+
+    const catalog = document.getElementById("catalog");
+    const search = document.getElementById("catalogSearch");
+    const emptyState = document.getElementById("emptyState");
+    const resultsCount = document.getElementById("resultsCount");
+
+    function searchableText(item) {
+      return [
+        item.page, item.room, item.title, item.status, item.assetKey,
+        item.files, item.current, item.replacement, item.ai
+      ].join(" ").toLowerCase();
+    }
+
+    function card(item) {
+      const thumbnail = item.thumb
+        ? `<div class="thumb"><img src="${ASSET_BASE + item.thumb}" alt=""></div>`
+        : `<div class="thumb thumb--none">No uploaded photo.<br>${item.status === "new" ? "New image to create." : "Generated or diagram-based asset."}</div>`;
+      return `
+        <li class="photo-card">
+          ${thumbnail}
+          <div class="card-body">
+            <span class="badge badge--${item.status}">${labels[item.status]}</span>
+            <h3>${item.title}</h3>
+            <p class="room">${item.room}</p>
+            <dl>
+              <dt>Current files</dt><dd><code>${item.files}</code></dd>
+              <dt>What is shown</dt><dd>${item.current}</dd>
+              <dt>Create/replace</dt><dd>${item.replacement}</dd>
+            </dl>
+            <p class="ai"><strong>AI guidance:</strong> ${item.ai}</p>
+          </div>
+        </li>`;
+    }
+
+    function render() {
+      const query = search.value.trim().toLowerCase();
+      const filtered = items.filter(item => !query || searchableText(item).includes(query));
+      const pages = [...new Set(filtered.map(item => item.page))];
+      catalog.innerHTML = pages.map(page => {
+        const pageItems = filtered.filter(item => item.page === page);
+        return `
+          <details class="page-group" open>
+            <summary>${page} (${pageItems.length})</summary>
+            <ul class="catalog-list">${pageItems.map(card).join("")}</ul>
+          </details>`;
+      }).join("");
+      emptyState.hidden = filtered.length !== 0;
+      resultsCount.textContent = `${filtered.length} of ${items.length} visible image slots shown`;
+    }
+
+    const uniqueAssets = new Set(items.map(item => item.assetKey));
+    const currentWork = new Set(
+      items.filter(item => ["replace", "retouch", "capture"].includes(item.status))
+        .map(item => item.assetKey)
+    );
+    const newAssets = new Set(
+      items.filter(item => item.status === "new").map(item => item.assetKey)
+    );
+    document.getElementById("slotCount").textContent = items.length;
+    document.getElementById("uniqueCount").textContent = uniqueAssets.size;
+    document.getElementById("replaceCount").textContent = currentWork.size;
+    document.getElementById("newCount").textContent = newAssets.size;
+
+    search.addEventListener("input", render);
+    document.getElementById("clearSearch").addEventListener("click", () => {
+      search.value = "";
+      search.focus();
+      render();
+    });
+    render();
+  </script>
+</body>
+</html>

@@ -132,6 +132,7 @@ Use this catalog when you know the task but not which PlaceWell document to open
 | `Docs\etsy\Etsy_Launch_Plan.md` | Etsy listing and launch strategy for PlaceWell by BeNiralu. | Create the Etsy listing, pricing, photos, variations, shipping policy, or launch checklist. | Competitor analysis; differentiation; titles; listing description; tags; pricing; required photos; variations; shipping/policies; listing checklist; final recommendation. |
 | `Docs\etsy\Etsy_App_Quick_Start.txt` | Short customer-facing instructions for using PlaceWell smart labels. | Publish simple setup directions on Etsy or include them with an order. | Downloading the app with the included Order QR; bulk-loading the label set; basic setup; scanning individual labels later. |
 | `Docs\etsy\PlaceWell_App_Quick_Start.pdf` | Branded one-page customer quick-start with separate iPhone and Android download QR codes. | Upload a polished app-usage guide to Etsy or include it digitally with orders. | Download QRs; Order QR bulk loading; four-step setup; reminder to retain the Order QR until import succeeds. |
+| `Docs\shopify\Shopify_Image_Replacement_Catalog.html` | Searchable live-store image inventory for the QR-free individual-label transition. | Find every current Shopify photo by page, room, spice, format, or asset filename and plan its replacement. | Live product media; shared theme scenes; responsive variants; visible label/QR details; reuse mapping; AI-versus-retouch guidance; two recommended Order QR storytelling images. |
 
 ## PDF and label production references
 
