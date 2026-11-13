@@ -10,7 +10,7 @@ Remaining product phases require owner approval.
 Release: `plain-qr-20261112T004130Z` (UTC). Server rollback archives are under
 `/opt/placewell-release-backups/plain-qr-20261112T004130Z`. UI/QR health, live
 mode contracts, and both public preview layouts were verified without allocating
-test orders. Customer/physical testing and the fulfillment handoff remain pending.
+test orders. Customer/physical testing and full mixed-order fulfillment remain pending.
 
 ### First component: QR service
 
@@ -104,7 +104,11 @@ on 2026-11-11 and published by the owner on 2026-11-12:
 
 ### Seventh component: single-line-item Shopify production handoff
 
-Owner approved the small single-line-item scope on 2026-11-12:
+Owner approved the small single-line-item scope on 2026-11-12. Implemented and
+deployed to Linode with the matching PDF generator. Release backup:
+`/opt/placewell-release-backups/shopify-handoff-20261113T020106Z`.
+Deployed source hashes, UI health, the sample, and non-mutating single/multiple
+review behavior were verified without allocating a test order.
 
 - Review remains non-mutating. One approved configuration exposes an explicit
   Confirm & Generate PDFs action with purchased quantity and operator confirmation.
