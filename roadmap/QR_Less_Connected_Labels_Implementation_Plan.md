@@ -322,8 +322,11 @@ reviewed, registered, printed, and imported with the same names and quantities.
 
 ### Storage storefront expansion: approved requirements
 
-Status: product-page planning; no new Shopify product, checkout discount, or
-theme changes have been published for this expansion.
+Status: product-page implementation approved and implemented for draft review
+on 2026-11-13. Storage product `10424930205782` is DRAFT at USD $10.53 per
+sheet (variant `51157500624982`). New review theme `167737229398` is
+unpublished; live theme `167591018582` is unchanged. No checkout discount,
+collection expansion, or homepage redesign has been activated.
 
 - Position the new `sl522-template` product as **Storage Labels for Boxes &
   Totes**, covering home organization and moving rather than moving alone.
@@ -366,6 +369,43 @@ Approved initial name sets (12 labels / three sheets each before editing):
 - **Basement:** Holiday Decor; Seasonal Decor; Gift Wrap; Party Supplies;
   Seasonal Clothes; Extra Bedding; Guest Linens; Keepsakes; Photo Albums;
   Craft Supplies; Travel Gear; Spare Household Items.
+
+Implementation and remaining release gates:
+
+- Shared `product.placewell-catalog` template reads the pinned JSON product
+  metafield `placewell.label_configuration`; specifications and preset arrays
+  live in catalog data rather than new per-SKU page layouts. The provisioning
+  fixture is `Shopify\catalog\storage-labels.json`.
+- All four set choices use one editable sheet workspace. Switching choices
+  preserves in-page drafts; any sheet can be deleted and recreated. Named
+  labels and writable blanks retain their physical positions.
+- New version-5 cart configurations snapshot `sheets[].slots` and explicitly
+  identify physical-sheet quantity. Cart editing expands merged identical
+  configurations; fulfillment validates whole copies against purchased sheet
+  units. Existing version-2/3/4 contracts remain unchanged.
+- Real local PDF tests exposed the canonical renderer compacting names and
+  dropping blank sheets. The coordinated generator change extends opt-in
+  positioned rendering/preflight to canonical layouts, including blank-only
+  orders, without changing manual/compiler defaults.
+- Local DOM/parser/production tests cover the editor, merged quantities,
+  blank positions, and real generated page counts with allocation mocked.
+  The deployed sample-preview API already returns the new SKU's 4 by 5 inch
+  Plain PNG and PDF without individual QRs. No test order or Firestore
+  registration was created during this work.
+- Direct Shopify preview access returned HTTP 403, and an isolated headless
+  browser did not produce usable markup. Merchant desktop/mobile visual
+  review and an actual Shopify cart/checkout test are still outstanding.
+- **Not launch-ready:** deploy matching UI/generator changes, then resolve the
+  existing multi-line-item production gate and batch limits for the launch
+  offering. Do not enable the product or publish the review theme implicitly.
+  Photography, optional order discount, collection integration, and homepage
+  work remain separate.
+- Checked-in implementation: Shopify `9c286ce` (`main`), PlaceWellUI
+  `f6a78bc` (`feature/stock-jar-images`), and PdfGenerator `55ee5db`
+  (`master`), all pushed. Remote review-theme JavaScript, product section,
+  and cart snippet were downloaded and compared against the local source.
+  The catalog template assignment and DRAFT variant price/metafield were
+  independently read back. UI/generator production deployment remains pending.
 
 ## 7. Physical product, artwork, and photography
 
