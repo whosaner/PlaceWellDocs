@@ -320,6 +320,53 @@ Dependencies: shared contracts and backend production path.
 Acceptance gate: a configured cart can be edited, purchased/test-ordered,
 reviewed, registered, printed, and imported with the same names and quantities.
 
+### Storage storefront expansion: approved requirements
+
+Status: product-page planning; no new Shopify product, checkout discount, or
+theme changes have been published for this expansion.
+
+- Position the new `sl522-template` product as **Storage Labels for Boxes &
+  Totes**, covering home organization and moving rather than moving alone.
+  The canonical SL522-XW geometry is 4 by 5 inches portrait, four labels per
+  sheet. Its internal display name currently says `5x4-rect`; customer-facing
+  dimensions must match the verified geometry.
+- Use one product page with Kids Room, Garage, Basement, and Custom choices.
+  Room presets are name sets, not separate physical SKUs or product pages.
+- Product specifications and presets must be data-driven. Separate purpose
+  (Spice, Storage, future categories) from size/shape. Adding a supported SKU
+  should require catalog/configuration data and media, not a layout redesign.
+  Genuinely new customization features can still require code.
+- Presets and Custom share one editable multi-sheet workspace: browse numbered
+  sheets, rename individual labels, add sheets, and delete any individual sheet
+  including the first. Cleared names become writable blanks, not fewer paid
+  physical labels. Preview, cart edits, sheet counts, and fulfillment must
+  reflect the same final configuration.
+- **Approved price: USD $10.53 per sheet**, for both presets and Custom.
+  A three-sheet starter set is $31.59; six sheets are $63.18 before shipping,
+  taxes, and discounts. Other existing product prices are outside this change.
+- A future minimum-spend checkout discount can use Shopify's native amount-off
+  order discounts. Its qualifying subtotal and discount amount/percentage
+  have not been chosen: do not activate a rule or invent either value.
+  Shopify's minimum-purchase amount excludes shipping and taxes.
+- The earlier $21.53-first-sheet/$10-additional-sheet pricing is superseded.
+  Its cross-cart discount-app, Shopify Plus, and custom draft-order-checkout
+  investigations are no longer prerequisites for this product.
+- Review the new product page before collection integration, then address the
+  homepage separately. Do not publish a live storefront redesign as part of
+  planning this page.
+
+Approved initial name sets (12 labels / three sheets each before editing):
+
+- **Kids Room:** Toys; Building Blocks; Stuffed Animals; Dolls & Figures;
+  Books; Puzzles; Board Games; Arts & Crafts; Dress-Up; School Supplies;
+  Seasonal Clothes; Keepsakes.
+- **Garage:** Hand Tools; Power Tools; Hardware; Cords & Cables;
+  Painting Supplies; Car Care; Gardening Supplies; Cleaning Supplies;
+  Sports Gear; Camping Gear; Bike Accessories; Outdoor Toys.
+- **Basement:** Holiday Decor; Seasonal Decor; Gift Wrap; Party Supplies;
+  Seasonal Clothes; Extra Bedding; Guest Linens; Keepsakes; Photo Albums;
+  Craft Supplies; Travel Gear; Spare Household Items.
+
 ## 7. Physical product, artwork, and photography
 
 Dependencies: physical design approval before final asset production.
