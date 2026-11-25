@@ -322,14 +322,14 @@ reviewed, registered, printed, and imported with the same names and quantities.
 
 ### Storage storefront expansion: approved requirements
 
-Status: product-page implementation approved and implemented for draft review
-on 2026-11-13. Storage product `10424930205782` is DRAFT at USD $10.53 per
-sheet (variant `51157500624982`). New review theme `167737229398` is
+Status: reviewed revisions approved for implementation on 2026-11-25.
+Storage product `10424930205782` is DRAFT at USD $10.53 per 12-label
+pack (variant `51157500624982`). New review theme `167737229398` is
 unpublished; live theme `167591018582` is unchanged. No checkout discount,
 collection expansion, or homepage redesign has been activated.
 
-- Position the new `sl522-template` product as **Storage Labels for Boxes &
-  Totes**, covering home organization and moving rather than moving alone.
+- Position the new `sl522-template` product as **Weatherproof Storage Labels —
+  4″ × 5″**, covering home storage and moving in supporting copy.
   The canonical SL522-XW geometry is 4 by 5 inches portrait, four labels per
   sheet. Its internal display name currently says `5x4-rect`; customer-facing
   dimensions must match the verified geometry.
@@ -339,14 +339,28 @@ collection expansion, or homepage redesign has been activated.
   (Spice, Storage, future categories) from size/shape. Adding a supported SKU
   should require catalog/configuration data and media, not a layout redesign.
   Genuinely new customization features can still require code.
-- Presets and Custom share one editable multi-sheet workspace: browse numbered
-  sheets, rename individual labels, add sheets, and delete any individual sheet
-  including the first. Cleared names become writable blanks, not fewer paid
-  physical labels. Preview, cart edits, sheet counts, and fulfillment must
-  reflect the same final configuration.
-- **Approved price: USD $10.53 per sheet**, for both presets and Custom.
-  A three-sheet starter set is $31.59; six sheets are $63.18 before shipping,
-  taxes, and discounts. Other existing product prices are outside this change.
+- Preset names are fixed/read-only. Set selection and all twelve names appear
+  together, before font/color controls. Custom uses a continuous numbered form,
+  with **Add 12 labels** and **Remove the last 12 labels** (confirm entered-name
+  removal). Physical print sheets are an implementation detail.
+- Every Custom twelve-position group requires nine trimmed nonblank names,
+  permitting three writable blanks; duplicates count. Show live per-pack
+  guidance and explicit errors in the Custom form only, and enforce in import.
+  Spice Custom must reject every wholly empty/space-only sheet, but retains
+  its one-name-per-sheet minimum.
+- **Approved price: USD $10.53 per 12-label pack**, for presets and Custom.
+  24 labels cost $21.06 and 36 cost $31.59, before shipping, taxes, and
+  discounts. Clearing a name does not reduce price. Other product prices are
+  outside this change. This supersedes the initial per-physical-sheet draft.
+- A predefined product-page submission adds one pack; cart quantity buys more
+  copies of those fixed names. Custom pack additions require **Edit labels**,
+  not generic cart quantity changes that invent anonymous packs.
+- Title, short introduction, and What's Included use the approved simple copy.
+  Purchase note: **12 labels per pack**. Keep representative previews, font
+  samples, color swatches, shared disclosures, header, and footer. Photography
+  placeholders: Named-label close-up; Complete 12-label pack; Writable-blank
+  close-up; Label on a box or tote. **Find Your Perfect Fit** uses storage
+  visuals and the actual-size preview guide, never spice jars.
 - A future minimum-spend checkout discount can use Shopify's native amount-off
   order discounts. Its qualifying subtotal and discount amount/percentage
   have not been chosen: do not activate a rule or invent either value.
@@ -358,7 +372,7 @@ collection expansion, or homepage redesign has been activated.
   homepage separately. Do not publish a live storefront redesign as part of
   planning this page.
 
-Approved initial name sets (12 labels / three sheets each before editing):
+Approved fixed name sets (12 labels / three physical sheets per pack):
 
 - **Kids Room:** Toys; Building Blocks; Stuffed Animals; Dolls & Figures;
   Books; Puzzles; Board Games; Arts & Crafts; Dress-Up; School Supplies;
@@ -376,13 +390,15 @@ Implementation and remaining release gates:
   metafield `placewell.label_configuration`; specifications and preset arrays
   live in catalog data rather than new per-SKU page layouts. The provisioning
   fixture is `Shopify\catalog\storage-labels.json`.
-- All four set choices use one editable sheet workspace. Switching choices
-  preserves in-page drafts; any sheet can be deleted and recreated. Named
-  labels and writable blanks retain their physical positions.
-- New version-5 cart configurations snapshot `sheets[].slots` and explicitly
-  identify physical-sheet quantity. Cart editing expands merged identical
-  configurations; fulfillment validates whole copies against purchased sheet
-  units. Existing version-2/3/4 contracts remain unchanged.
+- All four choices share one names form. Switching choices preserves in-page
+  Custom drafts; preset names cannot be edited. Named labels and permitted
+  Custom blanks retain their physical positions.
+- New version-6 cart configurations snapshot `packs[].slots`, `labelsPerPack`,
+  `presetId`, and pack quantity units. Cart editing expands merged Custom
+  configurations; fulfillment validates complete copies against purchased pack
+  units and creates three physical sheets per pack. Existing versions 2-5
+  remain unchanged; old draft carts must be removed/reconfigured, not silently
+  repriced.
 - Real local PDF tests exposed the canonical renderer compacting names and
   dropping blank sheets. The coordinated generator change extends opt-in
   positioned rendering/preflight to canonical layouts, including blank-only
@@ -400,7 +416,7 @@ Implementation and remaining release gates:
   offering. Do not enable the product or publish the review theme implicitly.
   Photography, optional order discount, collection integration, and homepage
   work remain separate.
-- Checked-in implementation: Shopify `9c286ce` (`main`), PlaceWellUI
+- Historical initial draft: Shopify `9c286ce` (`main`), PlaceWellUI
   `f6a78bc` (`feature/stock-jar-images`), and PdfGenerator `55ee5db`
   (`master`), all pushed. Remote review-theme JavaScript, product section,
   and cart snippet were downloaded and compared against the local source.
