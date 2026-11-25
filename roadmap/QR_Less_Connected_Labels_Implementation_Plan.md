@@ -411,7 +411,8 @@ Implementation and remaining release gates:
 - Direct Shopify preview access returned HTTP 403, and an isolated headless
   browser did not produce usable markup. Merchant desktop/mobile visual
   review and an actual Shopify cart/checkout test are still outstanding.
-- **Not launch-ready:** deploy matching UI/generator changes, then resolve the
+- **Not launch-ready:** matching UI/generator changes were deployed with
+  explicit approval on 2026-11-25; resolve the
   existing multi-line-item production gate and batch limits for the launch
   offering. Do not enable the product or publish the review theme implicitly.
   Photography, optional order discount, collection integration, and homepage
@@ -421,7 +422,11 @@ Implementation and remaining release gates:
   (`master`), all pushed. Remote review-theme JavaScript, product section,
   and cart snippet were downloaded and compared against the local source.
   The catalog template assignment and DRAFT variant price/metafield were
-  independently read back. UI/generator production deployment remains pending.
+  independently read back. The reviewed version-6 UI/generator production
+  rollout completed on 2026-11-25. Follow-up feedback made the remove-last-pack
+  control prominent, hyperlinked the FAQ, and removed preview selection
+  captions and the page watermark notice. Actual preview watermarks remain.
+  The live theme and product activation remain unchanged.
 
 ## 7. Physical product, artwork, and photography
 

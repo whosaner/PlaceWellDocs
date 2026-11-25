@@ -5,6 +5,23 @@
 **Auth:** HTTP Basic Auth (username + password via Apache)
 **Internal port:** 8080 (localhost only — Apache proxies to it)
 
+## November 25, 2026 scoped UI/PDF rollout
+
+With explicit approval, the UI version-6 storage-pack parser and matching
+PdfGenerator positioned rendering were deployed together. Product-preview
+PNGs no longer include sample-selection captions; actual PNG/PDF watermarks
+remain. The QR service, stock artwork, environment, order outputs, and Shopify
+live theme were not changed.
+
+Dependencies matched the deployed manifests and `pip check` passed; no packages
+were installed. The previous code is retained in
+`/opt/placewell-ui/backups/ui-pdf-review-20261125.tar.gz`. Deployment stopped
+only `placewell-ui`, installed the coordinated package, compiled/imported it,
+restarted it, and verified health and source checksums. Public Plain previews
+for Round, Rectangle, Square, and storage were checked without allocating
+identities. Product activation and customer cart/checkout acceptance remain
+separate gates.
+
 ---
 
 ## Overview
