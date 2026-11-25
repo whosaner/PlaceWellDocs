@@ -341,8 +341,9 @@ collection expansion, or homepage redesign has been activated.
   Genuinely new customization features can still require code.
 - Preset names are fixed/read-only. Set selection and all twelve names appear
   together, before font/color controls. Custom uses a continuous numbered form,
-  with **Add 12 labels** and **Remove the last 12 labels** (confirm entered-name
-  removal). Physical print sheets are an implementation detail.
+  with **Add 12 labels** and a **Remove this pack** control on each pack
+  (confirm entered-name removal and retain one pack). Physical print sheets are
+  an implementation detail.
 - Every Custom twelve-position group requires nine trimmed nonblank names,
   permitting three writable blanks; duplicates count. Show live per-pack
   guidance and explicit errors in the Custom form only, and enforce in import.
@@ -350,8 +351,10 @@ collection expansion, or homepage redesign has been activated.
   its one-name-per-sheet minimum.
 - **Approved price: USD $10.53 per 12-label pack**, for presets and Custom.
   24 labels cost $21.06 and 36 cost $31.59, before shipping, taxes, and
-  discounts. Clearing a name does not reduce price. Other product prices are
-  outside this change. This supersedes the initial per-physical-sheet draft.
+  discounts. Clearing a name does not reduce price. Later approved feedback set
+  Round, Rectangle, and Square to **USD $10.53 per physical sheet** as well.
+  Each native variant price remains independently configurable. This
+  supersedes the initial storage per-physical-sheet draft.
 - A predefined product-page submission adds one pack; cart quantity buys more
   copies of those fixed names. Custom pack additions require **Edit labels**,
   not generic cart quantity changes that invent anonymous packs.
@@ -427,6 +430,17 @@ Implementation and remaining release gates:
   control prominent, hyperlinked the FAQ, and removed preview selection
   captions and the page watermark notice. Actual preview watermarks remain.
   The live theme and product activation remain unchanged.
+- Later shared feedback updated all native prices to $10.53 and removed
+  Round's next-business-day shipping paragraph after auditing all four product
+  descriptions. These native changes affect live spice products and were
+  explicitly approved; shared theme changes remain unpublished. Add to Cart
+  totals now follow quantity for every SKU. Spice Custom uses minimum-one
+  guidance/gates; storage has a removal control on each twelve-label pack.
+- New spice version-7 sheet quantities were approved and deployed, preserving
+  older paid-order contracts while preventing double multiplication. Merged
+  cart editing retains names and paid units. Real local PDF cases verified
+  two paid Custom sheets print two pages; public preview and deployed source
+  checks are non-mutating.
 
 ## 7. Physical product, artwork, and photography
 

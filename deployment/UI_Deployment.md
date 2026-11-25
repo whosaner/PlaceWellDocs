@@ -22,6 +22,15 @@ for Round, Rectangle, Square, and storage were checked without allocating
 identities. Product activation and customer cart/checkout acceptance remain
 separate gates.
 
+The subsequent explicitly approved spice quantity rollout installed version 7
+support. New spice orders use paid physical-sheet quantities rather than copies
+of an already-expanded configuration; versions 2-6 retain their contracts.
+The previous code is retained in
+`/opt/placewell-ui/backups/ui-pdf-shared-sku-20261125.tar.gz`. Generator code
+and the QR service were unchanged in this targeted update. Public v7 previews,
+per-sheet empty-name rejection, health, and deployed checksums were verified
+without allocation.
+
 ---
 
 ## Overview
