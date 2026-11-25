@@ -441,6 +441,15 @@ Implementation and remaining release gates:
   cart editing retains names and paid units. Real local PDF cases verified
   two paid Custom sheets print two pages; public preview and deployed source
   checks are non-mutating.
+- The next approved review feedback adds confirmation of the total writable
+  blanks in valid Custom selections before adding/saving cart items. Cancel
+  does not change the cart; predefined and fully named sets do not prompt.
+  The unpublished collection heading is **Weatherproof Labels**. The owner
+  explicitly retained DRAFT status, approving only a clearly marked storage
+  photography placeholder in the merchant theme editor's `/collections/all`,
+  without a purchase link or fabricated price/count. Real collection inclusion
+  still requires separately approved product availability. The live theme,
+  backend, and catalog availability are unchanged.
 
 ## 7. Physical product, artwork, and photography
 
