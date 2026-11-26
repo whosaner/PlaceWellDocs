@@ -454,6 +454,15 @@ Implementation and remaining release gates:
   cream/green themed modal: dynamic **Continue with X blank labels?** heading,
   no body message, and **Go back and edit** / **Continue to cart** buttons.
   Native dialog focus/Escape and revalidated single submission are preserved.
+- The owner physically printed all formats and reported they looked good,
+  except Round's four writable blanks retained a circular guide. The approved
+  follow-up leaves Round Plain/Standard blanks completely unprinted, preserving
+  named labels, other formats, digital metadata, and physical positions. Only
+  the renderer cell module was deployed on 2026-11-26 UTC; a synthetic deployed
+  26-name/four-blank PDF was verified without allocation. Existing PDFs were
+  not rewritten. The revised Round output still needs physical reprint
+  acceptance; no product activation, checkout, or theme publication approval
+  is implied by the physical test feedback.
 
 ## 7. Physical product, artwork, and photography
 

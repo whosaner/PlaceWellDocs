@@ -31,6 +31,22 @@ and the QR service were unchanged in this targeted update. Public v7 previews,
 per-sheet empty-name rejection, health, and deployed checksums were verified
 without allocation.
 
+### Round writable-blank rendering follow-up
+
+On 2026-11-26 UTC (November 25 locally), the owner explicitly approved removal
+of the circular writing guide from Round Plain/Standard blanks. Only
+`placewell_generator/renderer/cell.py` was deployed, with a baseline-hash guard,
+backup, rollback, compilation/render smoke check, and UI health verification.
+The previous renderer is retained in
+`/opt/placewell-ui/backups/pdf-round-blanks-20261126.tar.gz`.
+
+A synthetic deployed production PDF retained 26 named labels and four
+completely white blank positions, without allocation or writing to order
+outputs. Named labels, other formats, blank metadata, and Order QR handling
+are unchanged. The QR service PID/start time was unchanged; no dependencies,
+artwork, environment, Shopify theme, or existing order files were modified.
+Existing PDFs retain their prior artwork; this affects newly generated PDFs.
+
 ---
 
 ## Overview
