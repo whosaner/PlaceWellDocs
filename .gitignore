@@ -1,5 +1,6 @@
 # Private financial records must never be committed.
 Finances/
+scripts/tests/__pycache__/
 
 # Duplicate root-level POC copies retained only because a local viewer holds
 # them open. Canonical copies live under experimental-design-concepts/.

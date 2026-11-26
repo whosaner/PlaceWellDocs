@@ -7,6 +7,7 @@ Use this catalog when you know the task but not which PlaceWell document to open
 | If you want to... | Read first |
 |---|---|
 | Check out every repo from scratch | `Docs\setup\Project_Checkout_Guide.md` |
+| Clone all ten repositories on a MacBook and identify local-only files | `Docs\setup\MacBook_Setup.md` and `Docs\scripts\setup-placewell-mac.sh` |
 | Set up one local project | `Docs\setup\App_Setup.md`, `QRService_Setup.md`, `PdfGenerator_Setup.md`, or `UI_Setup.md` |
 | Deploy QR service/UI/PDF code to Linode | `Docs\scripts\deploy.ps1` (one-shot), or `Docs\deployment\Server_Reference.md` + `Linode_Deployment.md`/`UI_Deployment.md` |
 | Copy a compiled SKU JSON from a bundle | `Docs\scripts\Copy-SkuBundle.ps1` |

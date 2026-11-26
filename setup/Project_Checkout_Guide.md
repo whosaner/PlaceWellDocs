@@ -1,5 +1,9 @@
 # PlaceWell Project Checkout Guide
 
+For the current ten-repository MacBook checkout, working branches, and
+local-only transfer checklist, see [MacBook Setup](MacBook_Setup.md) and
+`scripts/setup-placewell-mac.sh`. The Windows snapshot below is historical.
+
 This guide starts from an empty Windows machine and checks out every PlaceWell repository under `C:\PlaceWell`. Verified on 2026-07-17 against the local repos and their Git remotes/branches.
 
 ## 1. Prerequisites
