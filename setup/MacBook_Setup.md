@@ -15,7 +15,7 @@ brew install gh git-lfs
 gh auth login --hostname github.com --git-protocol https --web
 gh auth setup-git --hostname github.com
 mkdir -p "$HOME/PlaceWell"
-gh repo clone whosaner/PlaceWellDocs "$HOME/PlaceWell/Docs" -- --branch feature/stock-jar-images
+gh repo clone whosaner/PlaceWellDocs "$HOME/PlaceWell/Docs" -- --branch master
 bash "$HOME/PlaceWell/Docs/scripts/setup-placewell-mac.sh"
 ```
 
@@ -30,19 +30,39 @@ actual tracked image masters, not just pointer files.
 
 | Folder | GitHub repository | Working branch |
 |---|---|---|
-| Docs | whosaner/PlaceWellDocs | feature/stock-jar-images |
+| Docs | whosaner/PlaceWellDocs | master |
 | PlaceWellApp | whosaner/PlaceWellApp | main |
-| PlaceWellQRService | whosaner/PlaceWellQRService | feature/stock-jar-images |
+| PlaceWellQRService | whosaner/PlaceWellQRService | main |
 | PlaceWellPdfGenerator | whosaner/PlaceWellPdfGenerator | master |
-| PlaceWellUI | whosaner/PlaceWellUI | feature/stock-jar-images |
+| PlaceWellUI | whosaner/PlaceWellUI | master |
 | Shopify | whosaner/PlaceWell-Shopify | main |
 | PlaceWellAdmin | whosaner/PlaceWellAdmin | master |
 | PlaceWell-StockImageMasters | whosaner/PlaceWell-StockImageMasters | main |
 | PlaceWell-SpiceJarRenderer | whosaner/PlaceWell-SpiceJarRenderer | main |
 | Label Templates | whosaner/PlaceWell-LabelTemplates | main |
 
-Branch choices are the verified migration snapshot on November 26, 2026,
-not an assertion that the repositories' default branches contain all current work.
+On November 26, 2026, the completed `feature/stock-jar-images` work was
+fast-forwarded into Docs/UI `master` and QR Service `main`. The script now
+checks out each repository's primary branch; old feature branches are retained
+for reference, not ongoing development.
+
+If you already cloned on the old feature branches, first ensure there are no
+uncommitted changes, fetch, and switch to the primary branches:
+
+```sh
+git -C "$HOME/PlaceWell/Docs" fetch origin
+git -C "$HOME/PlaceWell/Docs" switch master
+git -C "$HOME/PlaceWell/Docs" merge --ff-only origin/master
+git -C "$HOME/PlaceWell/PlaceWellUI" fetch origin
+git -C "$HOME/PlaceWell/PlaceWellUI" switch master
+git -C "$HOME/PlaceWell/PlaceWellUI" merge --ff-only origin/master
+git -C "$HOME/PlaceWell/PlaceWellQRService" fetch origin
+git -C "$HOME/PlaceWell/PlaceWellQRService" switch main
+git -C "$HOME/PlaceWell/PlaceWellQRService" merge --ff-only origin/main
+```
+
+If switching or fast-forwarding fails, stop and resolve the local work rather
+than forcing a reset. Skip commands for repositories you have not cloned yet.
 
 ## Local-only Windows files
 
