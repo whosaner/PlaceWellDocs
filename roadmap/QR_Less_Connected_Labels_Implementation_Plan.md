@@ -450,6 +450,10 @@ Implementation and remaining release gates:
   without a purchase link or fabricated price/count. Real collection inclusion
   still requires separately approved product availability. The live theme,
   backend, and catalog availability are unchanged.
+  Subsequent copy/design approval replaced the basic browser alert with a
+  cream/green themed modal: dynamic **Continue with X blank labels?** heading,
+  no body message, and **Go back and edit** / **Continue to cart** buttons.
+  Native dialog focus/Escape and revalidated single submission are preserved.
 
 ## 7. Physical product, artwork, and photography
 
