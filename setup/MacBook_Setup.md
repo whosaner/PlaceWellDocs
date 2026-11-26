@@ -15,7 +15,7 @@ brew install gh git-lfs
 gh auth login --hostname github.com --git-protocol https --web
 gh auth setup-git --hostname github.com
 mkdir -p "$HOME/PlaceWell"
-gh repo clone whosaner/PlaceWellDocs "$HOME/PlaceWell/Docs" -- --branch master
+gh repo clone whosaner/PlaceWellDocs "$HOME/PlaceWell/Docs" -- --branch main
 bash "$HOME/PlaceWell/Docs/scripts/setup-placewell-mac.sh"
 ```
 
@@ -30,32 +30,33 @@ actual tracked image masters, not just pointer files.
 
 | Folder | GitHub repository | Working branch |
 |---|---|---|
-| Docs | whosaner/PlaceWellDocs | master |
+| Docs | whosaner/PlaceWellDocs | main |
 | PlaceWellApp | whosaner/PlaceWellApp | main |
 | PlaceWellQRService | whosaner/PlaceWellQRService | main |
-| PlaceWellPdfGenerator | whosaner/PlaceWellPdfGenerator | master |
-| PlaceWellUI | whosaner/PlaceWellUI | master |
+| PlaceWellPdfGenerator | whosaner/PlaceWellPdfGenerator | main |
+| PlaceWellUI | whosaner/PlaceWellUI | main |
 | Shopify | whosaner/PlaceWell-Shopify | main |
-| PlaceWellAdmin | whosaner/PlaceWellAdmin | master |
+| PlaceWellAdmin | whosaner/PlaceWellAdmin | main |
 | PlaceWell-StockImageMasters | whosaner/PlaceWell-StockImageMasters | main |
 | PlaceWell-SpiceJarRenderer | whosaner/PlaceWell-SpiceJarRenderer | main |
 | Label Templates | whosaner/PlaceWell-LabelTemplates | main |
 
-On November 26, 2026, the completed `feature/stock-jar-images` work was
-fast-forwarded into Docs/UI `master` and QR Service `main`. The script now
-checks out each repository's primary branch; old feature branches are retained
-for reference, not ongoing development.
+On November 26, 2026, completed `feature/stock-jar-images` work was consolidated
+into the primary branches, and the remaining four `master` branches were renamed
+to `main` using GitHub's branch rename API. All ten GitHub default branches and
+Windows local checkouts now use `main`. Code/history were unchanged by the rename.
+Old feature branches are retained for reference, not ongoing development.
 
 If you already cloned on the old feature branches, first ensure there are no
 uncommitted changes, fetch, and switch to the primary branches:
 
 ```sh
 git -C "$HOME/PlaceWell/Docs" fetch origin
-git -C "$HOME/PlaceWell/Docs" switch master
-git -C "$HOME/PlaceWell/Docs" merge --ff-only origin/master
+git -C "$HOME/PlaceWell/Docs" switch main
+git -C "$HOME/PlaceWell/Docs" merge --ff-only origin/main
 git -C "$HOME/PlaceWell/PlaceWellUI" fetch origin
-git -C "$HOME/PlaceWell/PlaceWellUI" switch master
-git -C "$HOME/PlaceWell/PlaceWellUI" merge --ff-only origin/master
+git -C "$HOME/PlaceWell/PlaceWellUI" switch main
+git -C "$HOME/PlaceWell/PlaceWellUI" merge --ff-only origin/main
 git -C "$HOME/PlaceWell/PlaceWellQRService" fetch origin
 git -C "$HOME/PlaceWell/PlaceWellQRService" switch main
 git -C "$HOME/PlaceWell/PlaceWellQRService" merge --ff-only origin/main
@@ -63,6 +64,24 @@ git -C "$HOME/PlaceWell/PlaceWellQRService" merge --ff-only origin/main
 
 If switching or fast-forwarding fails, stop and resolve the local work rather
 than forcing a reset. Skip commands for repositories you have not cloned yet.
+
+For an existing clone still on `master` (Docs, UI, PDF Generator, or Admin),
+apply this sequence in that repository, after ensuring a clean worktree:
+
+```sh
+git fetch origin
+git branch -m master main
+git branch --set-upstream-to=origin/main main
+git merge --ff-only origin/main
+git remote set-head origin -a
+```
+
+Do not run the rename if a local `main` already exists; inspect both local
+branches first. Renaming preserves local commits; a failed fast-forward requires
+manual reconciliation, not a reset. GitHub's defaults moved to `main`, with no
+custom branch protections, repository webhooks, GitHub Pages, or checked-in
+Actions workflows on the four renamed repositories at the time of migration.
+Private-repository rulesets were unavailable under the current GitHub plan.
 
 ## Local-only Windows files
 

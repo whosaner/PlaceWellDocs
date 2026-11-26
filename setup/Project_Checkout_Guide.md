@@ -36,15 +36,16 @@ git clone https://github.com/whosaner/PlaceWellUI.git PlaceWellUI
 git clone https://github.com/whosaner/PlaceWell-StockImageMasters.git PlaceWell-StockImageMasters
 ```
 
-Verified repo state:
+Primary branch names below were updated to `main` on November 26, 2026.
+For the complete current ten-repository list, use the MacBook setup guide.
 
 | Local path | Remote | Branch |
 |---|---|---|
 | `C:\PlaceWell\PlaceWellApp` | `https://github.com/whosaner/PlaceWellApp.git` | `main` |
 | `C:\PlaceWell\PlaceWellQRService` | `https://github.com/whosaner/PlaceWellQRService.git` | `main` |
-| `C:\PlaceWell\PlaceWellPdfGenerator` | `https://github.com/whosaner/PlaceWellPdfGenerator.git` | `master` |
-| `C:\PlaceWell\Docs` | `https://github.com/whosaner/PlaceWellDocs.git` | `master` |
-| `C:\PlaceWell\PlaceWellUI` | `https://github.com/whosaner/PlaceWellUI.git` | `master` |
+| `C:\PlaceWell\PlaceWellPdfGenerator` | `https://github.com/whosaner/PlaceWellPdfGenerator.git` | `main` |
+| `C:\PlaceWell\Docs` | `https://github.com/whosaner/PlaceWellDocs.git` | `main` |
+| `C:\PlaceWell\PlaceWellUI` | `https://github.com/whosaner/PlaceWellUI.git` | `main` |
 | `C:\PlaceWell\PlaceWell-StockImageMasters` | `https://github.com/whosaner/PlaceWell-StockImageMasters.git` | `main` |
 
 The stock-image masters repository is private and stores its 78 PNG sources through Git
@@ -112,7 +113,7 @@ For individual PNG export from PDFs, see `PlaceWellPdfGenerator\LABEL_EXPORT_WIK
 
 ### PlaceWellUI — FastAPI operator UI
 
-`PlaceWellUI` is a separate git repo at `https://github.com/whosaner/PlaceWellUI.git` on branch `master`.
+`PlaceWellUI` is a separate git repo at `https://github.com/whosaner/PlaceWellUI.git` on branch `main`.
 
 ```powershell
 Set-Location C:\PlaceWell\PlaceWellUI

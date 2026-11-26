@@ -422,7 +422,7 @@ Implementation and remaining release gates:
   work remain separate.
 - Historical initial draft: Shopify `9c286ce` (`main`), PlaceWellUI
   `f6a78bc` (`feature/stock-jar-images`), and PdfGenerator `55ee5db`
-  (`master`), all pushed. Remote review-theme JavaScript, product section,
+  (`master` at that time, now `main`), all pushed. Remote review-theme JavaScript, product section,
   and cart snippet were downloaded and compared against the local source.
   The catalog template assignment and DRAFT variant price/metafield were
   independently read back. The reviewed version-6 UI/generator production
